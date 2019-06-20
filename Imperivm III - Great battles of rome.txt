@@ -1,0 +1,39 @@
+--------------------------------------------------------------------------
+-- Imperium III: Great battles of Rome
+-- Start Data: 14/04/2019
+-- Last Update: 20/06/2019
+-- Author: Arves100
+---------------------------------------------------------------------------
+
+Game Information:
+ProductID: 10594
+GameName: gbrome
+
+Server used:
+ Master Server: Avaiable Check (gbrome.avaiable.gamespy.com)
+ Master Server: Server browser (gbrome.msX.gamespy.com)
+ Master Server: Query Report 2 (gbrome.master.gamespy.com)
+ Master Server: Game statistics (gamestats.gamespy.com)
+ Presence Server: Connection Manager (gpcm.gamespy.com)
+ Presence Server: Search Player (gpsp.gamespy.com)
+ PeerChat (peerchat.gamespy.com)
+
+Tools used:
+ Ghidra
+ x64dbg
+ RetroSpy Server (Dumping the data between client and server)
+
+Technique used to connect to the game:
+ DNS Server
+
+Note: The game is Unicode/UTF16 encoded, the game calls several Widechar routines as shown in the avaiable check.
+
+Search of GameSpy strings:
+gamestats.gamespy.com/gbrome/hof.asp
+gbrome.avaiable.gamespy.com
+peerchat.gamespy.com
+"??".master.gamespy.com
+"??".ms"?".gamespy.com
+gpcm.gamespy.com
+gpsp.gamespy.com
+GameSpy Error: (internal) connection failed
