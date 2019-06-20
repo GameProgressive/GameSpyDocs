@@ -1,0 +1,19 @@
+Master server:
+    Common (gsAvaiable)
+    Query Report 2 (Dedicated server or CD-KEY reports)
+    Game Stats
+
+Web browser:
+    Sake
+    Webservices
+    Brigades
+    Competiton/ATLAS
+    Patching
+    Tracking
+
+Standalone servers:
+    Presence Connection Manager
+    Presence Search Player
+    Nat Negotiation
+    IRC/PeerChat
+    CD-KEY
