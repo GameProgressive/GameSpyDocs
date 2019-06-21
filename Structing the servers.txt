@@ -1,5 +1,5 @@
 Master server:
-    Common (gsAvaiable)
+    Common (gsAvailable)
     Query Report 2 (Dedicated server or CD-KEY reports)
     Game Stats
 
