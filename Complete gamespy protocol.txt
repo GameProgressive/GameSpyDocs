@@ -366,6 +366,221 @@ Query Report 2 Queries:
     Keep alive (0x08)
       Ignored packet
 
+
+CD-Key/NatNeg authentication to QR2:
+Client ------> Query Report 2 ------> CD-Key/NatNeg Server -----> Query Report 2 (Filtered with CD-KEY or NatNeg Request) -----> Client
+
+----------------------------------------- Master Server: Server Browser -------------------------
+UDP and ICMP sockets
+
+Connect to: ms<index>.gamespy.com:28910 (TCP)
+Where index is the index of the server, up to 20 multiple servers are supported.
+
+NOTE: Strings are null terminated
+
+Connect request:
+ First three bytes: Message ID (0x00), length of the data (done with htons)
+ Data:
+	0x01 (Protocol version)
+	0x03 (Encoding version)
+	int32 (Unknown, should be 0, called queryFromVersion in the SDK)
+	string[36] (Server returned for this game name)
+	string[36] (The current game name)
+	string[8] (Challenge)
+	Server filter (char* with 0x0 at the end)
+	Field list (char* with 0x0 at the end)
+	int32 (Options, done with htonl)
+	If we are using an alternative source ip:
+	int32 (server IP with htonl)
+	If we limit the results we can get
+	int32 (max servers to see)
+
+
+Response is a Query Report 2 query:
+	First byte is 0x00 for a normal response
+	First byte is 0x09 for a challenge response
+
+	From byte 2 to 5 there are some skipped bytes (Request key)
+	
+	If the client is expecting a Query Challenge, it sends a normal IP verify query (See QR2 research)
+	Otherwise it sends a normal Query to QR2 with Split packets support
+		It could request all keys or a basic query with not player or team queries and just some server queries
+
+
+When A client request a server:
+
+Request  :: Client (GameSpy 3D) -------> Server Browser (TCP 28910) --------> Query Report 2 Server (UDP 27901)
+Response :: Query Report 2 ------> Server Browser (Parse the QR2 data, filter it) -----> Client
+
+The server browser is like a high-level Query Report 2 server, it helps creating a server browser without having to
+do everything manually on the Query Report. An interpreter server for QR2.
+
+Get Server rules (Client request) from Server Browser server:
+	First two bytes, htons(message length)
+	Third byte: 0x01 (Server Info request)
+	4 bytes: IP of server
+	2 bytes: Port of server
+
+Send Message to the Server:
+	First two bytes, htons(message length)
+	Third byte: 0x02 (Send Message request)
+	4 bytes: IP
+	2 bytes: Port
+
+	After this is done, the client sends the message (null terminated) to the Master Server (Server Browser server)
+
+Send NatNeg cookie to server:
+	This just do a normal Send message to server function (see above)
+	But the data is sended is a natneg request:
+		First 6 bytes: NatNeg 6 magic (0xFD, 0xFC, 0x1E, 0x66, 0x6A, 0xB2)
+		4 bytes for the cookie (htonl(cookie))
+
+
+Send MapLoop request:
+	First two bytes, htons(message length)
+	Third byte: 0x04 (MapLoop request)
+	4 bytes: Public IP of server
+	2 bytes: Public Port of server
+
+Send PlayerSearch request:
+	First two bytes, htons(message length)
+	Third byte: 0x05 (PlayerSearch request)
+	4 bytes: Search option (htonl(searchOptions))
+	4 bytes: Max result
+	Null terminated string containing the name
+
+
+Server Browser responses:
+ Main data (Or Server data):
+	All data is crypted with GOA (Or Query Report 1 Server) algorithm for the cryptation key that is:
+		Secret QR2 key + Challenge + Server Challenge		
+		sb_serverlist.c line 797
+
+	Data sended from server, header of crypted data:	
+		[Length of Data] [Game Flags] [Data] [Length of Key] [Key Data]
+		Byte 0: Length of the data (The length is XORed with 0xEC)
+		Byte (Length of data - 1): Key length (Xored with 0xEA)
+		The key data is used to decrypt the data
+		Byte 1-2: Game flags (Setted by the dedicated server) and used htons
+		The data is decrypted with GOA (QR1 Cryptation)
+
+	Fixed Header (First 6 bytes of decrypted data):
+		[Public IP] [Default port]
+		PublicIP of the client requesting: 4 bytes
+		Default port of the client requesting: 2 bytes (if it's 0xFFFF then there was an error)
+		
+	Error Data: It's contained after the fixed header to the end, null terminated
+	Data:
+		[Key List] [Unique Value List] [Server list]
+
+	Key List:
+		[Length of keys] [KeyInfo] [KeyInfo 2] [...]
+		Length of keys: One byte (Max 255 Key infos)
+	Key Info:
+		[Key length] [Key Name] [Key Type]
+		Key length: One byte
+		Key name: Null terminated at the end
+
+		Types of keys:
+			0x01: KeyInfo byte (value length is 1)
+			0x02: KeyInfo short (value length is 2)
+			0x00: KeyInfo string
+				The first byte is the index, if it's 0xFF then it's a null terminated string
+				otherwise we already have the length when we parsed the keys
+
+
+	Unique Value List:
+		[Length of unique values] [Unique value] [Unique Value 2] [....]
+		Length of uvalues: One byte (Max 255 unique values)
+		Unique value: Null terminated string
+
+	
+	Server list:
+		[Server Info] [Server Info 2] [...] [Last Server Info]
+
+	Server Info:
+		[Flags] [IP] [Port (Optional)] [Server Data (Optional)]
+		Flags: One byte, if bit 5 of flags is setted (flags | 16), then the server does not use a default game port
+		So, after the IP, The port data will be setted
+		IP: 4 bytes containing the IP
+		Port: 2 bytes
+
+	Server Data:
+		[Private IP] [Private Port] [ICMP IP] [KeyInfo...]
+		If bit 2 of flags is setted, then we have the Private IP of the server
+		The private IP length is 4
+		
+		If bit 6 is setted, the server uses a custom private port (not the default one)
+		Private port length is 2
+		
+		If bit 4 is setted, the server have an ICMP server used
+		ICMP IP length is 4
+
+		If bit 7 is seteted, the server have some custom keys
+		The length was setted when we where parsing the Key List data
+
+
+		If bit 8 is setted, then we have the game full rules
+			All the strings inside the full game rules are null terminated
+			[Rule 1] [Rule 2] [...]
+
+
+ Second data sended: AdHoc data (After the server/main data)
+	This data is not crypted
+
+	The first two byes is the message length (then htohs)
+	The message can be at maximum 4096.
+	
+	The third byte is the message type
+		Type 1: Push keys
+			Add some keys to the server browser client
+			The first character is the number of keys (max 255 keys)
+			
+			The keys follows the structure of KeyInfo
+
+		Type 2: Server message
+			Works the same as Server Info
+
+		Type 3: Keepalive message
+			All data the server sends it's replied back
+		
+		Type 4: Delete server
+			[Server IP] [Server Port]
+			Server IP: 4 bytes
+			Server Port: 2 bytes (NOT OPTIONAL)
+
+		Type 5: Maploop (Used when a new map needs to be selected)
+			[Server IP] [Server Port] [Time] [Map Count] [Map Data] [Map Data 2...] [...]
+			Server IP: 4 bytes
+			Server Port: 2 bytes (NOT OPTIONAL)
+			Time: 4 bytes (time_t)ntohl(time) rapresentation
+			Map Count: One byte telling the number of maps avaiable
+			Map Data: Null terminated string
+		
+		Type 6: Player Search
+			[Is Final] [Result Count] [PlayerSearch Data] [PlayerSearch Data 2] [...]
+			Is Final: 1 byte, when setted to 1, means the research is finished
+				When setted to 0, the client have to expect another Type 6 adhoc packet
+			Result Count: 1 byte telling the numbers of result that the playersearch produced
+
+			PlayerSearch Data:
+				[Nickname] [IP] [Port] [LastSeen] [Game name]
+				Nickname: Null terminated string
+				IP: 4 bytes
+				Port: 2 bytes (not optional)
+				Last Seen: 4 bytes, (time_t)ntohl(lastSeen)
+				Game name: A null terminated string
+			
+
+Get LAN server list:
+	Client binds a socket that will be used for communicating with QR2 (Also multihomed support)
+	Client sends a QR2 query request with ID 0x02 and 4 extra bytes (Called echo request) to Server Browser
+	
+	The QR2 socket is a broadcast socket
+
+When you create a  dedicated server in your lan, by using Query Report 2, GameSpy SB SDK discovers all
+dedicated servers opened in your network, if the dedicated servers reply the QR2 Echo Packet
+
 ---------------------------------------------------- Master Server Avaiability ---------------
 
 IP: gamename.avaiable.gamespy.com
