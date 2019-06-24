@@ -1,0 +1,122 @@
+\documentclass[oneside,titlepage,a4paper]{report} %book,article,report,letter
+\usepackage{amsmath} %宏包
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{titling}
+\usepackage{hyperref}
+\usepackage{pdfpages}
+\usepackage{xcolor}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage{multirow} 
+\usepackage{shorttoc}
+\usepackage{tabularx}
+\usepackage{geometry}
+\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
+%\usepackage[T1]{fontenc}
+%\usepackage{makecell}
+%\renewcommand\theadfont{\bfseries\sffamily}
+%导言区
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{3}
+\begin{document}
+
+\title{\Huge\textbf{Research On GameSpy Protocol}} 
+\author{Rendina Christian, Jiangheng Kou}
+
+\renewcommand\maketitlehooka{
+	\pagestyle{empty}
+	\centering
+	}
+\renewcommand\maketitlehookc{	
+	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.pdf}
+	\vfill First Edition}
+
+
+%\date{} %%如果没有这句，会生成时间
+
+\maketitle  %%生成书名
+
+\tableofcontents  %%生成目录
+
+%\mainmatter %%表示文章的正文部分，在生成目录后将从第一页开始
+
+\part{Research On GameSpySDK}
+
+\chapter{GameSpy General Construction}
+\par In GameSpy SDK there are 16 modules, which constructed the GameSpy main functions.
+\section{GameSpy SDK Module}
+\begin{itemize}
+	\item GameSpy Presence Servers
+	\begin{itemize}
+		\item GameSpy Presence Connection Manager
+		\item GameSpy Presence Search Player
+	\end{itemize}
+	\item Nat Negotiation
+	\item Master Server: Query Report 2
+	\item Master Server: Server Browser
+	\item Master Server: Available Check
+	\item Game Patching
+	\item Game Tracking
+	\item Master Server Patching: Downloading files from FilePlanet
+	\item Peer SDK
+	\item Game Statitics
+	\item Chat Server
+\end{itemize}
+
+\chapter{GameSpy Presence Servers}
+\par GameSpy Presence Servers contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user infomation stored on GameSpy. GPSP is a server that handle search request for user.
+\subsection{Server IP and Ports}
+Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP and Ports that client/game connect to.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		IP&Port  \\ 
+		\hline 
+		gpcm.gamespy.com&29900 \\ 		
+		\hline 
+	 	gpsp.gamespy.com&29901 \\
+	 	\hline 
+	\end{tabular} 
+\caption{IP and Ports for GameSpy Presence Servers}
+\label{IP and Ports for GameSpy Presence Servers}
+
+\end{table}
+
+\subsection{Key Field}
+These keys is what GameSpy Presence SDK using to find a user in their database. Keys are shown in Table \ref{Key Field}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+		\hline 
+		Keys& Description  \\ 
+		\hline 
+		User & An user contains the Email and the password, but contains multiple profiles \\ 		
+		\hline 
+		ProfileID & The profile contains the name, surname, birth date and all the rest user info, including
+		an unique nickname used to identify the profile and a generic nickname used to show for example in
+		games \\
+		\hline 
+	\end{tabular} 
+	\caption{Key Field}
+	\label{Key Field}	
+\end{table}
+
+\subsection{Protocol Descriptions}
+
+In this part, we show the protocol detail in GameSpy Presence SDK.
+
+\chapter{summary}
+
+\chapter{introduction3}
+
+\part{RetroSpy System Architecture}
+
+\chapter{introduction}
+
+\chapter{conclusion}
+
+\end{document}
