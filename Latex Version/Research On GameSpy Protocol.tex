@@ -12,7 +12,7 @@
 \usepackage{shorttoc}
 \usepackage{tabularx}
 \usepackage{geometry}
-\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
+%\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
 %\usepackage[T1]{fontenc}
 %\usepackage{makecell}
 %\renewcommand\theadfont{\bfseries\sffamily}
@@ -85,8 +85,8 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP a
 
 \end{table}
 
-\subsection{Key Field}
-These keys is what GameSpy Presence SDK using to find a user in their database. Keys are shown in Table \ref{Key Field}.
+\subsection{Database Key Field}
+These keys is that GameSpy Presence SDK using to find a user in their database. Keys are shown in Table \ref{Key Field}.
 
 \begin{table}[H]
 	\centering
@@ -108,7 +108,88 @@ These keys is what GameSpy Presence SDK using to find a user in their database. 
 \subsection{Protocol Descriptions}
 
 In this part, we show the protocol detail in GameSpy Presence SDK.
+\subsubsection{The Pattern of String}
+We first introduce the pattern of the string, which is using to make up a request.
+This kind of string is represent a value in a request sends by the client as Table \ref{Value string}.
 
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		String&Description  \\ 
+		\hline 
+	$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
+		\hline 
+	\end{tabular} 
+\caption{Value string}
+\label{Value string}
+\end{table}
+
+This kind of string is represent a command in a request sends by the client as Table \ref{Command string}.
+
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		String&Description  \\ 
+		\hline 
+		$ \backslash command \backslash\backslash $& This is a command \\ 		
+		\hline 
+		$ \backslash error \backslash \backslash $ & Error command \\
+		 \hline
+		 $\backslash lc \backslash$& Login command\\
+		 \hline
+	\end{tabular} 
+	\caption{Command string}
+	\label{Command string}
+\end{table}
+
+This kind of string is represent a parameter in a request sends by the client \ref{Parameter string}. GameSpy uses the combination of the parameter to search the string with value, and sends the data back to client use this kind of parameter string.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		String&Description  \\ 
+		\hline 
+		$ \backslash id \backslash 1 \backslash $& This is a parameter string the value of $ id $ is $ 1 $ \\ 		
+		\hline 
+		$ \backslash profileid \backslash 007 \backslash $ & This is a parameter string the value of $ profileid $ is $ 007 $ \\
+		\hline
+	\end{tabular} 
+	\caption{Parameter string}
+	\label{Parameter string}
+\end{table}
+
+Error response string for (GPCM, GPSP):
+\begin{equation}
+\begin{split}
+\backslash error \backslash\backslash err \backslash \langle error code \rangle \backslash fatal\backslash\backslash errmsg \backslash \langle error message \rangle \backslash id\backslash 1 \backslash final \backslash
+\end{split}	
+\end{equation}
+\subsubsection{Login Phase}
+There are three ways of login:
+\begin{itemize}
+	\item AuthToken: Logging using an alphanumeric string that rapresents an user
+	\item 	UniqueNick: Logging using a nickname that is unique from all the players
+	\item User: Logging with the nickname and the password
+\end{itemize}
+
+
+Login response string: 
+\begin{equation}\label{Login response string}
+	\begin{split}
+		\backslash lc \backslash 1
+	\end{split}	
+\end{equation}
+This response string \ref{Login response string} is send by the server when a connection is accepted, and followed by a challenge\ref{Chanllenge string}, which verifies the server that client connect to.
+
+The challenge string:
+\begin{equation}\label{Chanllenge string}
+	\backslash challenge \backslash \langle challenge \rangle
+\end{equation}
+The $ \langle challenge \rangle $ in \ref{Chanllenge string} is a 10 byte alphanumeric string.
 \chapter{summary}
 
 \chapter{introduction3}
