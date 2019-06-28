@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------
 -- Complete GameSpy Protocol
 -- Start Data: Unknown (around mid-2019)
--- Last Update: 20-06-2019
+-- Last Update: 28-06-2019
 -- Author: Arves100
 ---------------------------------------------------------------------------
 
@@ -581,6 +581,29 @@ Get LAN server list:
 When you create a  dedicated server in your lan, by using Query Report 2, GameSpy SB SDK discovers all
 dedicated servers opened in your network, if the dedicated servers reply the QR2 Echo Packet
 
+---------------------------------------------------- Master Server: ICMP -----------------------------
+
+Discovered with the SDK, we know that ICMP support can be disabled.
+It is confirmed to be used in platforms like PlayStation2.
+
+What server to connect?
+ - If the Server (in the serverbrowser ServerData) define a custom ICMP IP, then connect to that
+ - Otherwise, connect to the Public IP of the server
+
+Everything looks the same as ServerBrowsing reverse, the different seems to be that
+we can parse data not only from the Query socket (UDP) but from the ICMP socket
+
+Platforms that doesn't use ICMP:
+ - Linux or any other Unix based distribution (like FreeBSD)
+ - MacOSX
+ - iPhone
+ - Nintendo DS
+ - Nintendo Wii
+
+The data follows a usual ICMP protocol: https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol
+Look at sb/sb_internal.h for more information about SBICMPHeader.
+
+
 ---------------------------------------------------- Master Server Avaiability ---------------
 
 IP: gamename.avaiable.gamespy.com
@@ -872,6 +895,37 @@ Getting the profile id from a cd-key login
 
 2. Server reponses
 \getpidr\<pid>\lid\<local id>
+
+------------------------------------ Auth service (aka login with http) ---------------------------
+
+You can login with a SOAP XML Web Service, a web application is hosted by GameSpy.
+
+Domain: gamename.auth.pubsvs.gamespy.com/AuthService/AuthService.asmx (ASP.NET Webservice)
+
+First, the service avaiability is checked as usual.
+
+
+------------------------------------- SAKE ---------------------------------------
+
+SAKE is a small webserver used to storage some data from the client.
+This is a normal HTTP server with a SOAP XML application hosted in it.
+
+Domain: gamename.sake.gamespy.com/SakeStorageServer/StorageServer.asmx (ASP.NET Webservice)
+
+First, the service avaiability is checked as usual.
+
+Second, you login normally with GPSP (No firewall and blocking)
+
+A SAKE profile contains:
+  The game name
+  The game ID
+  The game secret key
+  The profile ID
+  The profile login ticket
+
+A normal SAKE XML request:
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:
 
 ----------------------------------- Chat server research -----------------------
 
