@@ -1,5 +1,5 @@
 \documentclass[oneside,titlepage,a4paper]{report} %book,article,report,letter
-\usepackage{amsmath} %宏包
+\usepackage{amsmath,amsfonts,amsthm,bm} %math
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{titling}
@@ -193,11 +193,11 @@ There are three ways of login:
 
 The full login request string:
 \begin{equation}\label{Chanllenge string}
-\begin{gathered}
-	\backslash login \backslash challenge \backslash \langle challenge \rangle \backslash authtoken \backslash \langle authtoken \rangle \\ \backslash uniquenick \backslash \langle uniquenick \rangle \backslash user \backslash \langle user \rangle 
-	\backslash userid \backslash \langle userid \rangle \\ \backslash profileid \backslash \langle profileid \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash response \backslash \langle response \rangle \\
-	 \backslash firewall \backslash 1 \backslash port \backslash \langle port \rangle \backslash productid \backslash  \langle productid \rangle \\ \backslash gamename \backslash \langle gamename \rangle \backslash namespaceid \backslash \langle namespaceid \rangle \\ \backslash  sdkrevision \backslash \langle sdkrevision \rangle \backslash quiet \backslash \langle quiet \rangle \backslash id \backslash 1 \backslash final \backslash
-\end{gathered}
+\begin{split}
+	&\backslash login \backslash challenge \backslash \langle challenge \rangle \backslash authtoken \backslash \langle authtoken \rangle \\& \backslash uniquenick \backslash \langle uniquenick \rangle \backslash user \backslash \langle user \rangle 
+	\backslash userid \backslash \langle userid \rangle \\& \backslash profileid \backslash \langle profileid \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash response \backslash \langle response \rangle \\&
+	 \backslash firewall \backslash 1 \backslash port \backslash \langle port \rangle \backslash productid \backslash  \langle productid \rangle \\& \backslash gamename \backslash \langle gamename \rangle \backslash namespaceid \backslash \langle namespaceid \rangle \\& \backslash  sdkrevision \backslash \langle sdkrevision \rangle \backslash quiet \backslash \langle quiet \rangle \backslash id \backslash 1 \backslash final \backslash
+\end{split}
 \end{equation}
 The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ in \ref{Chanllenge string} is a 10 byte alphanumeric string.
 
@@ -252,13 +252,32 @@ This response string \ref{Login response string1}, \ref{Login response string2} 
 \subsubsection{User Creation}
 This commmand \ref{Create user command} is used to create a user in GameSpy.
 \begin{equation}\label{Create user command}
-\begin{gathered}
-\backslash newuser \backslash email \backslash \langle email \rangle \backslash nick \backslash \langle nick \rangle \backslash passwordenc \backslash \langle passwordenc \rangle \\
-\backslash productid \backslash \langle productid \rangle \backslash gamename \backslash \langle gamename \rangle \backslash uniquenick \backslash \langle uniquenick \rangle \\ \backslash cdkeyenc \backslash \langle cdkeyenc \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash id \backslash 1 \backslash final \backslash
-\end{gathered}	
+\begin{split}
+&\backslash newuser \backslash email \backslash \langle email \rangle \backslash nick \backslash \langle nick \rangle \\& \backslash passwordenc \backslash \langle passwordenc \rangle 
+\backslash productid \backslash \langle productid \rangle \\& \backslash gamename \backslash \langle gamename \rangle \backslash uniquenick \backslash \langle uniquenick \rangle \\& \backslash cdkeyenc \backslash \langle cdkeyenc \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash id \backslash 1 \backslash final \backslash
+\end{split}	
 \end{equation}
-
-
+The description of each parameter string is shown in Table \ref{User creation string}.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{9cm}|}
+		\hline
+		  String    & Description                                                                  \\ \hline
+		   email    & The email used to create                                                     \\ \hline
+		   nick     & The nickname that will be created                                            \\ \hline
+		passwordenc & The encoded password (password XORed by Gamespy seed and the Base64 encoded) \\ \hline
+		 productid  & An ID that identify the game you're using                                    \\ \hline
+		 gamename   & A string that rapresents the game that you're using, used also for several   \\ \hline
+		namespaceid & ?Unknown                                                                     \\ \hline
+		uniquenick  & Uniquenick that will be created                                              \\ \hline
+		 cdkeyenc   & The encrypted CDkey, encrypted method is the same as the passwordenc         \\ \hline
+		 partnerid  & This ID is used to identify a backend service logged with gamespy            \\ \hline
+		    id      & The value of id is 1                                                         \\ \hline
+		   final    & Message end                                                                  \\ \hline
+	\end{tabular}
+\caption{User creation string}
+\label{User creation string}
+\end{table}
 \part{RetroSpy System Architecture}
 
 
