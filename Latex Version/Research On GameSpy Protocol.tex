@@ -11,7 +11,8 @@
 \usepackage{multirow} 
 \usepackage{shorttoc}
 \usepackage{tabularx}
-\usepackage{geometry}
+%\usepackage{geometry}
+
 %\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
 %\usepackage[T1]{fontenc}
 %\usepackage{makecell}
@@ -20,6 +21,17 @@
 
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{3}
+%header and footer setting
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Research on GameSpy protocol}
+\lhead{\includegraphics[scale=0.05]{Pictures/RetroSpyLogoWithText.png}}
+\lfoot{Page \thepage}
+\rfoot{\includegraphics[scale=0.07]{Pictures/RetroSpy_Logo_with_Long_Text.png}}
+\fancypagestyle{plain}{\pagestyle{fancy}}
+
+
 \begin{document}
 
 \title{\Huge\textbf{Research On GameSpy Protocol}} 
@@ -108,7 +120,7 @@ These keys is that GameSpy Presence SDK using to find a user in their database. 
 \subsection{Protocol Descriptions}
 
 In this part, we show the protocol detail in GameSpy Presence SDK.
-\subsubsection{The Pattern of String}
+\subsubsection{The String Pattern}
 We first introduce the pattern of the string, which is using to make up a request.
 This kind of string is represent a value in a request sends by the client as Table \ref{Value string}.
 
@@ -125,7 +137,7 @@ This kind of string is represent a value in a request sends by the client as Tab
 \label{Value string}
 \end{table}
 
-This kind of string is represent a command in a request sends by the client as Table \ref{Command string}.
+This kind of string is represent a command in a request sends by the client as Table \ref{Command string}. The command will end with $ \backslash \backslash $ or $ \backslash $ depends on whether run at the server-side or client-side.
 
 
 \begin{table}[H]
@@ -189,12 +201,37 @@ The challenge string:
 \begin{equation}\label{Chanllenge string}
 	\backslash challenge \backslash \langle challenge \rangle
 \end{equation}
-The $ \langle challenge \rangle $ in \ref{Chanllenge string} is a 10 byte alphanumeric string.
-\chapter{summary}
+The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ in \ref{Chanllenge string} is a 10 byte alphanumeric string.
 
-\chapter{introduction3}
+The following Table \ref{Login parameter string} is a description of string used in login request or response, GameSpy can use these string to find value in database.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|p{9cm}|}
+		\hline
+		  String    & Description                                                                                                                                                                                               \\ \hline
+		 challenge  & The user challenge used to verify the authenticity of the client                                                                                                                                          \\ \hline
+		 authtoken  & The token used to login (represent of an user)                                                                                                                                                            \\ \hline
+		uniquenick  & The unique nickname used to login                                                                                                                                                                         \\ \hline
+		   user     & The users account (format is NICKNAME@EMAIL)                                                                                                                                                              \\ \hline
+		  userid    & Send the userid (for example when you disconnect you will keep this)                                                                                                                                      \\ \hline
+		 profileid  & Send the profileid (for example when you disconnect you will keep this)                                                                                                                                   \\ \hline
+		 partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) \\ \hline
+		 response   & The client challenge used to verify the authenticity of the client                                                                                                                                        \\ \hline
+		 firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection port: The peer port (used for p2p stuff)                                                                          \\ \hline
+		 productid  & An ID that identify the game you're using                                                                                                                                                                 \\ \hline
+		 gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification                                                                                 \\ \hline
+		sdkrevision & The revision of the SDK you're using                                                                                                                                                                      \\ \hline
+		namespaceid & ?                                                                                                                                                                                                         \\ \hline
+		   quiet    & ?                                                                                                                                                                                                         \\ \hline
+	\end{tabular} 
+	\caption{Login parameter string}
+	\label{Login parameter string}
+\end{table}
+
+
 
 \part{RetroSpy System Architecture}
+
 
 \chapter{introduction}
 
