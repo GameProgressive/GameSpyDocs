@@ -11,6 +11,7 @@
 \usepackage{multirow} 
 \usepackage{shorttoc}
 \usepackage{tabularx}
+
 %\usepackage{geometry}
 
 %\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
@@ -31,6 +32,7 @@
 \rfoot{\includegraphics[scale=0.07]{Pictures/RetroSpy_Logo_with_Long_Text.png}}
 \fancypagestyle{plain}{\pagestyle{fancy}}
 
+\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 
 \begin{document}
 
@@ -181,6 +183,7 @@ Error response string for (GPCM, GPSP):
 \end{split}	
 \end{equation}
 \subsubsection{Login Phase}
+\myparagraph{Client Login Request}
 There are three ways of login:
 \begin{itemize}
 	\item AuthToken: Logging using an alphanumeric string that rapresents an user
@@ -188,27 +191,23 @@ There are three ways of login:
 	\item User: Logging with the nickname and the password
 \end{itemize}
 
-
-Login response string: 
-\begin{equation}\label{Login response string}
-	\begin{split}
-		\backslash lc \backslash 1
-	\end{split}	
-\end{equation}
-This response string \ref{Login response string} is send by the server when a connection is accepted, and followed by a challenge\ref{Chanllenge string}, which verifies the server that client connect to.
-
-The challenge string:
+The full login request string:
 \begin{equation}\label{Chanllenge string}
-	\backslash challenge \backslash \langle challenge \rangle
+\begin{gathered}
+	\backslash login \backslash challenge \backslash \langle challenge \rangle \backslash authtoken \backslash \langle authtoken \rangle \\ \backslash uniquenick \backslash \langle uniquenick \rangle \backslash user \backslash \langle user \rangle 
+	\backslash userid \backslash \langle userid \rangle \\ \backslash profileid \backslash \langle profileid \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash response \backslash \langle response \rangle \\
+	 \backslash firewall \backslash 1 \backslash port \backslash \langle port \rangle \backslash productid \backslash  \langle productid \rangle \\ \backslash gamename \backslash \langle gamename \rangle \backslash namespaceid \backslash \langle namespaceid \rangle \\ \backslash  sdkrevision \backslash \langle sdkrevision \rangle \backslash quiet \backslash \langle quiet \rangle \backslash id \backslash 1 \backslash final \backslash
+\end{gathered}
 \end{equation}
 The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ in \ref{Chanllenge string} is a 10 byte alphanumeric string.
 
-The following Table \ref{Login parameter string} is a description of string used in login request or response, GameSpy can use these string to find value in database.
+The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|p{9cm}|}
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{9cm}|}
 		\hline
 		  String    & Description                                                                                                                                                                                               \\ \hline
+		 login& The login command which use to identify the login request of client\\ \hline
 		 challenge  & The user challenge used to verify the authenticity of the client                                                                                                                                          \\ \hline
 		 authtoken  & The token used to login (represent of an user)                                                                                                                                                            \\ \hline
 		uniquenick  & The unique nickname used to login                                                                                                                                                                         \\ \hline
@@ -217,17 +216,47 @@ The following Table \ref{Login parameter string} is a description of string used
 		 profileid  & Send the profileid (for example when you disconnect you will keep this)                                                                                                                                   \\ \hline
 		 partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) \\ \hline
 		 response   & The client challenge used to verify the authenticity of the client                                                                                                                                        \\ \hline
-		 firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection port: The peer port (used for p2p stuff)                                                                          \\ \hline
+		 firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection \\
+		 \hline
+		 port& The peer port (used for p2p stuff)                                                                          \\ \hline
 		 productid  & An ID that identify the game you're using                                                                                                                                                                 \\ \hline
 		 gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification                                                                                 \\ \hline
-		sdkrevision & The revision of the SDK you're using                                                                                                                                                                      \\ \hline
+		
 		namespaceid & ?                                                                                                                                                                                                         \\ \hline
-		   quiet    & ?                                                                                                                                                                                                         \\ \hline
+		sdkrevision & The version of the SDK you're using \\ \hline
+		   quiet    & ? Maybe indicate invisible login which can not been seen at friends list \\ \hline
+		   id& The value is 1\\ \hline
+		   final & Message end\\ \hline
 	\end{tabular} 
 	\caption{Login parameter string}
 	\label{Login parameter string}
 \end{table}
+\paragraph{Login Response From Server}\mbox{}\\
+There are two kinds of login response string: 
+\begin{equation}\label{Login response string1}
+\begin{split}
+\backslash lc \backslash 1
+\end{split}	
+\end{equation}
+\begin{equation}\label{Login response string2}
+\begin{split}
+\backslash lc \backslash 2
+\end{split}	
+\end{equation}
 
+
+This response string \ref{Login response string1}, \ref{Login response string2} is send by the server when a connection is accepted, and followed by a challenge\ref{Chanllenge string}, which verifies the server that client connect to.
+
+
+
+\subsubsection{User Creation}
+This commmand \ref{Create user command} is used to create a user in GameSpy.
+\begin{equation}\label{Create user command}
+\begin{gathered}
+\backslash newuser \backslash email \backslash \langle email \rangle \backslash nick \backslash \langle nick \rangle \backslash passwordenc \backslash \langle passwordenc \rangle \\
+\backslash productid \backslash \langle productid \rangle \backslash gamename \backslash \langle gamename \rangle \backslash uniquenick \backslash \langle uniquenick \rangle \\ \backslash cdkeyenc \backslash \langle cdkeyenc \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash id \backslash 1 \backslash final \backslash
+\end{gathered}	
+\end{equation}
 
 
 \part{RetroSpy System Architecture}

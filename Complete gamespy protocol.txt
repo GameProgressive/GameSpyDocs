@@ -101,7 +101,7 @@ id: 1 (The ID of the server hardcoded as 1)
 
 
 Login response:
-\\lc\\2:
+\lc\2:
 
 sesskey: The session key, which is a integer rapresentating the client connection
 userid: The userID of the profile
