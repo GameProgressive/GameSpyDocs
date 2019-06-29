@@ -279,8 +279,13 @@ The description of each parameter string is shown in Table \ref{User creation st
 \label{User creation string}
 \end{table}
 \part{RetroSpy System Architecture}
-
-
+\section{GameSpy Library}
+	\subsection{Networks}
+	 There are two different servers in RetroSpy; one is TCP another is UDP.  TCP and UDP work differently so the implementation will be different. We show the different implementing in \ref{Tcp} and \ref{Udp}.
+		\subsubsection{TCP}\label{Tcp}
+		    TcpServer class is only for making the connection and listening for connections. TcpStream is for receiving and sending the message.
+		\subsubsection{UDP}\label{Udp}
+		  UdpServer class does not need a server to handle connection and listen for connection, every client can be a server, and every server is a client. So this class has both receiving and sending functions.
 \chapter{introduction}
 
 \chapter{conclusion}
