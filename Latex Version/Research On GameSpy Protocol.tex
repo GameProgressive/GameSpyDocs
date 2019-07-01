@@ -232,20 +232,64 @@ The following Table \ref{Login parameter string} is a description of string used
 	\label{Login parameter string}
 \end{table}
 \paragraph{Login Response From Server}\mbox{}\\
-There are two kinds of login response string: 
-\begin{equation}\label{Login response string1}
-\begin{split}
-\backslash lc \backslash 1
-\end{split}	
-\end{equation}
-\begin{equation}\label{Login response string2}
-\begin{split}
-\backslash lc \backslash 2
-\end{split}	
-\end{equation}
-
 
 This response string \ref{Login response string1}, \ref{Login response string2} is send by the server when a connection is accepted, and followed by a challenge\ref{Chanllenge string}, which verifies the server that client connect to.
+\par There are two kinds of login response string: 
+\begin{equation}\label{Login response string1}
+\begin{split}
+&\backslash lc \backslash 1 \backslash challenge \backslash \langle challenge \rangle \backslash nur \\&\backslash userid \backslash \langle userid \rangle \backslash profileid \backslash \langle profileid \rangle \backslash final \backslash
+\end{split}	
+\end{equation}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+		\hline 
+		Keys& Description  \\ 
+		\hline 
+		challenge & The challenge string sended by GameSpy Presence server  \\ 		
+		\hline 
+		nur & ? \\
+		\hline 
+ userid&The userID of the profile \\	\hline 
+ profileid&The profileID \\	\hline 
+ final& \\	\hline 
+	\end{tabular} 
+	\caption{The first type login response}
+	\label{The first type login response}	
+\end{table}
+
+\begin{equation}\label{Login response string2}
+\begin{split}
+&\backslash lc \backslash 2 \backslash sesskey \backslash \langle sesskey \rangle  \backslash userid \backslash \langle userid \rangle \backslash profileid \backslash \langle profileid \rangle \\& \backslash uniquenick \backslash \langle uniquenick \rangle \backslash lt \backslash \langle lt \rangle \backslash proof \backslash \langle proof \rangle \backslash final \backslash
+\end{split}	
+\end{equation}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+		\hline 
+		Keys& Description  \\ 
+		\hline 
+		sesskey & The session key, which is a integer rapresentating the client connection \\ 		
+		\hline 
+		userid & The userID of the profile \\
+		\hline 
+		profileid&The profileID \\	\hline 
+		uniquenick&The logged in unique nick \\	\hline 
+		lt& The login ticket, unknown usage\\\hline
+		proof& The proof is something similar to the response but it vary\\\hline
+		final& \\
+	\hline 
+	\end{tabular} 
+	\caption{The second type login response}
+	\label{The second type login response}
+\end{table}
+Proof in \ref*{The second type login response} generation: $ md5(password)||48 spaces $
+The user could be AuthToken or the User/UniqueNick (with the extra PartnerID).
+server challenge that we received before.
+the client challenge that was generated before.
+
 
 
 
