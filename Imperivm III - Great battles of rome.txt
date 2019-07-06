@@ -37,3 +37,11 @@ peerchat.gamespy.com
 gpcm.gamespy.com
 gpsp.gamespy.com
 GameSpy Error: (internal) connection failed
+
+
+Login:
+	When GBRome tries to login (Imperivm Tournament), since it was intended to be for tournaments
+	The system appends a new profile (Specific for GBRome), which is GBR358_(Nickname)@(Email).
+
+	Method of login: First (Nickname+Email)
+
