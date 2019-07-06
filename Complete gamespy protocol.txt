@@ -301,12 +301,6 @@ Query Report 2 Queries:
   Which can be the challenges or something different.
 
   Packet types:
-    Prequery IP Verify (0x09)
-      Try to verify the IP of a client that connects to the server.
-      This is only done if the user enable the IP challenge.
-      Each new client has to verify themself with a challenge.
-
-      A new key is added to the data to send:
 
     Query (0x00)
       This packet verify the IP of the client by checking if the random data
@@ -347,10 +341,17 @@ Query Report 2 Queries:
       
       The first byte is 0x05
       Then the data the server sended (max 32 bytes are allowed)
+
+    Heartbeat (0x03)
+      Check "General heartbeat packet"
       
     Add Error (0x04)
       The master server sends an error to the dedicated server
       For example about Server registration (Failed challenge)
+
+    Echo response (0x05)
+     This is a response of the Echo packet that Server sended to Client
+     Server to Client ID is 0x02, Client to Server ID is 0x05
 
     Client Message (0x06)
       Sends the following data (After the packet structure)
@@ -363,8 +364,18 @@ Query Report 2 Queries:
 
       Max 10 messages to track
 
+	0x07???
+
     Keep alive (0x08)
       Ignored packet
+
+    Prequery IP Verify (0x09) [Server to Client only]
+      Try to verify the IP of a client that connects to the server.
+      This is only done if the user enable the IP challenge.
+      Each new client has to verify themself with a challenge.
+
+      A new key is added to the data to send:
+
 
 
 CD-Key/NatNeg authentication to QR2:
