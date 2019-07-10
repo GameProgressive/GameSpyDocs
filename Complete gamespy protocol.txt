@@ -987,13 +987,24 @@ NamespaceID is the namespace ID as shown in GPSP
 Normal login example: LOGIN 0 * KFEOGJMIASNEFNIAEJFEIF :Arves100 arves100@gmail.com
 Uniquenick login example: LOGIN 0 Arves100 KFEOGJMIASNEFNIAEJFEIF
 
+Reply for LOGIN or LOGINPREAUTH if the login succeeded:
+:s 707 <userID> <profileID>
+Reply for LOGIN or LOGINPREAUTH if the login fails:
+:s 708
+Reply for LOGIN or LOGINPREAUTH if nickname does not exist:
+:s 401
+Reply if the nickname is already logged in:
+:s 433
 
-Command: USRIP
+Command: USRIP (Same as WHOIS)
 
 Gets the user id of the current connection
 
 Example: USRIP
 
+Reply: :s <encrypted IP>|<profileID>
+
+see https://aluigi.altervista.org/papers/peerchat_ip.zip for the algorithm of encrypting.
 
 Command: REGISTERNICK
 Parameter: <namespaceID> <uniqueNick> <cdkey>
@@ -1033,11 +1044,28 @@ Action message parameter: <receiver> :\001ACTION <message>\001
 Example: PRIVMSG Arves100 :\001ACTION JOIN THIS\001
 
 Command: ATM
-Parameter: 
+Parameter: <channel> <message>
+Reply: :s ATM <nickname> <message>
 
-UNKOWN?
+It should be a type of message
+
 
 Command: UTM
-Parameter:
+Parameter: <channel> <message>
+Reply: :s UTM <nickname> <messag
 
-UNKOWN?
+It should be a type of message
+
+Command: CRYPT
+Parameter: DES versionID GameName
+Example: CRYPT DES 1 Capricorn
+
+This command gets some random crypting keys from the server
+
+Reply: :s 705 <clientRandomKey> <serverRandomKey>
+
+The keys have a length of 16 bytes each.
+It presumably used the algorithm DES to encrypt the connection, and perhaps different
+algorithms where supported
+
+Generic Error: :s 461 <errorMsg>
