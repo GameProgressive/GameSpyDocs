@@ -126,6 +126,19 @@ IP: natneg1.gamespy.com or natneg2.gamespy.com or natneg3.gamespy.com
 Protocol: UDP
 Port: 27901
 
+Nat Negotiation mechanism:
+Because the ip address and other environment are changing from time to time, so when a client1 wants to connect
+to client2, he dose not know any informations about client2, so he cannot connect to client2. using natneg it can ask client2 information on gamespy nat server and connect to client2.
+
+The Nat Negotiation do the following things:
+1.connect to GameSpy nat server
+2.send the data that contain all information about himself to gamespy nat server
+3.GameSpy Nat server store clients information.
+4.when a client1 is try to connect to other client2:
+	(1) client1 send request to gamespy nat server
+	(2) gamespy nat server send the information about client2 to client1
+	(3) client1 get the client2 information and connect.
+
 1. Client discovers if the servers are reachable
 sends the following data
 
