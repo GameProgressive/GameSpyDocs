@@ -1,51 +1,10 @@
-\documentclass[oneside,titlepage,a4paper]{report} %book,article,report,letter
-\usepackage{amsmath,amsfonts,amsthm,bm} %math
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{titling}
-\usepackage{hyperref}
-\usepackage{pdfpages}
-\usepackage{xcolor}
-\usepackage{enumerate}
-\usepackage{float}
-\usepackage{multirow} 
-\usepackage{shorttoc}
-\usepackage{tabularx}
+\documentclass[oneside,titlepage,a4paper]{Definition/retrospy} %book,article,report,letter
 
-%\usepackage{geometry}
-
-%\geometry{left=2.0cm,right=2.0cm,top=2.0cm,bottom=2.0cm}
-%\usepackage[T1]{fontenc}
-%\usepackage{makecell}
-%\renewcommand\theadfont{\bfseries\sffamily}
-%导言区
-
-\setcounter{tocdepth}{4}
-\setcounter{secnumdepth}{3}
-%header and footer setting
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{Research on GameSpy protocol}
-\lhead{\includegraphics[scale=0.05]{Pictures/RetroSpyLogoWithText.png}}
-\lfoot{Page \thepage}
-\rfoot{\includegraphics[scale=0.07]{Pictures/RetroSpy_Logo_with_Long_Text.png}}
-\fancypagestyle{plain}{\pagestyle{fancy}}
-
-\newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 
 \begin{document}
 
 \title{\Huge\textbf{Research On GameSpy Protocol}} 
 \author{Arves100, Xiaojiuwo}
-
-\renewcommand\maketitlehooka{
-	\pagestyle{empty}
-	\centering
-	}
-\renewcommand\maketitlehookc{	
-	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.pdf}
-	\vfill First Edition}
 
 
 %\date{} %%如果没有这句，会生成时间
@@ -87,7 +46,7 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP a
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
-		IP&Port  \\ 
+		\textbf{IP}&\textbf{Port}  \\ 
 		\hline 
 		gpcm.gamespy.com&29900 \\ 		
 		\hline 
@@ -106,7 +65,7 @@ These keys is that GameSpy Presence SDK using to find a user in their database. 
 	\centering
 	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
 		\hline 
-		Keys& Description  \\ 
+		\textbf{Keys}& \textbf{Description}  \\ 
 		\hline 
 		User & An user contains the Email and the password, but contains multiple profiles \\ 		
 		\hline 
@@ -130,7 +89,7 @@ This kind of string is represent a value in a request sends by the client as Tab
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
-		String&Description  \\ 
+		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
 	$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
 		\hline 
@@ -146,7 +105,7 @@ This kind of string is represent a command in a request sends by the client as T
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
-		String&Description  \\ 
+		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
 		$ \backslash command \backslash\backslash $& This is a command \\ 		
 		\hline 
@@ -165,7 +124,7 @@ This kind of string is represent a parameter in a request sends by the client \r
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
-		String&Description  \\ 
+		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
 		$ \backslash id \backslash 1 \backslash $& This is a parameter string the value of $ id $ is $ 1 $ \\ 		
 		\hline 
@@ -204,29 +163,31 @@ The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ 
 The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|>{\centering\arraybackslash}p{9cm}|}
+\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+
 		\hline
-		  String    & Description                                                                                                                                                                                               \\ \hline
-		 login& The login command which use to identify the login request of client\\ \hline
-		 challenge  & The user challenge used to verify the authenticity of the client                                                                                                                                          \\ \hline
-		 authtoken  & The token used to login (represent of an user)                                                                                                                                                            \\ \hline
-		uniquenick  & The unique nickname used to login                                                                                                                                                                         \\ \hline
-		   user     & The users account (format is NICKNAME@EMAIL)                                                                                                                                                              \\ \hline
-		  userid    & Send the userid (for example when you disconnect you will keep this)                                                                                                                                      \\ \hline
-		 profileid  & Send the profileid (for example when you disconnect you will keep this)                                                                                                                                   \\ \hline
-		 partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) \\ \hline
-		 response   & The client challenge used to verify the authenticity of the client                                                                                                                                        \\ \hline
-		 firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection \\
+		\textbf{Keys} & \textbf{Description} & \textbf{Type}
+			                                                                          \\ \hline
+		 login& The login command which use to identify the login request of client&\\ \hline
+		 challenge  & The user challenge used to verify the authenticity of the client     &                                                                                                                                     \\ \hline
+		 authtoken  & The token used to login (represent of an user)        &                                                                                                                                                    \\ \hline
+		uniquenick  & The unique nickname used to login       &                                                                                                                                                                  \\ \hline
+		   user     & The users account (format is NICKNAME@EMAIL)           &                                                                                                                                                   \\ \hline
+		  userid    & Send the userid (for example when you disconnect you will keep this)              &                                                                                                                        \\ \hline
+		 profileid  & Send the profileid (for example when you disconnect you will keep this)           &                                                                                                                        \\ \hline
+		 partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) &\\ \hline
+		 response   & The client challenge used to verify the authenticity of the client     &                                                                                                                                   \\ \hline
+		 firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection &\\
 		 \hline
-		 port& The peer port (used for p2p stuff)                                                                          \\ \hline
-		 productid  & An ID that identify the game you're using                                                                                                                                                                 \\ \hline
-		 gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification                                                                                 \\ \hline
+		 port& The peer port (used for p2p stuff)            &                                                              \\ \hline
+		 productid  & An ID that identify the game you're using            &                                                                                                                                                     \\ \hline
+		 gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification             &                                                                    \\ \hline
 		
-		namespaceid & ?                                                                                                                                                                                                         \\ \hline
-		sdkrevision & The version of the SDK you're using \\ \hline
-		   quiet    & ? Maybe indicate invisible login which can not been seen at friends list \\ \hline
-		   id& The value is 1\\ \hline
-		   final & Message end\\ \hline
+		namespaceid & ?   &                                                                                                                                                                                                      \\ \hline
+		sdkrevision & The version of the SDK you're using& \\ \hline
+		   quiet    & ? Maybe indicate invisible login which can not been seen at friends list &\\ \hline
+		   id& The value is 1&\\ \hline
+		   final & Message end&\\ \hline
 	\end{tabular} 
 	\caption{Login parameter string}
 	\label{Login parameter string}
@@ -243,17 +204,18 @@ This response string \ref{Login response string1}, \ref{Login response string2} 
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+
 		\hline 
-		Keys& Description  \\ 
+		\textbf{Keys}&\textbf{Description}&\textbf{Type}  \\ 
 		\hline 
-		challenge & The challenge string sended by GameSpy Presence server  \\ 		
+		challenge & The challenge string sended by GameSpy Presence server&  \\ 		
 		\hline 
-		nur & ? \\
+		nur & ? &\\
 		\hline 
- userid&The userID of the profile \\	\hline 
- profileid&The profileID \\	\hline 
- final& \\	\hline 
+ userid&The userID of the profile &\\	\hline 
+ profileid&The profileID &\\	\hline 
+ final& &\\	\hline 
 	\end{tabular} 
 	\caption{The first type login response}
 	\label{The first type login response}	
@@ -267,19 +229,19 @@ This response string \ref{Login response string1}, \ref{Login response string2} 
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
 		\hline 
-		Keys& Description  \\ 
+		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
 		\hline 
-		sesskey & The session key, which is a integer rapresentating the client connection \\ 		
+		sesskey & The session key, which is a integer rapresentating the client connection& \\ 		
 		\hline 
-		userid & The userID of the profile \\
+		userid & The userID of the profile& \\
 		\hline 
-		profileid&The profileID \\	\hline 
-		uniquenick&The logged in unique nick \\	\hline 
-		lt& The login ticket, unknown usage\\\hline
-		proof& The proof is something similar to the response but it vary\\\hline
-		final& \\
+		profileid&The profileID &\\	\hline 
+		uniquenick&The logged in unique nick &\\	\hline 
+		lt& The login ticket, unknown usage&\\\hline
+		proof& The proof is something similar to the response but it vary&\\\hline
+		final& &\\
 	\hline 
 	\end{tabular} 
 	\caption{The second type login response}
@@ -304,20 +266,20 @@ This commmand \ref{Create user command} is used to create a user in GameSpy.
 The description of each parameter string is shown in Table \ref{User creation string}.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|>{\centering\arraybackslash}p{9cm}|}
+	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
 		\hline
-		  String    & Description                                                                  \\ \hline
-		   email    & The email used to create                                                     \\ \hline
-		   nick     & The nickname that will be created                                            \\ \hline
-		passwordenc & The encoded password (password XORed by Gamespy seed and the Base64 encoded) \\ \hline
-		 productid  & An ID that identify the game you're using                                    \\ \hline
-		 gamename   & A string that rapresents the game that you're using, used also for several   \\ \hline
-		namespaceid & ?Unknown                                                                     \\ \hline
-		uniquenick  & Uniquenick that will be created                                              \\ \hline
-		 cdkeyenc   & The encrypted CDkey, encrypted method is the same as the passwordenc         \\ \hline
-		 partnerid  & This ID is used to identify a backend service logged with gamespy            \\ \hline
-		    id      & The value of id is 1                                                         \\ \hline
-		   final    & Message end                                                                  \\ \hline
+		  \textbf{String}    & \textbf{Description} &\textbf{Type}                                                                 \\ \hline
+		   email    & The email used to create                                                    & \\ \hline
+		   nick     & The nickname that will be created                                            & \\ \hline
+		passwordenc & The encoded password (password XOR with Gamespy seed and the Base64 encoded)  &\\ \hline
+		 productid  & An ID that identify the game you're using                                     &\\ \hline
+		 gamename   & A string that rapresents the game that you're using, used also for several    &\\ \hline
+		namespaceid & ?Unknown                                                                      &\\ \hline
+		uniquenick  & Uniquenick that will be created                                               &\\ \hline
+		 cdkeyenc   & The encrypted CDkey, encrypted method is the same as the passwordenc          &\\ \hline
+		 partnerid  & This ID is used to identify a backend service logged with gamespy             &\\ \hline
+		    id      & The value of id is 1                                                          &\\ \hline
+		   final    & Message end                                                                   &\\ \hline
 	\end{tabular}
 \caption{User creation string}
 \label{User creation string}
