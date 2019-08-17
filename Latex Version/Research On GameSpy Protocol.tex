@@ -15,7 +15,7 @@
 
 %\mainmatter %%表示文章的正文部分，在生成目录后将从第一页开始
 
-\part{Research On GameSpySDK}
+\part{Research On GameSpy SDK}
 
 \chapter{GameSpy General Construction}
 \par In GameSpy SDK there are 16 modules, which constructed the GameSpy main functions.
@@ -38,7 +38,8 @@
 	\item Chat Server
 \end{itemize}
 
-\chapter{GameSpy Presence Servers}
+\chapter{GameSpy Presence SDK}
+\section{GameSpy Presence Connection Manager}
 \par GameSpy Presence Servers contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user infomation stored on GameSpy. GPSP is a server that handle search request for user.
 \subsection{Server IP and Ports}
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP and Ports that client/game connect to.
@@ -163,8 +164,9 @@ The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ 
 The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
 \begin{table}[H]
 	\centering
-\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+%\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
 
+\begin{tabular}{A}
 		\hline
 		\textbf{Keys} & \textbf{Description} & \textbf{Type}
 			                                                                          \\ \hline
@@ -284,6 +286,29 @@ The description of each parameter string is shown in Table \ref{User creation st
 \caption{User creation string}
 \label{User creation string}
 \end{table}
+
+\section{GameSpy Presence Search Player}
+
+\subsection{Search User}
+This is the request that client sends to server:
+\begin{equation}\label{Search User Request}
+\begin{split}
+ \backslash search\backslash\backslash sesskey \backslash<sesskey>\backslash profileid \backslash <profileid> \\ \backslash namespaceid\backslash <namespaceid>  \backslash partnerid\backslash <partnerid>\\ \backslash nick \backslash <nick> \backslash uniquenick \backslash <uniquenick> \\ \backslash email \backslash <email> \backslash gamename \backslash <gamename> \backslash final \backslash
+\end{split}
+\end{equation}
+
+This is the response that server sends to client:
+\begin{equation}
+	\begin{split}
+	\backslash bsr \backslash <profileid> \backslash nick \backslash <nick>	\backslash uniquenick \backslash <uniquenick> \\
+	\backslash namespaceid \backslash <namespaceid>\backslash firstname \backslash <firstname> \\ 
+	\backslash lastname \backslash <lastname>\backslash email \backslash <email> \\
+	\backslash bsrdone \backslash <gamespy enc determinator> \backslash final \backslash
+	\end{split}
+\end{equation}
+
+
+
 \part{RetroSpy System Architecture}
 \section{GameSpy Library}
 	\subsection{Networks}
