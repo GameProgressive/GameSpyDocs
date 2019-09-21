@@ -18,70 +18,21 @@
 \part{Research On GameSpy SDK}
 
 \chapter{GameSpy General Construction}
-\par In GameSpy SDK there are 16 modules, which constructed the GameSpy main functions.
+\par In GameSpy SDK there are 9 modules, which constructed the GameSpy main functions.
 \section{GameSpy SDK Module}
 \begin{itemize}
-	\item GameSpy Presence Servers
-	\begin{itemize}
-		\item GameSpy Presence Connection Manager
-		\item GameSpy Presence Search Player
-	\end{itemize}
+	\item GameSpy Presence Connection Manager
+	\item GameSpy Presence Search Player
 	\item Nat Negotiation
-	\item Master Server: Query Report 2
-	\item Master Server: Server Browser
-	\item Master Server: Available Check
-	\item Game Patching
-	\item Game Tracking
-	\item Master Server Patching: Downloading files from FilePlanet
-	\item Peer SDK
-	\item Game Statitics
-	\item Chat Server
+	\item Query Report 2
+	\item Server Browser
+	\item Game Patching 
+	\item Master Server Patching 
+	\item Game Stats and Tracking 
+	\item Chat 
 \end{itemize}
-
-\chapter{GameSpy Presence SDK}
-\section{GameSpy Presence Connection Manager}
-\par GameSpy Presence Servers contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user infomation stored on GameSpy. GPSP is a server that handle search request for user.
-\subsection{Server IP and Ports}
-Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP and Ports that client/game connect to.
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline 
-		\textbf{IP}&\textbf{Port}  \\ 
-		\hline 
-		gpcm.gamespy.com&29900 \\ 		
-		\hline 
-	 	gpsp.gamespy.com&29901 \\
-	 	\hline 
-	\end{tabular} 
-\caption{IP and Ports for GameSpy Presence Servers}
-\label{IP and Ports for GameSpy Presence Servers}
-
-\end{table}
-
-\subsection{Database Key Field}
-These keys is that GameSpy Presence SDK using to find a user in their database. Keys are shown in Table \ref{Key Field}.
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
-		\hline 
-		\textbf{Keys}& \textbf{Description}  \\ 
-		\hline 
-		User & An user contains the Email and the password, but contains multiple profiles \\ 		
-		\hline 
-		ProfileID & The profile contains the name, surname, birth date and all the rest user info, including
-		an unique nickname used to identify the profile and a generic nickname used to show for example in
-		games \\
-		\hline 
-	\end{tabular} 
-	\caption{Key Field}
-	\label{Key Field}	
-\end{table}
-
-\subsection{Protocol Descriptions}
-
-In this part, we show the protocol detail in GameSpy Presence SDK.
+\subsection{Basic Descriptions of Protocol}
+In this part, we show the basic descriptions of protocol in GameSpy Presence SDK.
 \subsubsection{The String Pattern}
 We first introduce the pattern of the string, which is using to make up a request.
 This kind of string is represent a value in a request sends by the client as Table \ref{Value string}.
@@ -92,11 +43,11 @@ This kind of string is represent a value in a request sends by the client as Tab
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-	$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
+		$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
 		\hline 
 	\end{tabular} 
-\caption{Value string}
-\label{Value string}
+	\caption{Value string}
+	\label{Value string}
 \end{table}
 
 This kind of string is represent a command in a request sends by the client as Table \ref{Command string}. The command will end with $ \backslash \backslash $ or $ \backslash $ depends on whether run at the server-side or client-side.
@@ -111,29 +62,66 @@ This kind of string is represent a command in a request sends by the client as T
 		$ \backslash command \backslash\backslash $& This is a command \\ 		
 		\hline 
 		$ \backslash error \backslash \backslash $ & Error command \\
-		 \hline
-		 $\backslash lc \backslash$& Login command\\
-		 \hline
+		\hline
+		$\backslash lc \backslash$& Login command\\
+		\hline
 	\end{tabular} 
 	\caption{Command string}
 	\label{Command string}
 \end{table}
 
-This kind of string is represent a parameter in a request sends by the client \ref{Parameter string}. GameSpy uses the combination of the parameter to search the string with value, and sends the data back to client use this kind of parameter string.
 
+
+\chapter{The Detail of GameSpy Presence SDK}
+\section{GameSpy Presence Connection Manager}
+\par GameSpy Presence SDK contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user information stored on GameSpy. GPSP is a server that handle search request for user.
+\subsection{Server IP and Ports}
+Table \ref{IP and Ports for GPCM} are the GPCM and GPSP IP and Ports that client/game connect to.
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|c|c|}
 		\hline 
-		\textbf{String}&\textbf{Description}  \\ 
+		\textbf{IP}&\textbf{Port}\\ 
 		\hline 
-		$ \backslash id \backslash 1 \backslash $& This is a parameter string the value of $ id $ is $ 1 $ \\ 		
-		\hline 
-		$ \backslash profileid \backslash 007 \backslash $ & This is a parameter string the value of $ profileid $ is $ 007 $ \\
-		\hline
+		gpcm.gamespy.com&29900 \\ 
+	 	\hline 
 	\end{tabular} 
-	\caption{Parameter string}
-	\label{Parameter string}
+\caption{IP and Ports for GameSpy Presence Servers}
+\label{IP and Ports for GameSpy Presence Servers}
+
+\end{table}
+\subsection{Request For GameSpy Presence Connection Manager}
+Table \ref{Request For GameSpy Presence Connection Manager} lists the request(already known by us) that clients send to GameSpy Presence Connection Manager server (GPSP).
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		\textbf{Commands}&\textbf{Description}  \\ 
+		\hline 
+		$\backslash inviteto \backslash\backslash$& Invite friends\\ 		
+		\hline 
+		$\backslash login \backslash\backslash$&Login to GPCM \\
+		\hline
+ 		$\backslash getprofile \backslash\backslash$&	Get profile of some player\\
+ 		\hline
+		$\backslash addbuddy \backslash\backslash$& Add player to my friend list \\
+		\hline
+		$\backslash delbuddy \backslash\backslash$ & Delete player from my friend list \\
+		\hline
+		$\backslash updateui \backslash\backslash$& ?\\
+		\hline
+		$\backslash updatepro \backslash\backslash$& Update player's profile such as first name, last name, gender etc. \\
+		\hline
+		$\backslash logout \backslash\backslash$& Logout manually by user\\
+		\hline
+		$\backslash status \backslash\backslash$& Update status of a user\\
+		\hline
+		$\backslash ka \backslash\backslash$& Keep client alive(do not disconnect) \\
+ 		
+		\hline 
+	\end{tabular} 
+	\caption{Request For GameSpy Presence Connection Manager}
+	\label{Request For GameSpy Presence Connection Manager}
 \end{table}
 
 Error response string for (GPCM, GPSP):
@@ -164,7 +152,7 @@ The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ 
 The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
 \begin{table}[H]
 	\centering
-%\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+%\begin{tabular}{A}
 
 \begin{tabular}{A}
 		\hline
@@ -206,7 +194,7 @@ This response string \ref{Login response string1}, \ref{Login response string2} 
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+	\begin{tabular}{A}
 
 		\hline 
 		\textbf{Keys}&\textbf{Description}&\textbf{Type}  \\ 
@@ -231,7 +219,7 @@ This response string \ref{Login response string1}, \ref{Login response string2} 
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+	\begin{tabular}{A}
 		\hline 
 		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
 		\hline 
@@ -268,7 +256,7 @@ This commmand \ref{Create user command} is used to create a user in GameSpy.
 The description of each parameter string is shown in Table \ref{User creation string}.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+	\begin{tabular}{A}
 		\hline
 		  \textbf{String}    & \textbf{Description} &\textbf{Type}                                                                 \\ \hline
 		   email    & The email used to create                                                    & \\ \hline
@@ -288,7 +276,19 @@ The description of each parameter string is shown in Table \ref{User creation st
 \end{table}
 
 \section{GameSpy Presence Search Player}
-
+Table \ref{IP and Port for GPSP} are the GPSP IP and Ports that client/game connect to.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		\textbf{IP}&\textbf{Port}  \\ 		
+		\hline 
+		gpsp.gamespy.com&29901 \\
+		\hline 
+	\end{tabular} 
+	\caption{IP and Ports for GameSpy Presence Search Player}
+	\label{IP and Ports for GameSpy Presence Search Player}
+	\end{table}
 \subsection{Search User}
 This is the request that client sends to server:
 \begin{equation}\label{Search User Request}
@@ -308,16 +308,109 @@ This is the response that server sends to client:
 \end{equation}
 
 
-
 \part{RetroSpy System Architecture}
-\section{GameSpy Library}
+
+
+
+\chapter{Introduction}
+2014 is a year that thousands games are abandon by GameSpy. I still remember the day when GameSpy shutdown, no matter how hard i try to login into Crysis2 multiplayer, but the same error shows "An error has occurred. Please check your network connectivity"\ref{Crysis2 error message}.
+\begin{figure}[H]
+	\centering
+	\caption{Crysis2 error message}
+	\label{Crysis2 error message}
+	\includegraphics[scale=0.25]{Pictures/RetroSpyLogoWithText.png}
+\end{figure}
+
+\chapter{Database}
+This kind of string is represent a parameter in a request sends by the client \ref{Parameter string}. GameSpy uses the combination of the parameter to search the string with value, and sends the data back to client use this kind of parameter string.
+\subsection{Database Key Field}
+These keys is that GameSpy Presence SDK using to find a user in their database. Keys are shown in Table \ref{Key Field}.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|}
+		\hline 
+		\textbf{Keys}& \textbf{Description}  \\ 
+		\hline 
+		$user$ & An user contains the Email and the password, but contains multiple profiles \\ 		
+		\hline 
+		$profileid$ & The profile contains the name, surname, birth date and all the rest user info, including
+		an unique nickname used to identify the profile and a generic nickname used to show for example in
+		games \\
+		\hline 
+	\end{tabular} 
+	\caption{Key Field}
+	\label{Key Field}	
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		\textbf{String}&\textbf{Description}  \\ 
+		\hline 
+		$ \backslash id \backslash 1 \backslash $& This is a parameter string the value of $ id $ is $ 1 $ \\ 		
+		\hline 
+		$ \backslash profileid \backslash 007 \backslash $ & This is a parameter string the value of $ profileid $ is $ 007 $ \\
+		\hline
+	\end{tabular} 
+	\caption{Parameter string}
+	\label{Parameter string}
+\end{table}
+
+\chapter{The Detail of RetroSpy Project}
+All projects in the RetroSpy visual studio solution is listed as follows.
+\begin{itemize}
+	\item GameSpyLib: The library for all RetroSpy servers.
+	\item CDKey: CD-Key server.
+	\item NATNegotiation: NAT negotiation server.
+	\item PresenceConnectionManager: GPCM server.
+	\item PresenceSearchPlayer:  GPSP server.
+	\item QueryReport: Query report server.
+	\item ServerBrowser: Server browser server.
+	\item StatsAndTracking: Stats and tracking server.
+	\item SAKEPersistentStorage: SAKE persistent storage server.
+\end{itemize}
+\section{GameSpyLib}
+	\subsection{Common}
+	\subsection{Database}
+	\subsection{Extensions}
+	\subsection{Logging}
 	\subsection{Networks}
-	 There are two different servers in RetroSpy; one is TCP another is UDP.  TCP and UDP work differently so the implementation will be different. We show the different implementing in \ref{Tcp} and \ref{Udp}.
-		\subsubsection{TCP}\label{Tcp}
-		    TcpServer class is only for making the connection and listening for connections. TcpStream is for receiving and sending the message.
-		\subsubsection{UDP}\label{Udp}
-		  UdpServer class does not need a server to handle connection and listen for connection, every client can be a server, and every server is a client. So this class has both receiving and sending functions.
-\chapter{introduction}
+	There are two different servers in RetroSpy; one is TCP another is UDP.  TCP and UDP work differently so the implementation will be different. We show the different implementing in \ref{Tcp} and \ref{Udp}.
+	\subsubsection{Tcp}\label{Tcp}
+	TcpServer class is only for making the connection and listening for connections. TcpStream is for receiving and sending the message.
+	\subsubsection{Udp}\label{Udp}
+	UdpServer class does not need a server to handle connection and listen for connection, every client can be a server, and every server is a client. So this class has both receiving and sending functions.
+
+\section{CDKey}
+\section{NATNegotiation}
+\section{PresenceConnectionManager}
+\subsection{LoginHandler}
+Different game will have different request. Some of request contain different combination of <key,value> pairs. The request we already known is shown in the Table~\ref{Game requests key}.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline 
+		\textbf{Game name}&\textbf{request}  \\ 
+		\hline 		
+		armada2 & firewall,port \\
+		\hline
+		gslive& uniquenick,productid,partnerid,gamename,sdkrevision \\ 		
+		\hline 
+		Crysis2&uniquenick,productid,partnerid,gamename,sdkrevision \\
+		\hline
+	\end{tabular} 
+	\caption{Game requests key}
+	\label{Game requests key}
+\end{table}
+\section{PresenceSearchPlayer}
+\subsection{NewUserHandler}
+
+\section{QueryReport}
+\section{ServerBrowser}
+\section{StatsAndTracking}
+\section{SAKEPersistentStorage}
 
 \chapter{conclusion}
 
