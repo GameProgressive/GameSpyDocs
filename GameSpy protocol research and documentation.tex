@@ -2,99 +2,197 @@
 
 
 \begin{document}
+ 
+% Header
 
-\title{\Huge\textbf{Research On GameSpy Protocol}} 
+\title{\Huge\textbf{GameSpy protocol research and documentation}} 
 \author{Arves100, Xiaojiuwo}
 
+\maketitle
 
-%\date{} %%如果没有这句，会生成时间
-
-\maketitle  %%生成书名
-
-\tableofcontents  %%生成目录
+\tableofcontents
 
 %\mainmatter %%表示文章的正文部分，在生成目录后将从第一页开始
 
-\part{Research On GameSpy SDK}
+%\part{Protocol and server research} % We should divide the RetroSpy structure, game research from each other.
+	
+	\chapter{General Construction}
+		\par Inside the GameSpy SDK there are 16 compotents, which constructed the GameSpy services.
+		\subsection{SDK Module}
+		\begin{itemize}
+			\item Brigades
+			\item Chat
+			\item Presence \& Messaging
+			\item CDKey
+			\item Stats \& Tracking
+			\item Persistent Storage
+			\item Transport
+			\item NAT Negotation
+			\item Peer to Peer communication
+			\item Patching \& Tracking
+			\item Server Browser
+			\item Query \& Reporting
+			\item SAKE Persistent Storage
+			\item ATLAS Competition
+			\item Voice Chat
+			\item Web Authentication
+		\end{itemize}
+		\subsection{Servers}
+		\par Those compoents allows accessing multiple GameSpy servers that they provide.
+		\begin{itemize}
+			\item Presence Connection Manager
+			\item Presence Search Player
+			\item Master (Backend)
+			\item Chat
+			\item SAKE Storage
+			\item NAT Negotation Mathup
+			\item Server Browser
+			\item CDKey
+			\item Stats \& Tracking
+			\item Web Services
+		\end{itemize}
+	\chapter{Presence Servers}
+		            Presence \& Messaging system allows a game to add account authentication or registration, which includes a profile where personal information could be stored (such as email, first name) and a friend list (called buddies).
+            The presence server also allows to set a location string, which could be used to indicate where the player is currently playing at (for example: GameSpy Arcade uses home://).
 
-\chapter{GameSpy General Construction}
-\par In GameSpy SDK there are 9 modules, which constructed the GameSpy main functions.
-\section{GameSpy SDK Module}
-\begin{itemize}
-	\item GameSpy Presence Connection Manager
-	\item GameSpy Presence Search Player
-	\item Nat Negotiation
-	\item Query Report 2
-	\item Server Browser
-	\item Game Patching 
-	\item Master Server Patching 
-	\item Game Stats and Tracking 
-	\item Chat 
-\end{itemize}
-\subsection{Basic Descriptions of Protocol}
-In this part, we show the basic descriptions of protocol in GameSpy Presence SDK.
-\subsubsection{The String Pattern}
-We first introduce the pattern of the string, which is using to make up a request.
-This kind of string is represent a value in a request sends by the client as Table \ref{Value string}.
+		\subsection{Account representation}
+		GameSpy used to store accounts that are associated for a game in a specific way. In the presence server: User, Profile, Unique nickname and Namespace ID are dinstincted.
+		\subsubsection{User}
+	            A Presence account rapresents an User (the term used by the SDK), an user contains the EMail and Password for such user.
+	            The Email address MUST BE unique, as it's used to identify an user in every context (for example: multiple games).
+		\subsubsection{Profile}
+	            A profile contains the information of an user regarding a game (or the friend list for such game). It could also store information such as birth date and surname.
+	            An user could have multiple profiles, and a profile must be associated with only one user.
+		\subsubsection{Namespace \& Unique Nicknames}
+	            A namespace identify a space where a game is defined (for example: namespace 0 identify GameSpy Arcade).
+	            In this context, an unique nickname could be associated to the user, such nickname <strong>MUST BE</strong> unique in that namespace.
+	            An profile could have multiple unique nicknames for each namespace, but it could only have one unique nickname in such namespace.
 
+		\subsection{Login methods}
+		There are three methods that a client can login to the GPCM.
+		\begin{itemize}
+			\item Profile
+			\item Unique nickname
+			\item PreAuthenticated
+			%\item CD-Key (Verify if it's possible to login by using a CD-Key)
+		\end{itemize}
+
+		\subsubsection{Profile}
+			The profile login is the standard way to login to GPCM, it requires that the client sends the email, the profile nickname and the namespace identification number, which will be used to identify both the profile and the user.
+			The server returns the profile identification number, the user identification number, and the unique nickname associated to that profile in the specific namespace context.
+		\subsubsection{Unique nickname}
+			The unique nickname login is used for loggin in with a special nickname in a special game context. Both the unique nickname and the namespace are used to identify the profile and the user.
+			The server returns the profile identification number, the user identification number and the profile nickname associated to that unique nickname in the specific namespace context.
+		\subsubsection{PreAuthenticated}
+			The Pre-Authenticated method (also known as Authentication token method) is a special method of logging into GameSpy services that works in conjunction of the Web Services.
+			Using this method, you don't login with a password, nickname or email. You login by using an authentication token and a partner challenge. This two are generated and retrived from the Web Service Server.
+			The user that is logging in with this method is not an ordinary account, it's a "shadow" account, created just for the following backend login (and possibly game).
+			This method is used by special third-party backends that saves the login information in a different way. An example of this is shown with PlayStation 3 login (NP), the Web Service would generate an auth token and partner challenge from the SEN/PSN User information.
+			The client needs to send the authentication token and the partner challenge disguized as an MD5 password.
+			The server returns the profile identification number, the user identification number, the profile nickname and the unique nickname associated to the specific namespace context.
+			Keep in mind that this are permanent account associated with the backend, in case of PlayStation 3 service, you can also see your SEN/PSN friends in your GameSpy buddies list if they had created a shadow account for use in GameSpy services. 
+
+		%\subsubsection{CD-Key}
+
+		\subsection{Login system}
+			Passwords aren't sent in login requests, rather, both client and server generate a MD5 hash known as "proof", which has in the intent to verify if an user could authenticate to the server or not.
+			The proof is not only used to verify the user password, but also to make sure that you're not connecting to a fake server, or that the password has not been tampred.
+			It's the job of both client and server to verify the proof once it has been sent by the client or the server. (In the server response, it's known as response)
+			If the proof is not verified, the server sends an error message and close the connection, the client directly cuts the connection with the server.
+
+			\subsubsection{The login proof}
+			The login proof is a 32 hexadecimal string which is used for different purposed,the method of generating it it's different, but yet similar, for both client and server.
+			
+			\paragraph{Variable user information:} Inside the proof, a variable user information (referenced as "user" in the SDK) will be generated. This user information changes for each of the three login method used.
+				If you're logging in with the Profile method, the user information will contain "profile nickname"@"email".
+				If you're logging in with the Unique nickname method, the user information will contain just the unique nickname.
+				If you're logging in with the Pre-Authenticated method, the user information will contain the authentication token.
+				If the Partner ID specified is different than 0 (GameSpy), it will append to the beginning of the user string the following data: "partner id number@". This is not applied to the PreAuthenticated method.
+		
+			\paragraph{Client generation:} First, an MD5 hash of the password is calculated (in case of the Pre-Authenticated method, it's the Partner challenge), then 48 white spaces are appended to the md5 hash password.
+				Then, the variable user information, client challenge and server challenge are appended to the previous string. This long generated string is hashed with MD5 and expressed in hexadecimal.
+
+			\paragraph{Server generation:} The server generation is almost the same as the client one, the only difference is that the server challenge is appended BEFORE the client challenge, and not after.
+				
+			\subsubsection{Login request and response}
+			The login starts by the server, after a client has been accepted, the server sends a "lc" (login challenge) command with the value 1, containing it's id and the server challenge.
+			This challenge will be used for generating the proof.
+			
+			The client answers by sending a "login" command containing the data required to login with it's login method and the client challenge and the client generated proof, that the server will verify.
+			The server then, calculated it's proof and verify the client one, in case there is a mismatch, the server disconnects the client after sending an error (See /ref{GPCMErrors} for a list of the known errors).
+			If the verification of the client proof has succeeded, the server sends a "lc" command with the value 2, containing the profile's unique nickname, nickname, the server proof and the session key.
+			The clients now, needs to verify if the server proof matches the generated one, in case there is a mismatch, the client disconnects from the server.
+		
+		\newpage
+		\subsection{Protocol information}
+			The data in both the presence servers (Connection Manager and Search Player) are exchanged with ASCII strings that contains request \& response of the client and the server. This ASCII data is known as "Command".
+
+			\subsubsection{Command Pattern}
+			This type of string is represent map containing both a key and value.
+			A command starts with the character "$ \backslash $" and it ends with the following data "$ \backslash final \backslash $".
+			As an example, we provide two example strings, one from the client \ref{Client example command} and one from the server \ref{Server example command}
+
+			\begin{tcolorbox}
+				$ \backslash login \backslash \backslash challenge \backslash jfeuihj48t4h3w8wj8f34j8 \backslash user \newline
+				\backslash spyguy@spyguy@gamespy.com \backslash response \newline \backslash fje4ifh482teifh348h7u \backslash port \newline
+				\backslash -9805 \backslash productid \backslash 10469 \backslash gamename \newline \backslash conflictsopc \backslash namespaceid \backslash 1 \backslash id \backslash 1 \backslash final \backslash $
+				\label{Client example command}
+			\end{tcolorbox}
+
+			\begin{tcolorbox}
+				$ \backslash lc \backslash 1 \backslash challenge \backslash JFU78DCH78 \backslash id \backslash 1 \backslash final \backslash  $
+				\label{Server example command}
+			\end{tcolorbox}
+
+			Each $ \backslash $ divide a key to it's value, for example: the first key is "lc" and the first value is "1".
+			The first key is always the command name, for example "lc" is the command name of that server request, while "login" is the command name of the client request.
+			The value after the command name could be used to decribe what action is performing at the moment, in the case of $ \backslash lc \backslash 1 \backslash $ it is perfoming the action 1 of the command "lc".
+			Client usually doesn't send a value after the command name, leaving two $ \backslash $ after the command name.
+
+			\subsubsection{Errors}
+			The error command is the same for both the two presence server. The table \ref{GPErrors} describes the keys that the error string could have.
+			
+			\begin{table}[H]
+				\centering
+				\label{GPError}
+				\caption{GP Error}
+				\begin{tabular}{c|c}
+					\hline
+					\textbf{Name} & \textbf{Description} \\
+					\hline
+					error & This is the command name, it does not require any extra parameter \\
+					\hline
+					err & The ID of the error \\
+					\hline
+					errmsg & A string that describes the error \\
+					\hline
+				\end{tabular}
+			\end{table}
+
+		\newpage
+		\subsection{Connection Manager Server}
+		Connection Manager Server (also known as GPCM), is a server that manage the user authentication and profile information. The IP, port and protocol of the server are shown in the table \ref{GPCMInfo}.
+		
+		\begin{table}[H]
+			\centering
+			\begin{tabular}{c|c|c}
+				\hline 
+				\textbf{IP} & \textbf{Port} & \textbf{Protocol} \\ 
+				\hline 
+				gpcm.gamespy.com & 29900 & TCP only \\ 
+			 	\hline
+			\end{tabular} 
+		\caption{IP \, Port and protcol of GPCM}
+		\label{GPCMInfo}
+	\end{table}
+
+\begin{comment}
+
+	\subsection{Request and responses}
+	The Table \ref{GPCMRequests} lists the request (that we were able to found) that the client sends to GPCM.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|c|}
-		\hline 
-		\textbf{String}&\textbf{Description}  \\ 
-		\hline 
-		$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
-		\hline 
-	\end{tabular} 
-	\caption{Value string}
-	\label{Value string}
-\end{table}
-
-This kind of string is represent a command in a request sends by the client as Table \ref{Command string}. The command will end with $ \backslash \backslash $ or $ \backslash $ depends on whether run at the server-side or client-side.
-
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline 
-		\textbf{String}&\textbf{Description}  \\ 
-		\hline 
-		$ \backslash command \backslash\backslash $& This is a command \\ 		
-		\hline 
-		$ \backslash error \backslash \backslash $ & Error command \\
-		\hline
-		$\backslash lc \backslash$& Login command\\
-		\hline
-	\end{tabular} 
-	\caption{Command string}
-	\label{Command string}
-\end{table}
-
-
-
-\chapter{The Detail of GameSpy Presence SDK}
-\section{GameSpy Presence Connection Manager}
-\par GameSpy Presence SDK contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user information stored on GameSpy. GPSP is a server that handle search request for user.
-\subsection{Server IP and Ports}
-Table \ref{IP and Ports for GPCM} are the GPCM and GPSP IP and Ports that client/game connect to.
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline 
-		\textbf{IP}&\textbf{Port}\\ 
-		\hline 
-		gpcm.gamespy.com&29900 \\ 
-	 	\hline 
-	\end{tabular} 
-\caption{IP and Ports for GameSpy Presence Servers}
-\label{IP and Ports for GameSpy Presence Servers}
-
-\end{table}
-\subsection{Request For GameSpy Presence Connection Manager}
-Table \ref{Request For GameSpy Presence Connection Manager} lists the request(already known by us) that clients send to GameSpy Presence Connection Manager server (GPSP).
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|}
+	\begin{tabular}[|c|c|]
 		\hline 
 		\textbf{Commands}&\textbf{Description}  \\ 
 		\hline 
@@ -120,8 +218,8 @@ Table \ref{Request For GameSpy Presence Connection Manager} lists the request(al
  		
 		\hline 
 	\end{tabular} 
-	\caption{Request For GameSpy Presence Connection Manager}
-	\label{Request For GameSpy Presence Connection Manager}
+	\caption{Request for GameSpy Presence Connection Manager}
+	\label{GPCMRequests}
 \end{table}
 
 Error response string for (GPCM, GPSP):
@@ -154,7 +252,7 @@ The following Table \ref{Login parameter string} is a description of string used
 	\centering
 %\begin{tabular}{A}
 
-\begin{tabular}{A}
+	\begin{tabular}{A}
 		\hline
 		\textbf{Keys} & \textbf{Description} & \textbf{Type}
 			                                                                          \\ \hline
@@ -413,5 +511,7 @@ Different game will have different request. Some of request contain different co
 \section{SAKEPersistentStorage}
 
 \chapter{conclusion}
+
+\end{comment}
 
 \end{document}
