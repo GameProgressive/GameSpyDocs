@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Definitions/retrospy}[retrospy report class]
+\ProvidesClass{Definition/retrospy}[retrospy report class]
 \LoadClass[oneside,titlepage,a4paper]{report}
 
 
@@ -17,8 +17,8 @@
 \RequirePackage{shorttoc}
 \RequirePackage{tabularx}
 \RequirePackage{fancyhdr}
-
-
+\RequirePackage{verbatim} 
+\RequirePackage{tcolorbox}
 
 
 \setcounter{tocdepth}{4}
@@ -48,5 +48,5 @@
 	\centering
 }
 \renewcommand\maketitlehookc{	
-	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.pdf}
+	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.png}
 	\vfill First Edition}
