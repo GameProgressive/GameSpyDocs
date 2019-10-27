@@ -85,12 +85,14 @@
 			The server returns the profile identification number, the user identification number and the profile nickname associated to that unique nickname in the specific namespace context.
 		\subsubsection{PreAuthenticated}
 			The Pre-Authenticated method (also known as Authentication token method) is a special method of logging into GameSpy services that works in conjunction of the Web Services.
-			Using this method, you don't login with a password, nickname or email. You login by using an authentication token and a partner challenge. This two are generated and retrived from the Web Service Server.
-			The user that is logging in with this method is not an ordinary account, it's a "shadow" account, created just for the following backend login (and possibly game).
-			This method is used by special third-party backends that saves the login information in a different way. An example of this is shown with PlayStation 3 login (NP), the Web Service would generate an auth token and partner challenge from the SEN/PSN User information.
+			Using this method, you don't login with a password, nickname or email. You login by using an authentication token and a partner challenge.
+			This two could be retrived from the Web Service Server.
+			The user that is logging in with this method is usually not an ordinary account, it's a "shadow" account, created just for the following backend login (and possibly game).
+			This method is used by special third-party backends that saves the login information in a different way.
+			An example of this is shown with PlayStation 3 login (NP), the Web Service would generate an auth token and partner challenge from the SEN/PSN User information.
 			The client needs to send the authentication token and the partner challenge disguized as an MD5 password.
 			The server returns the profile identification number, the user identification number, the profile nickname and the unique nickname associated to the specific namespace context.
-			Keep in mind that this are permanent account associated with the backend, in case of PlayStation 3 service, you can also see your SEN/PSN friends in your GameSpy buddies list if they had created a shadow account for use in GameSpy services. 
+			Keep in mind that this are permanent account associated with the backend, in case of PlayStation 3 service, you can also see your SEN/PSN friends in your GameSpy buddies list if they had created a shadow account for use in GameSpy services.
 
 		%\subsubsection{CD-Key}
 
