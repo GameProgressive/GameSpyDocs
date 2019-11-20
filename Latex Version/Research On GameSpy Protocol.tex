@@ -306,7 +306,11 @@ This is the response that server sends to client:
 	\backslash bsrdone \backslash <gamespy enc determinator> \backslash final \backslash
 	\end{split}
 \end{equation}
+\section{GameSpy Status and Tracking}
 
+session key length (128-byte)
+server challenge length (38-byte)
+$ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
 
 \part{RetroSpy System Architecture}
 
