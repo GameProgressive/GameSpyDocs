@@ -17,7 +17,7 @@
 \RequirePackage{shorttoc}
 \RequirePackage{tabularx}
 \RequirePackage{fancyhdr}
-
+\RequirePackage{array}
 
 
 
@@ -36,8 +36,9 @@
 
 %\newcommand{\begin{KeysTabularStyle}}{\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}}
 
-\newcommand\KeysTabularStyle{\\|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
-%\newcolumntype{KeysTabularStyle}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}
+
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{A}{|M{2cm}|M{7cm}|M{1cm}|}
 
 
 
