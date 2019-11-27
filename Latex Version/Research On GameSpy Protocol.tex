@@ -307,9 +307,19 @@ This is the response that server sends to client:
 	\end{split}
 \end{equation}
 \section{GameSpy Status and Tracking}
+when game connect to GSTATS server, server will send an message to game which contains the challenge, the total length of message must bigger than 38bytes, and the challenge must bigger than 20bytes.
+when game received the challenge it will compute a response, the response is formed as follows. 
+response = CRC32(<server challenge>,<length of server challenge>)||<game secret key>
+then game will compute the MD5 hash as MD5value = MD5(<response>,<length of response>)
+then encoded with Enctype3
+then construct the challenge-response message as $ \backslash auth \backslash \backslash gamename \backslash <gamename>\backslash response \backslash <MD5value> \backslash port \backslash <port> \backslash id \backslash <id> $
 
-session key length (128-byte)
-server challenge length (38-byte)
+session key length (unknown)
+connction id = transfer ascii of sessionkey to integer
+
+the initialization phase is finished.
+server challenge message length (bigger than 38-byte)
+server challenge length (bigger than 20-byte)
 $ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
 
 \part{RetroSpy System Architecture}
