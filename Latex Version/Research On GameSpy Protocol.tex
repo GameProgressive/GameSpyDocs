@@ -75,6 +75,24 @@ This kind of string is represent a command in a request sends by the client as T
 \chapter{The Detail of GameSpy Presence SDK}
 \section{GameSpy Presence Connection Manager}
 \par GameSpy Presence SDK contain two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP). GPCM is a server that handle login request and response with corresponding user information stored on GameSpy. GPSP is a server that handle search request for user.
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}  
+	\node[block] (a) {Client};  
+	\node[block,right=150pt of a] (b) {GPCM};
+	%\node[block,below= of b] (c){GameSpy CDKey};
+	% these are the name of the blocks
+	
+	\draw[line] ([yshift=15pt]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15pt]a.east);
+	\draw[line] (a.east)--node [fill = white] {2.Send client challenge} (b.west);
+	\draw[line] ([yshift=-15pt]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15pt]a.east);
+
+	\end{tikzpicture}  
+\end{figure}
+
+	
+
 \subsection{Server IP and Ports}
 Table \ref{IP and Ports for GPCM} are the GPCM and GPSP IP and Ports that client/game connect to.
 \begin{table}[H]
