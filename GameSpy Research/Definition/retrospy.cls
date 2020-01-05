@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Definitions/retrospy}[retrospy report class]
+\ProvidesClass{Definition/retrospy}[retrospy report class]
 \LoadClass[oneside,titlepage,a4paper]{report}
 
 
@@ -18,7 +18,17 @@
 \RequirePackage{tabularx}
 \RequirePackage{fancyhdr}
 \RequirePackage{array}
+\RequirePackage{tikz}
 
+\usetikzlibrary{positioning,fit,calc}
+
+\tikzset{block/.style={draw, thick, text width=3cm, minimum height=1.5cm, align=center},   
+	% the align command is used to align the block diagram at the center  
+	% the height command adjust the height of the block diagram  
+	% here block diagram refers to the whole diagram, not the single block  
+	% the thick command here signifies the border of all the blocks used inside the block diagram. You can change it to thin command if you want the thin edge of the blocks  
+	line/.style={-latex}   % the lesser the width the greater will be the diagram window  
+}  
 
 
 \setcounter{tocdepth}{4}
