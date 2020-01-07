@@ -22,7 +22,7 @@
 
 \usetikzlibrary{positioning,fit,calc}
 
-\tikzset{block/.style={draw, thick, text width=3cm, minimum height=1.5cm, align=center},   
+\tikzset{block/.style={draw, thick, text width=2cm, minimum height=1cm, align=center},   
 	% the align command is used to align the block diagram at the center  
 	% the height command adjust the height of the block diagram  
 	% here block diagram refers to the whole diagram, not the single block  
@@ -45,7 +45,9 @@
 \newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 
 %\newcommand{\begin{KeysTabularStyle}}{\begin{tabular}{|>{\centering\arraybackslash}m{2cm}|>{\centering\arraybackslash}m{7cm}|>{\centering\arraybackslash}m{1cm}|}}
-
+%%%%%%%%%%%%Set the number in circle%%%%%%%%%%
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+		\node[shape=circle,draw,inner sep=1.5pt] (char) {#1};}}
 
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{A}{|M{2cm}|M{7cm}|M{1cm}|}

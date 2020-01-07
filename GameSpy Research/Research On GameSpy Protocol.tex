@@ -52,6 +52,61 @@
 		\item Web Services
 	\end{itemize}
 
+\section{The Access Sequence of Client}
+
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}  [node distance = 2cm, auto,rotate=90,transform shape]
+	\node[block] (gpcm) {GPCM};
+	%%%%%%%%%%%right nodes%%%%%%%%%%
+	\node[block, right= of gpcm](gpsp){GPSP};
+	\node[block, right= of gpsp](qr){QR};
+	\node[block, right= of qr](sb){SB};
+	%%%%%%%%%%%left nodes%%%%%%%%%%%
+	\node[block,left= of gpcm](cdkey){CDKey};
+
+		%%%%%%%%%%%bottom nodes%%%%%%%%
+	\node[block, below= of gpsp] (client) {Client};  
+	\node[block, below= of client](gstats){GSTATS};
+	\node[block, right= of gstats](webserver){WebServer};
+		\node[block, left= of gstats](chat){CHAT};
+	%%%%%%%%%%%top nodes%%%%%%%%%%
+	\node[block, above= of gpcm](gameserver){Game Server};
+	
+	
+	%%%%%%%%%%%lines%%%%%%%%%%%%%
+	\draw[line] (client)--(gpcm);
+	\draw[line](client)--(gpsp);
+	\draw[line](client)--(cdkey);
+	\draw[line](client)--(chat);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{1}}\circled{\small{3}}} (qr);
+	\draw[line](client)--(sb);
+	
+	\draw[line](client)--(gstats);
+	\draw[line](client)--(webserver);
+	
+	
+	\draw[line](sb)--(qr);
+	
+	
+	
+	\draw[line](gameserver)--(qr);
+	\draw[line](client)--(gameserver);
+	\draw[line](gameserver)--(cdkey);
+	
+	
+	
+	
+	%\node[block,below= of b] (c){GameSpy CDKey};
+	% these are the name of the blocks
+	
+%	\draw[line] ([yshift=15pt]gpcm.west)--node [fill = white] {1.Send server challenge} ([yshift=15pt]client.east);
+%	\draw[line] (client.east)--node [fill = white] {2.Send client challenge} (gpcm.west);
+%	\draw[line] ([yshift=-15pt]gpcm.west)--node [fill = white] {3.Accept or reject} ([yshift=-15pt]client.east);
+	
+	\end{tikzpicture}  
+\end{figure}
+
 \section{Basic Description of Protocol}
 In this part, we describe some of the basic patterns that are used in all GameSpy servers.
 
