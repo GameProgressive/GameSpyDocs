@@ -19,6 +19,7 @@
 \RequirePackage{fancyhdr}
 \RequirePackage{array}
 \RequirePackage{tikz}
+\RequirePackage{rotating}
 
 \usetikzlibrary{positioning,fit,calc}
 

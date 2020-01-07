@@ -54,16 +54,18 @@
 
 \section{The Access Sequence of Client}
 
-\begin{figure}[H]
+\begin{figure}
 	\centering
-	\begin{tikzpicture}  [node distance = 2cm, auto,rotate=90,transform shape]
+	\caption{The access sequence of client}
+	\makebox[\textwidth][c]{
+	\begin{tikzpicture}  [node distance = 2cm, auto,transform shape]
 	\node[block] (gpcm) {GPCM};
 	%%%%%%%%%%%right nodes%%%%%%%%%%
 	\node[block, right= of gpcm](gpsp){GPSP};
 	\node[block, right= of gpsp](qr){QR};
-	\node[block, right= of qr](sb){SB};
+	\node[block, below= of qr](sb){SB};
 	%%%%%%%%%%%left nodes%%%%%%%%%%%
-	\node[block,left= of gpcm](cdkey){CDKey};
+	\node[block,below= of gpcm](cdkey){CDKey};
 
 		%%%%%%%%%%%bottom nodes%%%%%%%%
 	\node[block, below= of gpsp] (client) {Client};  
@@ -75,24 +77,24 @@
 	
 	
 	%%%%%%%%%%%lines%%%%%%%%%%%%%
-	\draw[line] (client)--(gpcm);
-	\draw[line](client)--(gpsp);
-	\draw[line](client)--(cdkey);
-	\draw[line](client)--(chat);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{1}}\circled{\small{3}}} (qr);
-	\draw[line](client)--(sb);
+	\draw[line] (client)--node [midway, above, sloped] {\circled{\small{2}}}(gpcm);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{2}}}(gpsp);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{3}}}(cdkey);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{4}}}(chat);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{1}}} (qr);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{7}}}(sb);
 	
-	\draw[line](client)--(gstats);
-	\draw[line](client)--(webserver);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(gstats);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(webserver);
 	
 	
 	\draw[line](sb)--(qr);
 	
 	
 	
-	\draw[line](gameserver)--(qr);
-	\draw[line](client)--(gameserver);
-	\draw[line](gameserver)--(cdkey);
+	\draw[line](gameserver)--node [midway, above, sloped] {\circled{\small{6}}}(qr);
+	\draw[line](client)--node [midway, above, sloped] {\circled{\small{8}}}(gameserver);
+	\draw[line](gameserver.west) to [in=190,out=190] node [midway, above, sloped] {\circled{\small{9}}}(cdkey.west);
 	
 	
 	
@@ -105,6 +107,7 @@
 %	\draw[line] ([yshift=-15pt]gpcm.west)--node [fill = white] {3.Accept or reject} ([yshift=-15pt]client.east);
 	
 	\end{tikzpicture}  
+}
 \end{figure}
 
 \section{Basic Description of Protocol}
