@@ -4,7 +4,7 @@
 \begin{document}
 
 \title{\Huge\textbf{Research On GameSpy Protocol}} 
-\author{Arves100, Xiaojiuwo}
+\author{Arves100, xiaojiuwo}
 
 
 %\date{} %%如果没有这句，会生成时间
@@ -14,10 +14,17 @@
 \tableofcontents  %%生成目录
 
 %\mainmatter %%表示文章的正文部分，在生成目录后将从第一页开始
+\chapter{Introduction}
+
+\section{The History of GameSpy}
+
+\section{Related Works}
+
 
 \chapter{General Construction}
-\par Inside the GameSpy SDK there are 16 compotents, which constructed the GameSpy services.
+In this chapter we describe the structure of GameSpy SDK and GameSpy servers.
 \section{SDK Module}
+GameSpy SDK contains of  16 modules.
 	\begin{itemize}
 		\item Brigades
 		\item Chat
@@ -37,27 +44,28 @@
 		\item Web Authentication
 	\end{itemize}
 
-\section{Servers}
-\par Those compoents allows accessing multiple GameSpy servers that they provide.
+\section{GameSpy Backend Servers}
+\par GameSpy backend servers are list as follows.
 	\begin{itemize}
-		\item Presence Connection Manager
-		\item Presence Search Player
-		\item Master (Backend)
-		\item Chat
-		\item SAKE Storage
-		\item NAT Negotation Mathup
-		\item Server Browser
-		\item CDKey
-		\item Stats \& Tracking
-		\item Web Services
+		\item GameSpy Presence Connection Manager (GPCM)
+		\item GameSpy Presence Search Player(GPSP)
+		\item GameSpy Query and Report (QR)
+		\item GameSpy Chat
+		\item GameSpy SAKE Storage (SAKE)
+		\item GameSpy NAT Negotation (NatNeg)
+		\item GameSpy Server Browser (SB)
+		\item GameSpy CDKey 
+		\item GameSpy Stats \& Tracking (GStats)
+		\item GameSpy Web Services
 	\end{itemize}
 
 \section{The Access Sequence of Client}
-
-\begin{figure}
+If a user want to use GameSpy service, the access sequence is listed in Figure~\ref{The access sequence of client} and we describe the detail below.
+\begin{figure}[H]
 	\centering
 	\caption{The access sequence of client}
-	\makebox[\textwidth][c]{
+	\label{The access sequence of client}
+	\scalebox{0.7}{
 	\begin{tikzpicture}  [node distance = 2cm, auto,transform shape]
 	\node[block] (gpcm) {GPCM};
 	%%%%%%%%%%%right nodes%%%%%%%%%%
@@ -109,14 +117,28 @@
 	\end{tikzpicture}  
 }
 \end{figure}
+\paragraph{Access sequence explain}
+\begin{enumerate}
+	\item Client access to available check in QR server, which tells client GameSpy back-end server status.
+	\item Client access GPCM or GPSP to check their account and login.
+	\item Client access to CDKey to verify his cd-key in login phase.
+	\item Client login to Chat server.
+	\item Client retrieve player data(level, exp, etc.) from GStats(old game use this server to store player data, new game use Web Server to store player data).
+	\item When a game server is launched it will send heartbeat to QR server to tell QR its information.
+	\item Client access to SB to search online game server.
+	\item Client login to game server with his information and cd-key.
+	\item Game server will check his cd-key by accessing to CDKey server, after every information is verified, client should be able to play their game.
+\end{enumerate}
+
 
 \section{Basic Description of Protocol}
 In this part, we describe some of the basic patterns that are used in all GameSpy servers.
 
 \subsection{The String Pattern}
 We first introduce the pattern of the string, which is using to make up a request and response.
-The following servers do use the pattern: Presence Connection Manager, Presence Search Player, Game Status, CD-Key, Query Report Version 1.
-This kind of string represents a value in a request and response sent by the client or the server as Table \ref{Value string}.
+The following servers do use the pattern: Presence Connection Manager, Presence Search Player, GameSpy Status and Tracking, CD-Key, Query Report(version 1)
+This kind of string represents a value in a request and response sent by the client or the server as Table \ref{String pattern}.\\
+
 
 \begin{table}[H]
 	\centering
@@ -124,14 +146,34 @@ This kind of string represents a value in a request and response sent by the cli
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-		$ \backslash \langle content \rangle \backslash $& The value is $ \langle content \rangle $  \\ 
+		$ \backslash key \backslash \langle value \rangle \backslash $& The key is $ key $, the value of the key is $  value  $  \\ 
+ 		\hline
+	\end{tabular} 
+	\caption{String pattern}
+	\label{String pattern}
+\end{table}
+There are two kind of patterns the first one is value string, the second one is command string.
+\paragraph{Value String}
+This kind of string represents a key value pair in the request or response string, it has a key and a correspond value as shown in Table~\ref{Value string}.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
 		\hline 
+		\textbf{String}&\textbf{Description}  \\ 
+		\hline 
+		$ \backslash pid \backslash  13  \backslash $& The key is $ pid $, the value of the $ pid $ is $  13  $  \\ 
+		\hline
+		$ \backslash userid \backslash  0  \backslash $& The key is $ userid $, the value of the $ userid $ is $  0  $  \\ 
+		\hline
 	\end{tabular} 
 	\caption{Value string}
 	\label{Value string}
 \end{table}
 
-This kind of string is represent a command in a request sends by the client or the server as Table \ref{Command string}.
+
+\paragraph{Command String}
+
+This kind of string represents a command in a request sends by the client or the server as Table \ref{Command string}.
 The command will end with $ \backslash \backslash $ or $ \backslash $ depends on whether run at the server-side or client-side.
 
 
@@ -142,10 +184,6 @@ The command will end with $ \backslash \backslash $ or $ \backslash $ depends on
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
 		$ \backslash command \backslash\backslash $& This is a command \\ 		
-		\hline 
-		$ \backslash error \backslash \backslash $ & Error command \\
-		\hline
-		$\backslash lc \backslash$& Login command\\
 		\hline
 	\end{tabular} 
 	\caption{Command string}
@@ -153,21 +191,24 @@ The command will end with $ \backslash \backslash $ or $ \backslash $ depends on
 \end{table}
 
 
-\chapter{Details of GameSpy Presence}
+\chapter{GameSpy Presence and Messaging}
 \par Presence \& Messaging system allows a game to add account authentication or registration, which includes a profile where personal information could be stored (such as email, first name), a friend list (called buddies), private messages.
 \par GameSpy Presence contains two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP).
 GPCM is a server that manages the profiles (such as login, storing the profile information).
+
+\section{Common Information}
+In this section we describe the common information, methods, techniques that GPCM and GPSP have.
 \subsection{Server IP and Ports}
-Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP and Ports that client/game connect to.
+Table \ref{IP and Ports for GameSpy Presence Servers} are the  IP and Ports of GPCM and GPSP that client or game connect to.
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|c|}
+	\begin{tabular}{|c|c|c|}
 		\hline 
-		\textbf{IP}&\textbf{Port}\\ 
+		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
 		\hline 
-		gpcm.gamespy.com&29900 \\ 
+		GPCM&gpcm.gamespy.com&29900 \\ 
 	 	\hline 
-		gpsp.gamespy.com&29901 \\
+		GPSP&gpsp.gamespy.com&29901 \\
 		\hline
 	\end{tabular} 
 \caption{IP and Ports for GameSpy Presence Servers}
@@ -175,11 +216,27 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPCM and GPSP IP a
 
 \end{table}
 
+\section{GameSpy Presence Connection Manager}
+
+\subsection{Communication Diagram}
+\begin{figure}[H]
+	\scalebox{0.8}{
+	\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\draw[line] ([yshift=15]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15]a.east);
+		\draw[line] (a.east)--node [fill = white] {2.Send client challenge} (b.west);
+		\draw[line] ([yshift=-15]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15]a.east);
+	\end{tikzpicture}
+}
+\end{figure}
+
+
 \subsection{Request For GameSpy Presence Connection Manager}
 Table \ref{Request For GameSpy Presence Connection Manager} lists the request (known by us) that clients send to GameSpy Presence Connection Manager server (GPCM).
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|c|}
+	\begin{tabular}{B}
 		\hline 
 		\textbf{Commands}&\textbf{Description}  \\ 
 		\hline 
@@ -237,8 +294,6 @@ The value $ \langle challenge \rangle $ for $ \backslash challenge \backslash $ 
 The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
 \begin{table}[H]
 	\centering
-%\begin{tabular}{A}
-
 \begin{tabular}{A}
 		\hline
 		\textbf{Keys} & \textbf{Description} & \textbf{Type}
@@ -361,19 +416,8 @@ The description of each parameter string is shown in Table \ref{User creation st
 \end{table}
 
 \section{GameSpy Presence Search Player}
-Table \ref{IP and Port for GPSP} are the GPSP IP and Ports that client/game connect to.
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|c|c|}
-		\hline 
-		\textbf{IP}&\textbf{Port}  \\ 		
-		\hline 
-		gpsp.gamespy.com&29901 \\
-		\hline 
-	\end{tabular} 
-	\caption{IP and Ports for GameSpy Presence Search Player}
-	\label{IP and Ports for GameSpy Presence Search Player}
-	\end{table}
+Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
+
 \subsection{Search User}
 This is the request that client sends to server:
 \begin{equation}\label{Search User Request}
@@ -391,7 +435,10 @@ This is the response that server sends to client:
 	\backslash bsrdone \backslash <gamespy enc determinator> \backslash final \backslash
 	\end{split}
 \end{equation}
-\section{GameSpy Status and Tracking}
+
+
+
+\chapter{GameSpy Status and Tracking}
 when game connect to GSTATS server, server will send an message to game which contains the challenge, the total length of message must bigger than 38bytes, and the challenge must bigger than 20bytes.
 when game received the challenge it will compute a response, the response is formed as follows. 
 response = CRC32(<server challenge>,<length of server challenge>)||<game secret key>
