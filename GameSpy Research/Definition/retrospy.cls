@@ -20,6 +20,8 @@
 \RequirePackage{array}
 \RequirePackage{tikz}
 \RequirePackage{rotating}
+\RequirePackage{tcolorbox}
+
 
 \usetikzlibrary{positioning,fit,calc}
 
