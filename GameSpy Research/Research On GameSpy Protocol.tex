@@ -362,7 +362,7 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 		\hline
 		\textbf{Keys} & \textbf{Description} & \textbf{Type}	                                                                          \\ \hline
 		login& The login command which use to identify the login request of client&\\ \hline
-		challenge  & The user challenge used to verify the authenticity of the client     &10 byte alphanumeric string                                                                                                                                     \\ \hline
+		challenge  & The user challenge used to verify the authenticity of the client     & See \ref{Login Proof Challenge Gerneration Algorithm}                                                                                                        \\ \hline
 		authtoken  & The token used to login (represent of an user)        &                                                                                                                                                    \\ \hline
 		uniquenick  & The unique nickname used to login       &                                                                                                                                                                  \\ \hline
 		user     & The users account (format is NICKNAME@EMAIL)           &                                                                                                                                                   \\ \hline
@@ -1021,6 +1021,15 @@ the initialization phase is finished.
 server challenge message length (bigger than 38-byte)
 server challenge length (bigger than 20-byte)
 $ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
+
+
+\begin{appendix}
+\chapter{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}
+\chapter{Gstats Initial Encryption}
+\chapter{CDKey Server Initial Encryption}
+\end{appendix}
+
+	
 
 
 \end{document}
