@@ -1,6 +1,7 @@
 \documentclass[oneside,titlepage,a4paper]{Definition/retrospy} %book,article,report,letter
 
 
+
 \begin{document}
 
 \title{\Huge\textbf{Research On GameSpy Protocol}} 
@@ -275,22 +276,7 @@ We show the login communication diagram in Fig~\ref{Login diagram}
 \caption{Login diagram}
 \label{Login diagram}
 \end{figure}
-We show the common key/value pairs in \ref{Common login keys}.
-\begin{table}[H]
-	\centering
-	\begin{tabular}{A}
-		
-		\hline 
-		\textbf{Keys}&\textbf{Description}&\textbf{Type}  \\ 
-		\hline 
-		final & message end delimiter&  \\ 		
-		\hline 
-		id & the operation number that client generate &\\
-		\hline 
-	\end{tabular} 
-	\caption{Common login keys}
-	\label{Common login keys}	
-\end{table}	
+
 \myparagraph{1. Server initial Challenge}
 When a client is connected to GPCM server, GPCM Server will send a challenge to client. The challenge string shows in \ref{server challenge1} and \ref{server challenge2}. However we do not know the correct functionality of \ref{server challenge2}.
 \begin{tcolorbox}
@@ -303,10 +289,14 @@ When a client is connected to GPCM server, GPCM Server will send a challenge to 
 \begin{tcolorbox}
 	\begin{equation}\label{server challenge2}
 	\begin{split}
-	\backslash lc \backslash 1 \backslash challenge \backslash \langle \rangle 	\backslash nur \backslash userid \backslash \langle \rangle \backslash profileid \backslash \langle \rangle \backslash final \backslash
+	\backslash lc \backslash 1 \backslash challenge \backslash \langle \rangle 	\backslash nur \backslash\backslash userid \backslash \langle \rangle \backslash profileid \backslash \langle \rangle \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
+
+\begin{itemize}
+	\item{challenge: }The challenge string sent by GPCM.
+\end{itemize}
 \begin{table}[H]
 	\centering
 	\begin{tabular}{A}
@@ -314,12 +304,12 @@ When a client is connected to GPCM server, GPCM Server will send a challenge to 
 		\hline 
 		\textbf{Keys}&\textbf{Description}&\textbf{Type}  \\ 
 		\hline 
-		challenge & The challenge string sended by GameSpy Presence server&  \\ 		
+		challenge & The challenge string sended by GameSpy Presence server&String \\ 		
 		\hline 
-		nur & ? create new user delimiter &\\
+		nur & ? Create new user delimiter &\\
 		\hline 
-		userid&The userID of the profile &\\	\hline 
-		profileid&The profileID &\\	\hline 
+		userid&The userID of the profile & Uint\\	\hline 
+		profileid&The profileID & Uint\\	\hline 
 	\end{tabular} 
 	\caption{The first type login response}
 	\label{The first type login response}	
@@ -363,24 +353,24 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 		\textbf{Keys} & \textbf{Description} & \textbf{Type}	                                                                          \\ \hline
 		login& The login command which use to identify the login request of client&\\ \hline
 		challenge  & The user challenge used to verify the authenticity of the client     & See \ref{Login Proof Challenge Gerneration Algorithm}                                                                                                        \\ \hline
-		authtoken  & The token used to login (represent of an user)        &                                                                                                                                                    \\ \hline
-		uniquenick  & The unique nickname used to login       &                                                                                                                                                                  \\ \hline
-		user     & The users account (format is NICKNAME@EMAIL)           &                                                                                                                                                   \\ \hline
-		userid    & Send the userid (for example when you disconnect you will keep this)              &                                                                                                                        \\ \hline
-		profileid  & Send the profileid (for example when you disconnect you will keep this)           &                                                                                                                        \\ \hline
-		partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) &\\ \hline
-		response   & The client challenge used to verify the authenticity of the client     &                                                                                                                                   \\ \hline
-		firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection &\\
+		authtoken  & The token used to login (represent of an user)        & String\\ \hline
+		uniquenick  & The unique nickname used to login       & String                                                                                                                                                                 \\ \hline
+		user     & The users account (format is NICKNAME@EMAIL)           &String\\ \hline
+		userid    & User id              &      Uint                                                                                                                  \\ \hline
+		profileid  & Profile id          &      Uint                                                                                                                  \\ \hline
+		partnerid  & This ID is used to identify a backend service logged with gamespy.(Nintendo WIFI Connection will identify his partner as 11, which means that for gamespy, you are logging from a third party connection) & Uint\\ \hline
+		response   & The client challenge used to verify the authenticity of the client     & String                                                                                                                                   \\ \hline
+		firewall   & If this option is set to 1, then you are connecting under a firewall/limited connection & Uint\\
 		\hline
-		port& The peer port (used for p2p stuff)            &                                                              \\ \hline
-		productid  & An ID that identify the game you're using            &                                                                                                                                                     \\ \hline
-		gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification             &                                                                    \\ \hline
+		port& The peer port (used for p2p stuff)&Uint \\\hline
+		productid  & An ID that identify the game you're using            &Uint\\ \hline
+		gamename   & A string that rapresents the game that you're using, used also for several activities like peerchat server identification&string \\ \hline
 		
-		namespaceid & ?   &                                                                                                                                                                                                      \\ \hline
-		sdkrevision & The version of the SDK you're using& \\ \hline
-		quiet    & ? Maybe indicate invisible login which can not been seen at friends list &\\ \hline
-		lt& The login ticket used for login into SAKE& \\ \hline
-		id& The operation number&\\ \hline
+		namespaceid & Distinguish same nickname player   &Uint                                                                                                                                                                                                     \\ \hline
+		sdkrevision & The version of the SDK you're using&Uint \\ \hline
+		quiet    & ? Maybe indicate invisible login which can not been seen at friends list & Uint\\ \hline
+		lt& The login ticket used for login into SAKE&String \\ \hline
+		id& The operation number&Uint\\ \hline
 	\end{tabular} 
 	\caption{Login parameter string}
 	\label{Login parameter string}
@@ -423,11 +413,62 @@ The user could be AuthToken or the User/UniqueNick (with the extra PartnerID).
 server challenge that we received before.
 the client challenge that was generated before.
 
+\subsection{SDK Revision}
 
-The following Table \ref{Login parameter string} is a description of string used in login request, GameSpy can use these string to find value in database.
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Login Finished};  
+		\node[block,below=20pt of a] (b) {SDKRevision Check};
+		\node[block,below=20pt of b] (c) {Recv Buddy Message};
+		\node[block,right=20pt of c] (d) {Recv Buddy Status};
+		\node[block,right=20pt of b] (e) {Recv Buddy Request};
+		\node[block,right=20pt of a] (f) {Recv Buddy Revoke};
+		\draw[line] (a.south)--(b.north);
+		\draw[line] (b)--(c);
+		\draw[line] (c)--(d);
+		\draw[line] (d)--(e);
+		\draw[line] (e)--(f);
+		\end{tikzpicture}
+	}
+	\caption{SDK Revision process}
+	\label{SDK Revision process}
+\end{figure}
+	When a player finished login, GPCM will check his sdkrevision, sdkrevision is an addition of each sdkrevision number. Every addition of sdkrevision number will make GPCM act differently.
+\begin{tcolorbox}
+	\begin{itemize}
+		\item Extended message support
+		\begin{itemize}
+			\item{1} GPI\_NEW\_AUTH\_NOTIFICATION = 1
+			\item{2} GPI\_NEW\_REVOKE\_NOTIFICATION = 2
+		\end{itemize}
+		
+		\item New Status Info support
+		\begin{itemize}
+			\item{4} define GPI\_NEW\_STATUS\_NOTIFICATION = 4
+		\end{itemize}
+		
+		\item Buddy List + Block List retrieval on login
+		\begin{itemize}
+			\item{8} GPI\_NEW\_LIST\_RETRIEVAL\_ON\_LOGIN = 8
+		\end{itemize}
+	\item Remote Auth logins now return namespaceid/partnerid on login
+	\begin{itemize}
+		\item{16} GPI\_REMOTEAUTH\_IDS\_NOTIFICATION = 16
+	\end{itemize}
 
+	\item New CD Key registration style as opposed to using product ids
+	\begin{itemize}
+		\item{32}  GPI\_NEW\_CDKEY\_REGISTRATION = 32
+	\end{itemize}
 
+	\end{itemize}
+\end{tcolorbox}
 
+For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
+
+\subsection{Message System}
 
 
 
@@ -1028,8 +1069,6 @@ $ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of th
 \chapter{Gstats Initial Encryption}
 \chapter{CDKey Server Initial Encryption}
 \end{appendix}
-
-	
 
 
 \end{document}
