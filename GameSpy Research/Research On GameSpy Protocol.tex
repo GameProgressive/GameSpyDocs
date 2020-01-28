@@ -482,14 +482,36 @@ For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 \section{GameSpy Presence Search Player}
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
 
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPSP};
+		\draw[line] ([yshift=8]a.east)--node [fill = white] {1.Send client search request} ([yshift=8]b.west);
+		\draw[line] ([yshift=-8]b.west)--node [fill = white] {2.Send search result} ([yshift=-8]a.east);
+		\end{tikzpicture}
+	}
+	\caption{GPSP diagram}
+	\label{GPSP diagram}
+\end{figure}
+
 \subsection{Search User}
-This is the request that client sends to server:
+Client request \ref{Search User Request}.
 \begin{tcolorbox}
 	\begin{equation}\label{Search User Request}
 	\begin{split}
-	&\backslash search\backslash\backslash sesskey \backslash \langle \rangle\backslash profileid \backslash \langle \rangle \\ &\backslash namespaceid\backslash \langle \rangle  \backslash partnerid\backslash <>\\
+	&\backslash search\backslash\backslash sesskey \backslash \langle \rangle\backslash profileid \backslash \langle \rangle \\ &\backslash namespaceid\backslash \langle \rangle  \backslash partnerid\backslash \langle \rangle\\
 	& \backslash nick \backslash \langle \rangle \backslash uniquenick \backslash \langle \rangle \\ 
 	&\backslash email \backslash \langle \rangle \backslash gamename \backslash \langle \rangle \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+Server response \ref{Search user response}.
+\begin{tcolorbox}
+	\begin{equation}\label{Search user response}
+	\begin{split}
+&\backslash bsr \backslash \langle profileid \rangle \backslash nick \backslash \langle nick \rangle \backslash 
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
