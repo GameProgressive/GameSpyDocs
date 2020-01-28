@@ -246,9 +246,12 @@ Table \ref{Request For GameSpy Presence Connection Manager} lists the request (k
 		\hline
 		$\backslash status \backslash$& Update the status of a user (Such as what game is the player playing) \\
 		\hline
-		$\backslash ka \backslash$& Keep client alive (do not disconnect) \\ \hline
+		$\backslash ka \backslash$& Keep client or session alive \\ \hline
 		$\backslash bm \backslash$& Message command \\
 		\hline 
+		$ \backslash blk \backslash $& Block list \\ \hline
+		$ \backslash bdy \backslash $ & Friend list \\ \hline
+		$ \backslash lt \backslash $& Login ticket \\ \hline
 	\end{tabular} 
 	\caption{Request For GameSpy Presence Connection Manager}
 	\label{Request For GameSpy Presence Connection Manager}
@@ -396,14 +399,14 @@ When received client's login request, server check the challenge and proof. if c
 		\hline 
 		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
 		\hline 
-		sesskey & The session key, which is a integer rapresentating the client connection& \\ 		
+		sesskey & The session key, which is a integer rapresentating the client connection&Uint \\ 		
 		\hline 
-		userid & The userID of the profile& \\
+		userid & The userID of the profile&Uint \\
 		\hline 
-		profileid&The profileID &\\	\hline 
-		uniquenick&The logged in unique nick &\\	\hline 
-		lt& The login ticket, unknown usage&\\\hline
-		proof& The proof is something similar to the response but it vary&\\\hline
+		profileid&The profileID &Uint\\	\hline 
+		uniquenick&The logged in unique nick &String\\	\hline 
+		lt& The login ticket, unknown usage&String\\\hline
+		proof& The proof is something similar to the response but it vary&String\\\hline
 	\end{tabular} 
 	\caption{The second type login response}
 	\label{The second type login response}
@@ -425,12 +428,18 @@ the client challenge that was generated before.
 		\node[block,right=20pt of c] (d) {Recv Buddy Status};
 		\node[block,right=20pt of b] (e) {Recv Buddy Request};
 		\node[block,right=20pt of a] (f) {Recv Buddy Revoke};
+		\node[block,right=20pt of f]  (g) {Recv Buddy List};
+		\node[block,below=20pt of g] (h) {Recv Block List};
+		\node[block,below=20pt of h] (j) {Recv Buddy Status Info};
 		\draw[line] (a.south)--(b.north);
 		\draw[line] (b)--(c);
 		\draw[line] (c)--(d);
 		\draw[line] (d)--(e);
 		\draw[line] (e)--(f);
-		\end{tikzpicture}
+		\draw[line] (f)--(g);
+		\draw[line] (g)--(h);
+		\draw[line] (h)--(j);
+\end{tikzpicture}
 	}
 	\caption{SDK Revision process}
 	\label{SDK Revision process}
@@ -468,7 +477,11 @@ the client challenge that was generated before.
 
 For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 
-\subsection{Message System}
+\subsection{Buddy Message}
+\subsection{Buddy Status}
+\subsection{Buddy Status Info}
+\subsection{Buddy List}
+\subsection{Block List}
 
 
 
