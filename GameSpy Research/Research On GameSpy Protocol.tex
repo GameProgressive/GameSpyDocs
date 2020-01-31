@@ -147,7 +147,7 @@ This kind of string represents a value in a request and response sent by the cli
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-		$ \backslash key \backslash \langle value \rangle \backslash $& The key is $ key $, the value of the key is $  value  $  \\ 
+		$ \backslash key \backslash < value > \backslash $& The key is $ key $, the value of the key is $  value  $  \\ 
  		\hline
 	\end{tabular} 
 	\caption{String pattern}
@@ -260,7 +260,7 @@ Table \ref{Request For GameSpy Presence Connection Manager} lists the request (k
 Error response string for (GPCM, GPSP):
 \begin{equation}
 \begin{split}
-\backslash error \backslash\backslash err \backslash \langle error code \rangle \backslash fatal\backslash\backslash errmsg \backslash \langle error message \rangle \backslash id\backslash 1 \backslash final \backslash
+\backslash error \backslash\backslash err \backslash < error code > \backslash fatal\backslash\backslash errmsg \backslash < error message > \backslash id\backslash 1 \backslash final \backslash
 \end{split}	
 \end{equation}
 \subsection{Login Command $ \backslash login \backslash $}
@@ -285,14 +285,14 @@ When a client is connected to GPCM server, GPCM Server will send a challenge to 
 \begin{tcolorbox}
 	\begin{equation}\label{server challenge1}
 	\begin{split}
-	\backslash lc \backslash 1 \backslash challenge \backslash \langle \rangle \backslash final \backslash
+	\backslash lc \backslash 1 \backslash challenge \backslash < > \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
 \begin{tcolorbox}
 	\begin{equation}\label{server challenge2}
 	\begin{split}
-	\backslash lc \backslash 1 \backslash challenge \backslash \langle \rangle 	\backslash nur \backslash\backslash userid \backslash \langle \rangle \backslash profileid \backslash \langle \rangle \backslash final \backslash
+	\backslash lc \backslash 1 \backslash challenge \backslash < > 	\backslash nur \backslash\backslash userid \backslash < > \backslash profileid \backslash < > \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
@@ -328,13 +328,13 @@ We show the common part of login request in \ref{Common string}
 \begin{tcolorbox}
 	\begin{equation}\label{Common string}
 	\begin{split}
-	&\backslash login \backslash \backslash challenge \backslash \langle  \rangle \backslash \star
-	\backslash userid \backslash \langle  \rangle 
-	\\& \backslash profileid \backslash \langle  \rangle \backslash partnerid \backslash \langle  \rangle \backslash response \backslash \langle  \rangle 
+	&\backslash login \backslash \backslash challenge \backslash <  > \backslash \star
+	\backslash userid \backslash <  > 
+	\\& \backslash profileid \backslash <  > \backslash partnerid \backslash <  > \backslash response \backslash <  > 
 	\\&
-	\backslash firewall \backslash 1 \backslash port \backslash \langle  \rangle \backslash productid \backslash  \langle  \rangle 
-	\\& \backslash gamename \backslash \langle  \rangle \backslash namespaceid \backslash \langle  \rangle 
-	\\& \backslash  sdkrevision \backslash \langle  \rangle \backslash quiet \backslash \langle  \rangle \backslash id \backslash  \backslash final \backslash
+	\backslash firewall \backslash 1 \backslash port \backslash <  > \backslash productid \backslash  <  > 
+	\\& \backslash gamename \backslash <  > \backslash namespaceid \backslash <  > 
+	\\& \backslash  sdkrevision \backslash <  > \backslash quiet \backslash <  > \backslash id \backslash  \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
@@ -342,9 +342,9 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 \begin{tcolorbox}
 	\begin{equation}
 		\begin{split}
-		&\backslash authtoken \backslash \langle  \rangle \backslash \\
-		&\backslash uniquenick \backslash \langle  \rangle \backslash\\
-		&\backslash user \backslash \langle  \rangle \backslash
+		&\backslash authtoken \backslash <  > \backslash \\
+		&\backslash uniquenick \backslash <  > \backslash\\
+		&\backslash user \backslash <  > \backslash
 		\end{split}
 	\end{equation}
 \end{tcolorbox}
@@ -387,8 +387,8 @@ When received client's login request, server check the challenge and proof. if c
 	\label{server login response lc2}
 	\begin{equation}
 	\begin{split}
-	&\backslash lc \backslash 2 \backslash sesskey \backslash \langle \rangle \backslash userid \backslash \langle \rangle \backslash profileid \backslash \langle \rangle \\
-	&\backslash uniquenick \backslash \langle \rangle \backslash lt \backslash \langle \rangle \backslash proof \backslash \langle \rangle \backslash final \backslash
+	&\backslash lc \backslash 2 \backslash sesskey \backslash < > \backslash userid \backslash < > \backslash profileid \backslash < > \\
+	&\backslash uniquenick \backslash < > \backslash lt \backslash < > \backslash proof \backslash < > \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
@@ -480,8 +480,87 @@ For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 \subsection{Buddy Message}
 \subsection{Buddy Status}
 \subsection{Buddy Status Info}
+\begin{tcolorbox}\label{Buddy status info string}
+	\begin{equation}
+	\begin{split}
+	&\backslash bsi \backslash \backslash state\backslash <?> \backslash profile \backslash <profileid>  \\
+	&\backslash bip \backslash <> \backslash bport \backslash <> \backslash hostip \backslash <> \backslash hprivip \backslash <> \\
+	&\backslash qport \backslash <> \backslash hport \backslash <> \backslash sessflags \backslash <> \backslash rstatus \backslash <> \\
+	& \backslash gameType \backslash <> \backslash  gameVnt \backslash <> \backslash gameMn \backslash <> \backslash product \backslash <> \\
+	& \backslash qmodeflags \backslash <> \backslash final \backslash 
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{A}
+		\hline 
+		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
+		\hline 
+		bsi & buddy status info command & \\ 		
+		\hline 
+		state & ?&Uint \\
+		\hline 
+		profileid&The profileID &Uint\\	\hline 
+		uniquenick&The logged in unique nick &String\\	\hline 
+		lt& The login ticket, unknown usage&String\\\hline
+		proof& The proof is something similar to the response but it vary&String\\\hline
+	\end{tabular} 
+	\caption{Buddy status info keys}
+	\label{Buddy status info keys}
+\end{table}
+
 \subsection{Buddy List}
+Buddy list is a list which contains your friends.
+GPCM server will send buddy list when a client is logged in. Process is showing in Fig~\ref{Buddy List} and the response is showing in \ref{Buddy list string}.
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\draw[line] (b)--node [fill = white] {Send Buddy List} (a);
+		\end{tikzpicture}
+	}
+	\caption{Buddy List}
+	\label{Buddy List}
+\end{figure}
+
+\begin{tcolorbox}\label{Buddy list string}
+	\begin{equation}
+	\begin{split}
+	&\backslash bdy \backslash < \text{number of profileid} > \backslash list \backslash \\ &<\text{profileid 1}>,<\text{profileid 2}>,\cdots,<\text{profileid n}>\\
+	&\backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+
 \subsection{Block List}
+Block list is an list which contain the players you do not like.
+GPCM server will send block list when a client is logged in. Process is showing in Fig~\ref{Block List} and the response is showing in \ref{Block list string}.
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\draw[line] (b)--node [fill = white] {Send Block List} (a);
+		\end{tikzpicture}
+	}
+	\caption{Block List}
+	\label{Block List}
+\end{figure}
+
+\begin{tcolorbox}\label{Block list string}
+	\begin{equation}
+	\begin{split}
+	&\backslash blk \backslash < \text{number of profileid} > \backslash list \backslash \\ &<\text{profileid 1}>,<\text{profileid 2}>,\cdots,<\text{profileid n}>\\
+	&\backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
 
 
 
@@ -511,20 +590,23 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports 
 
 \subsection{Search User}
 Client request \ref{Search User Request}.
+
 \begin{tcolorbox}
 	\begin{equation}\label{Search User Request}
 	\begin{split}
-	&\backslash search\backslash\backslash sesskey \backslash \langle \rangle\backslash profileid \backslash \langle \rangle \\ &\backslash namespaceid\backslash \langle \rangle  \backslash partnerid\backslash \langle \rangle\\
-	& \backslash nick \backslash \langle \rangle \backslash uniquenick \backslash \langle \rangle \\ 
-	&\backslash email \backslash \langle \rangle \backslash gamename \backslash \langle \rangle \backslash final \backslash
+	&\backslash search\backslash\backslash sesskey \backslash < >\backslash profileid \backslash < > \\ &\backslash namespaceid\backslash < >  \backslash partnerid\backslash < >\\
+	& \backslash nick \backslash < > \backslash uniquenick \backslash < > \\ 
+	&\backslash email \backslash < > \backslash gamename \backslash < > \backslash final \backslash
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
+
 Server response \ref{Search user response}.
+
 \begin{tcolorbox}
 	\begin{equation}\label{Search user response}
 	\begin{split}
-&\backslash bsr \backslash \langle profileid \rangle \backslash nick \backslash \langle nick \rangle \backslash 
+&\backslash bsr \backslash < profileid > \backslash nick \backslash < nick > \backslash 
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
@@ -534,11 +616,11 @@ This commmand \ref{Create user command} is used to create a user in GameSpy.
 \begin{tcolorbox}
 	\begin{equation}\label{Create user command}
 	\begin{split}
-	&\backslash newuser \backslash email \backslash \langle email \rangle \backslash nick \backslash \langle nick \rangle \\
-	& \backslash passwordenc \backslash \langle passwordenc \rangle 
-	\backslash productid \backslash \langle productid \rangle \\
-	& \backslash gamename \backslash \langle gamename \rangle \backslash uniquenick \backslash \langle uniquenick \rangle \\
-	& \backslash cdkeyenc \backslash \langle cdkeyenc \rangle \backslash partnerid \backslash \langle partnerid \rangle \backslash id \backslash 1 \backslash final \backslash
+	&\backslash newuser \backslash email \backslash < email > \backslash nick \backslash < nick > \\
+	& \backslash passwordenc \backslash < passwordenc > 
+	\backslash productid \backslash < productid > \\
+	& \backslash gamename \backslash < gamename > \backslash uniquenick \backslash < uniquenick > \\
+	& \backslash cdkeyenc \backslash < cdkeyenc > \backslash partnerid \backslash < partnerid > \backslash id \backslash 1 \backslash final \backslash
 	\end{split}	
 	\end{equation}
 \end{tcolorbox}

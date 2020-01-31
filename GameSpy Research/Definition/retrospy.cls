@@ -21,7 +21,7 @@
 \RequirePackage{tikz}
 \RequirePackage{rotating}
 \RequirePackage{tcolorbox}
-
+\RequirePackage{titlesec}
 
 \usetikzlibrary{positioning,fit,calc}
 
@@ -65,3 +65,5 @@
 \renewcommand\maketitlehookc{	
 	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.pdf}
 	\vfill First Edition}
+%create new page for each section
+\newcommand{\sectionbreak}{\clearpage}
