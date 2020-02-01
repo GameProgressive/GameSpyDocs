@@ -478,8 +478,14 @@ the client challenge that was generated before.
 For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 
 \subsection{Buddy Message}
-\subsection{Buddy Status}
-\subsection{Buddy Status Info}
+\subsubsection{UTM}
+\subsubsection{Buddy Revoke}
+\subsubsection{Buddy Status}\label{Buddy Status}
+This is an old method for game to get status information. buddy status \ref{Buddy Status} and buddy status info \ref{Buddy Status Info} can not be used at same time. Buddy status method is a part of Buddy Message module, old game send buddy status through a buddy message.
+
+
+\subsection{Buddy Status Info}\label{Buddy Status Info}
+This is a new method used in new game. \ref{Buddy Status} is an old method used in old game. Currently we can not tell you which game use new method and which use old method.
 \begin{tcolorbox}\label{Buddy status info string}
 	\begin{equation}
 	\begin{split}
@@ -500,12 +506,22 @@ For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 		\hline 
 		bsi & buddy status info command & \\ 		
 		\hline 
-		state & ?&Uint \\
+		state & Buddy status state&Enum \\
 		\hline 
 		profileid&The profileID &Uint\\	\hline 
-		uniquenick&The logged in unique nick &String\\	\hline 
-		lt& The login ticket, unknown usage&String\\\hline
-		proof& The proof is something similar to the response but it vary&String\\\hline
+		bip& Buddy ip &String\\	\hline 
+		bport&Buddy port&Uint\\\hline
+		hostip& Host ip&String\\\hline
+		hprivip&Host private ip&String\\\hline
+		qport&Query port&Uint\\\hline
+		hport&Host port&Uint\\\hline
+		sessflags&Session flag&Uint\\\hline
+		rstatus&Rich status ?&String\\\hline
+		gameType&Game type&String\\\hline
+		gameVnt&Game variant&String\\\hline
+		gameMn&Game map name&String\\\hline
+		product&Productid&uint\\\hline
+		qmodeflags&Quiet mode flag&Enum\\\hline
 	\end{tabular} 
 	\caption{Buddy status info keys}
 	\label{Buddy status info keys}
