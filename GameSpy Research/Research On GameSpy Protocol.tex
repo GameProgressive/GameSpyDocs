@@ -64,8 +64,6 @@ GameSpy SDK contains of  16 modules.
 If a user want to use GameSpy service, the access sequence is listed in Figure~\ref{The access sequence of client} and we describe the detail below.
 \begin{figure}[H]
 	\centering
-	\caption{The access sequence of client}
-	\label{The access sequence of client}
 	\scalebox{0.7}{
 	\begin{tikzpicture}  [node distance = 2cm, auto,transform shape]
 	\node[block] (gpcm) {GPCM};
@@ -95,28 +93,18 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 	
 	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(gstats);
 	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(webserver);
-	
-	
+		
 	\draw[line](sb)--(qr);
-	
-	
 	
 	\draw[line](gameserver)--node [midway, above, sloped] {\circled{\small{6}}}(qr);
 	\draw[line](client)--node [midway, above, sloped] {\circled{\small{8}}}(gameserver);
 	\draw[line](gameserver.west) to [in=190,out=190] node [midway, above, sloped] {\circled{\small{9}}}(cdkey.west);
-	
-	
-	
-	
-	%\node[block,below= of b] (c){GameSpy CDKey};
-	% these are the name of the blocks
-	
-%	\draw[line] ([yshift=15pt]gpcm.west)--node [fill = white] {1.Send server challenge} ([yshift=15pt]client.east);
-%	\draw[line] (client.east)--node [fill = white] {2.Send client challenge} (gpcm.west);
-%	\draw[line] ([yshift=-15pt]gpcm.west)--node [fill = white] {3.Accept or reject} ([yshift=-15pt]client.east);
-	
+
+
 	\end{tikzpicture}  
 }
+	\caption{The access sequence of client}
+	\label{The access sequence of client}
 \end{figure}
 \paragraph{Access sequence explain}
 \begin{enumerate}
