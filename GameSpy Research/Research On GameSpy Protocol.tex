@@ -425,12 +425,12 @@ the client challenge that was generated before.
 		\node[block] (a) {Login Finished};  
 		\node[block,below=20pt of a] (b) {SDKRevision Check};
 		\node[block,below=20pt of b] (c) {Recv Buddy Message};
-		\node[block,right=20pt of c] (d) {Recv Buddy Status};
+		\node[block,right=20pt of c] (d) {Recv Buddy Status Info};
 		\node[block,right=20pt of b] (e) {Recv Buddy Request};
 		\node[block,right=20pt of a] (f) {Recv Buddy Revoke};
 		\node[block,right=20pt of f]  (g) {Recv Buddy List};
 		\node[block,below=20pt of g] (h) {Recv Block List};
-		\node[block,below=20pt of h] (j) {Recv Buddy Status Info};
+
 		\draw[line] (a.south)--(b.north);
 		\draw[line] (b)--(c);
 		\draw[line] (c)--(d);
@@ -438,7 +438,6 @@ the client challenge that was generated before.
 		\draw[line] (e)--(f);
 		\draw[line] (f)--(g);
 		\draw[line] (g)--(h);
-		\draw[line] (h)--(j);
 \end{tikzpicture}
 	}
 	\caption{SDK Revision process}
@@ -478,6 +477,45 @@ the client challenge that was generated before.
 For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 
 \subsection{Buddy Message}
+The Buddy Message is a method to transmit message, buddy add request, game invite, friend revoke(friend deletion), buddy status(online status etc.).
+\begin{figure}[H]
+	\centering
+	\scalebox{0.7}{
+		\begin{tikzpicture}
+		\node[block] (a) {Buddy Message}; 
+		
+
+		\node[block, right= of a](Request) {Request};
+		\node[block, above= of Request] (Message) {Message};
+		\node[block, above= of Message](UTM) {UTM};
+		
+		
+		\node[block, below= of Request](Status) {Status};
+		\node[block, below= of Status](Auth) {Auth};
+		
+
+		\node[block, left= of a](Invite) {Invite};
+		\node[block,above= of Invite](Revoke) {Revoke};
+		\node[block,below= of Invite](Ping) {Ping};
+		\node[block,below= of Ping](Pong) {Pong};
+		
+		\draw[line] (a.west)--(Invite);
+		\draw[line] (a.east)|-(Request);
+		
+		\draw[line] (a.west)--+(-0.5,-0.0)|-(Revoke);
+		\draw[line] (a.west)--+(-0.5,-0.0)|-(Ping);
+		\draw[line] (a.west)--+(-0.5,-0.0)|-(Pong);
+		
+		\draw[line] (a.east)--+(+0.5,-0.0)|-(UTM);
+		\draw[line] (a.east)--+(+0.5,-0.0)|-(Message);
+		\draw[line] (a.east)--+(+0.5,-0.0)|-(Status);
+		\draw[line] (a.east)--+(+0.5,-0.0)|-(Auth);
+		\end{tikzpicture}
+	}
+	\caption{Buddy message module}
+	\label{Buddy message module}
+\end{figure}
+
 \subsubsection{UTM}
 \subsubsection{Buddy Revoke}
 \subsubsection{Buddy Status}\label{Buddy Status}
@@ -489,7 +527,7 @@ This is a new method used in new game. \ref{Buddy Status} is an old method used 
 \begin{tcolorbox}\label{Buddy status info string}
 	\begin{equation}
 	\begin{split}
-	&\backslash bsi \backslash \backslash state\backslash <?> \backslash profile \backslash <profileid>  \\
+	&\backslash bsi \backslash \backslash state\backslash <buddy status> \backslash profile \backslash <profileid>  \\
 	&\backslash bip \backslash <> \backslash bport \backslash <> \backslash hostip \backslash <> \backslash hprivip \backslash <> \\
 	&\backslash qport \backslash <> \backslash hport \backslash <> \backslash sessflags \backslash <> \backslash rstatus \backslash <> \\
 	& \backslash gameType \backslash <> \backslash  gameVnt \backslash <> \backslash gameMn \backslash <> \backslash product \backslash <> \\
