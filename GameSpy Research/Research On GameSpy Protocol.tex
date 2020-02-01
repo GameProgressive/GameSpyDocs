@@ -106,6 +106,7 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 	\caption{The access sequence of client}
 	\label{The access sequence of client}
 \end{figure}
+
 \paragraph{Access sequence explain}
 \begin{enumerate}
 	\item Client access to available check in QR server, which tells client GameSpy back-end server status.
@@ -503,9 +504,45 @@ The Buddy Message is a method to transmit message, buddy add request, game invit
 	\caption{Buddy message module}
 	\label{Buddy message module}
 \end{figure}
+When a Buddy Message received by a client, the client will determine Buddy Message type according to Table~\ref{Buddy Message Definition}.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline 
+		\textbf{Definition}&\textbf{Value} \\ 
+		\hline 
+ GPI\_BM\_MESSAGE&            1\\\hline
+ GPI\_BM\_REQUEST     &               2\\\hline
+ GPI\_BM\_REPLY        &            3  \\\hline
+ GPI\_BM\_AUTH        &             4\\\hline
+ GPI\_BM\_UTM            &            5\\\hline
+ GPI\_BM\_REVOKE      &               6 \\\hline
+ GPI\_BM\_STATUS       &          100			\\\hline			
+ GPI\_BM\_INVITE           &       101\\\hline
+ GPI\_BM\_PING             &      102\\\hline
+ GPI\_BM\_PONG           &          103\\\hline
+ GPI\_BM\_KEYS\_REQUEST        &    104\\\hline
+ GPI\_BM\_KEYS\_REPLY            &   105\\\hline
+ GPI\_BM\_FILE\_SEND\_REQUEST   &  200\\\hline
+ GPI\_BM\_FILE\_SEND\_REPLY      &   201\\\hline
+ GPI\_BM\_FILE\_BEGIN       &      202\\\hline
+ GPI\_BM\_FILE\_END             &   203\\\hline
+ GPI\_BM\_FILE\_DATA             & 204\\\hline
+ GPI\_BM\_FILE\_SKIP          &      205\\\hline
+ GPI\_BM\_FILE\_TRANSFER\_THROTTLE   &206\\\hline
+ GPI\_BM\_FILE\_TRANSFER\_CANCEL&     207\\\hline
+ GPI\_BM\_FILE\_TRANSFER\_KEEPALIVE &208\\\hline
+	\end{tabular} 
+	\caption{Buddy Message Definition}
+	\label{Buddy Message Definition}
+\end{table}
+
 
 \subsubsection{UTM}
+
 \subsubsection{Buddy Revoke}
+
+
 \subsubsection{Buddy Status}\label{Buddy Status}
 This is an old method for game to get status information. buddy status \ref{Buddy Status} and buddy status info \ref{Buddy Status Info} can not be used at same time. Buddy status method is a part of Buddy Message module, old game send buddy status through a buddy message.
 
@@ -603,14 +640,6 @@ GPCM server will send block list when a client is logged in. Process is showing 
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
-
-
-
-
-
-
-
-
 
 
 \section{GameSpy Presence Search Player}
