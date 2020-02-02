@@ -536,15 +536,169 @@ When a Buddy Message received by a client, the client will determine Buddy Messa
 	\caption{Buddy Message Definition}
 	\label{Buddy Message Definition}
 \end{table}
+Because Client1 and Client2 are in NAT network, so they can not connect each other using p2p, so GPCM will forward message for them. The forward diagram shows in Figure~\ref{Buddy message diagram}
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client1};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\node[block,below= of a] (c) {Client2};
+		\draw[line] (a)--node [fill = white] {Client buddy message} (b);
+		\draw[line] (b)|-node [fill=white] {Server buddy message} (c);
+		\end{tikzpicture}
+	}
+	\caption{Buddy message diagram}
+	\label{Buddy message diagram}
+\end{figure}
+All Buddy Message from Client will have same prefix which we show in \ref{Client buddy message prefix}
+
+\begin{tcolorbox}\label{Client buddy message prefix}
+	\begin{equation}
+	\begin{split}
+	&\backslash bm \backslash <\text{buddy message type }>\\
+	&\backslash sesskey \backslash <sesskey>\backslash t \backslash <\text{profileid}>  \backslash \cdots \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{A}
+		\hline 
+		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
+		\hline 
+		bm & Indicate the buddy message command, please see \ref{Buddy Message Definition}&Uint \\ 		
+		\hline 
+		t & Profileid of the receiver&Uint \\
+		\hline 
+		sesskey&The session key of the sender client&Uint\\	\hline
+		msg& The message contents& String\\\hline 
+	\end{tabular} 
+	\caption{Client buddy message command in prefix}
+	\label{Client buddy message command in prefix}
+\end{table}
 
 
+
+All Buddy Message from GPCM will have same prefix which we show in \ref{Buddy message prefix}. The contents in $ \cdots $ is different from each Buddy Message Type.
+\begin{tcolorbox}\label{Buddy message prefix}
+	\begin{equation}
+		\begin{split}
+		&\backslash bm \backslash <\text{buddy message type }>\backslash f \backslash <\text{profileid}> \\
+		&\backslash date \backslash <\text{date}> \backslash \cdots \backslash final \backslash
+		\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{A}
+		\hline 
+		\textbf{Keys}& \textbf{Description}&\textbf{Type}  \\ 
+		\hline 
+		bm & Indicate the buddy message command, please see \ref{Buddy Message Definition}&Uint \\ 		
+		\hline 
+		f & Profileid of the sender&Uint \\
+		\hline 
+		date&The date that this message is sent, this value can be empty, possible format should be $ xxxxxxxx $ e.g. $ 20200201 $&Uint\\	\hline
+		msg& The message contents& String\\\hline 
+	\end{tabular} 
+	\caption{Buddy message command in prefix}
+	\label{Buddy message command in prefix}
+\end{table}
+
+Next following subsections we introduce message contents,  the message content will use in both client buddy message and server buddy message. We only write the message contents after $ \backslash msg \backslash $.
+\subsubsection{Message}
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+& \backslash msg \backslash <message> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
 \subsubsection{UTM}
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash <\text{UTM message}> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
 
-\subsubsection{Buddy Revoke}
-
-
-\subsubsection{Buddy Status}\label{Buddy Status}
+\subsubsection{Request}
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash |signed|<signature> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+\subsubsection{Auth}
+Auth method do not have contents after $ \backslash date \backslash $.
+\subsubsection{Revoke}
+Revoke method is called when a client1 deleted a client2 in his friend list. When deletion is finished in client1, client1 will send revoke message to GPCM, GPCM will forward this message to client2, then client2 will delete player1 in his friend list.
+Revoke method do not have contents after $ \backslash date \backslash $.
+\subsubsection{Status}\label{Buddy Status}
 This is an old method for game to get status information. buddy status \ref{Buddy Status} and buddy status info \ref{Buddy Status Info} can not be used at same time. Buddy status method is a part of Buddy Message module, old game send buddy status through a buddy message.
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash |s|<\text{status}>|ss|<\text{status string}>|ls|<\text{location string}>\\
+	&|ip|<\text{ip address}|p|<\text{port}>|qm|<\text{quiet mode flag}> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+\subsubsection{Invite}
+Invite method is used to invite a player to a game which is currently playing by another player.
+
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash |p|<\text{productid}>|l|<\text{location string}> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+\subsubsection{PING}
+Ping method maybe is used to check the ping to other player. 
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client1};  
+		\node[block,right=150pt of a] (b) {GPCM};
+		\node[block, below= of a] (c) {Cilent2};
+		
+		\draw[line] ([yshift=8]a.east)--node [fill = white] {1.Send PING request} ([yshift=8]b.west);
+		
+		\draw[line] ([xshift=-16]b.south)|-node [fill = white] {2.Forward PING request} ([yshift=8]c.east);
+		
+		\draw[line] ([yshift=-8]c.east)-|node [fill = white] {3. Send Pong Response} ([xshift=16]b.south);
+		
+		\draw[line] ([yshift=-8]b.west)--node [fill = white] {4.Forward PONG response} ([yshift=-8]a.east);
+		\end{tikzpicture}
+	}
+	\caption{PING and PONG diagram}
+	\label{PING and PONG diagram}
+\end{figure}
+
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash <message> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+\subsubsection{PONG}
+
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	& \backslash msg \backslash 1 \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
 
 
 \subsection{Buddy Status Info}\label{Buddy Status Info}
