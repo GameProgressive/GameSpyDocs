@@ -794,8 +794,65 @@ GPCM server will send block list when a client is logged in. Process is showing 
 	\end{split}
 	\end{equation}
 \end{tcolorbox}
+\subsection{Add Buddy}
+When a client want to add another client into his buddy list. He will send the following request to GPCM.
+
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client1};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\node[block, below= of a] (c) {Cilent2};
+		
+		\draw[line] (a.east)--node [fill = white] {1.Send addbuddy request} (b.west);
+		
+		\draw[line] (b.south)|-node [fill = white] {2.Translate addbuddy to bm request} (c.east);
+
+		\end{tikzpicture}
+	}
+	\caption{Add friend diagram}
+	\label{Add friend diagram}
+\end{figure}
 
 
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	&\backslash addbuddy \backslash \backslash sesskey \backslash <\text{session key}> \\
+	&\backslash newprofileid \backslash <\text{profileid}> \backslash reason \backslash <\text{reason}> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
+
+\subsection{Delete Buddy}
+When a client want to delete a friend in his buddy list. He will send the following request to GPCM.
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client1};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\node[block, below= of a] (c) {Cilent2};
+		
+		\draw[line] (a.east)--node [fill = white] {1.Send delbuddy request} (b.west);
+		
+		\draw[line] (b.south)|-node [fill = white] {2.Translate delbuddy to bm revoke} (c.east);
+		
+		\end{tikzpicture}
+	}
+	\caption{Delete friend diagram}
+	\label{Delete friend diagram}
+\end{figure}
+
+\begin{tcolorbox}
+	\begin{equation}
+	\begin{split}
+	&\backslash delbuddy \backslash \backslash sesskey \backslash <session key> \\
+	&\backslash delprofileid \backslash <profileid> \backslash final \backslash
+	\end{split}
+	\end{equation}
+\end{tcolorbox}
 \section{GameSpy Presence Search Player}
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
 
