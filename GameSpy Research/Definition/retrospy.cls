@@ -21,7 +21,9 @@
 \RequirePackage{tikz}
 \RequirePackage{rotating}
 \RequirePackage{tcolorbox}
+	\tcbuselibrary{skins,breakable}
 \RequirePackage{titlesec}
+\RequirePackage{lipsum}
 
 \usetikzlibrary{positioning,fit,calc}
 
@@ -62,7 +64,8 @@
 
 \newcommand{\ServerResponse}{\begin{flushleft}\textbf{Server response:}\end{flushleft}}
 
-\newenvironment{mybox}{\begin{tcolorbox}\centering}{\end{tcolorbox}}
+\newtcolorbox[auto counter, number within=section]{mybox}[1][]{%
+	title=Code~\thetcbcounter, #1}
 
 
 \renewcommand\maketitlehooka{

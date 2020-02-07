@@ -127,7 +127,7 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 In this part, we describe some of the basic patterns that are used in all GameSpy servers.
 
 \section{String Pattern}
-We first introduce the pattern of the string, which is using to make up a request and response.
+We first introduce the pattern of the string, which is used to make up a request and response.
 The following servers do use the pattern: Presence Connection Manager, Presence Search Player, GameSpy Status and Tracking, CD-Key, Query Report(version 1)
 This kind of string represents a value in a request and response sent by the client or the server as Table \ref{String pattern}.\\
 
@@ -185,7 +185,7 @@ The command will end with $ \backslash \backslash $ or $ \backslash $ depends on
 
 \part{GameSpy Presence \& Messaging}
 \par Presence \& Messaging system allows a game to add account authentication or registration, which includes a profile where personal information could be stored (such as email, first name), a friend list (called buddies), private messages.
-\par GameSpy Presence contains two server, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP).
+\par GameSpy Presence contains two servers, GameSpy Presence Connection Manager (GPCM) and GameSpy Presence Search Player (GPSP).
 GPCM is a server that manages the profiles (such as login, storing the profile information).
 
 \chapter{Common Information}
@@ -264,7 +264,7 @@ We show the login communication diagram in Fig~\ref{Login diagram}
 		\node[block] (a) {Client};  
 		\node[block,right=200pt of a] (b) {GPCM};
 		\draw[line] ([yshift=15]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15]a.east);
-		\draw[line] (a.east)--node [fill = white] {2.Send client challenge} (b.west);
+		\draw[line] (a.east)--node [fill = white] {2.Send client request} (b.west);
 		\draw[line] ([yshift=-15]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15]a.east);
 		\end{tikzpicture}
 	}
@@ -276,20 +276,15 @@ We show the login communication diagram in Fig~\ref{Login diagram}
 	\textbf{Server initial Challenge:\\}
 \end{flushleft}
 When a client is connected to GPCM server, GPCM Server will send a challenge to client. The challenge string shows in \ref{server challenge1} and \ref{server challenge2}. However we do not know the correct functionality of \ref{server challenge2}.
-\begin{tcolorbox}
-	\begin{equation}\label{server challenge1}
-	\begin{split}
-	\backslash lc \backslash 1 \backslash challenge \backslash < > \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
-\begin{tcolorbox}
-	\begin{equation}\label{server challenge2}
-	\begin{split}
-	\backslash lc \backslash 1 \backslash challenge \backslash < > 	\backslash nur \backslash\backslash userid \backslash < > \backslash profileid \backslash < > \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+
+\begin{mybox}[label=server challenge1]
+	\tbs lc\tbs 1\tbs challenge\tbs<challenge string>\tbs final\tbs
+\end{mybox}
+
+\begin{mybox}[label=server challenge2]
+	\tbs lc\tbs 1\tbs challenge\tbs<challenge string>\tbs nur\tbs\tbs userid\tbs<user id>\\
+	\tbs profileid\tbs<profile id>\tbs final\tbs
+\end{mybox}
 
 \begin{itemize}
 	\item{challenge: }The challenge string sent by GPCM.
@@ -313,7 +308,7 @@ When a client is connected to GPCM server, GPCM Server will send a challenge to 
 \end{table}	
 
 \begin{flushleft}
-	\textbf{Client Login Challenge:\\}
+	\textbf{Client Login Request:\\}
 \end{flushleft}
 There are three ways of login:
 \begin{itemize}
@@ -564,10 +559,12 @@ Because Client1 and Client2 are in NAT network, so they can not connect each oth
 All Buddy Message from Client will have same prefix which we show in \ref{Client buddy message prefix}
 \ClientRequest
 
-\begin{mybox}\label{Client buddy message prefix}
+\begin{mybox}[label=Client buddy message prefix]
 	\tbs bm\tbs <buddy message type>\tbs sesskey\tbs <session key>\\
 	\tbs t\tbs<profile id>\tbs date\tbs<date>\tbs$ \cdots $\tbs final\tbs
 \end{mybox}
+
+
 
 \begin{table}[H]
 	\centering
@@ -591,7 +588,7 @@ All Buddy Message from Client will have same prefix which we show in \ref{Client
 All Buddy Message from GPCM will have same prefix which we show in \ref{Buddy message prefix}. The contents in $ \cdots $ is different from each Buddy Message Type.
 \ServerResponse
 
-\begin{mybox}\label{Buddy message prefix}
+\begin{mybox}[label=Buddy message prefix]
 	\tbs bm\tbs <buddy message type>\tbs f\tbs<profile id>\tbs date\tbs<date>\tbs$ \cdots $\tbs final\tbs
 \end{mybox}
 
@@ -705,7 +702,7 @@ This is a new method used in new game. \ref{Buddy Status} is an old method used 
 
 \ServerResponse
 
-\begin{mybox}\label{Buddy status info string}
+\begin{mybox}[label=Buddy status info string]
 	\tbs bsi\tbs\tbs state\tbs <buddy status>\tbs profile\tbs<profileid>\tbs bip\tbs<buddy ip>\\
 	\tbs bport\tbs<buddy port>\tbs hostip\tbs <host ip>\tbs hprivip\tbs<host private ip>\\
 	\tbs qport\tbs<query port>\tbs hport\tbs<host port>\tbs sessflags\tbs<session flags>\\
@@ -785,9 +782,8 @@ GPCM server will send block list when a client is logged in. Process is showing 
 
 \ServerResponse
 
-\begin{mybox}\label{Block list string}
-\tbs blk\tbs <number of profile id>\tbs list\tbs<profileid 1>,
-\\<profileid 2>,$ \cdots $,<profileid n>\tbs final\tbs
+\begin{mybox}[label=Block list string]
+\tbs blk\tbs <number of profile id>\tbs list\tbs<profileid 1>,<profileid 2>,$ \cdots $,\\<profileid n>\tbs final\tbs
 \end{mybox}
 
 \subsection{Add Buddy}
@@ -1471,11 +1467,17 @@ server challenge message length (bigger than 38-byte)
 server challenge length (bigger than 20-byte)
 $ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
 
+\part{Chat Server}
+
+
+
+
+
 
 \begin{appendix}
-\part{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}
-\part{Gstats Initial Encryption}
-\part{CDKey Server Initial Encryption}
+\chapter{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}
+\chapter{Gstats Initial Encryption}
+\chapter{CDKey Server Initial Encryption}
 \end{appendix}
 
 
