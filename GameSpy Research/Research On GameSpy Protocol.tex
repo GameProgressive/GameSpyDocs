@@ -136,7 +136,7 @@ This kind of string represents a value in a request and response sent by the cli
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-		$ \backslash key \backslash < value > \backslash $& The key is $ key $, the value of the key is $  value  $  \\ 
+		\tbs \textbf{key}\tbs\textbf{value}\tbs& The key is \textbf{key}, the value of the key is \textbf{value}  \\ 
  		\hline
 	\end{tabular} 
 	\caption{String pattern}
@@ -151,9 +151,9 @@ This kind of string represents a key value pair in the request or response strin
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-		$ \backslash pid \backslash  13  \backslash $& The key is $ pid $, the value of the $ pid $ is $  13  $  \\ 
+		\tbs pid\tbs  13\tbs & The key is \textbf{pid}, the value of the \textbf{pid} is 13  \\ 
 		\hline
-		$ \backslash userid \backslash  0  \backslash $& The key is $ userid $, the value of the $ userid $ is $  0  $  \\ 
+		\tbs userid\tbs  0\tbs & The key is \textbf{userid}, the value of the  \textbf{userid} is 0  \\ 
 		\hline
 	\end{tabular} 
 	\caption{Value string}
@@ -173,7 +173,7 @@ The command will end with $ \backslash \backslash $ or $ \backslash $ depends on
 		\hline 
 		\textbf{String}&\textbf{Description}  \\ 
 		\hline 
-		$ \backslash command \backslash\backslash $& This is a command \\ 		
+		\tbs command\tbs\tbs& This is a command \\ 		
 		\hline
 	\end{tabular} 
 	\caption{Command string}
@@ -252,10 +252,9 @@ Error response string for (GPCM, GPSP):
 \backslash error \backslash\backslash err \backslash < error code > \backslash fatal\backslash\backslash errmsg \backslash < error message > \backslash id\backslash 1 \backslash final \backslash
 \end{split}	
 \end{equation}
-\subsection{Login Command $ \backslash login \backslash $}
+\subsection{Login}
 We show the login communication diagram in Fig~\ref{Login diagram}
 \begin{figure}[H]
-	
 	\scalebox{0.8}{
 		\begin{tikzpicture}
 		\node[block] (a) {Client};  
@@ -269,7 +268,9 @@ We show the login communication diagram in Fig~\ref{Login diagram}
 \label{Login diagram}
 \end{figure}
 
-\myparagraph{1. Server initial Challenge}
+\begin{flushleft}
+	\textbf{Server initial Challenge:\\}
+\end{flushleft}
 When a client is connected to GPCM server, GPCM Server will send a challenge to client. The challenge string shows in \ref{server challenge1} and \ref{server challenge2}. However we do not know the correct functionality of \ref{server challenge2}.
 \begin{tcolorbox}
 	\begin{equation}\label{server challenge1}
@@ -306,7 +307,10 @@ When a client is connected to GPCM server, GPCM Server will send a challenge to 
 	\caption{The first type login response}
 	\label{The first type login response}	
 \end{table}	
-\myparagraph{2. Client Login Challenge}
+
+\begin{flushleft}
+	\textbf{Client Login Challenge:\\}
+\end{flushleft}
 There are three ways of login:
 \begin{itemize}
 	\item AuthToken: Logging using an alphanumeric string that represents an user.
@@ -369,7 +373,7 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 \end{table}
 
 
-\myparagraph{3. Server Response}
+\ServerResponse
 
 When received client's login request, server check the challenge and proof. if client pass the check, server will first send response\ref{server login response lc2} and then it will send friend list friend status, message, add friend request.
 \begin{tcolorbox}
@@ -552,15 +556,12 @@ Because Client1 and Client2 are in NAT network, so they can not connect each oth
 	\label{Buddy message diagram}
 \end{figure}
 All Buddy Message from Client will have same prefix which we show in \ref{Client buddy message prefix}
+\ClientRequest
 
-\begin{tcolorbox}\label{Client buddy message prefix}
-	\begin{equation}
-	\begin{split}
-	&\backslash bm \backslash <\text{buddy message type }>\\
-	&\backslash sesskey \backslash <sesskey>\backslash t \backslash <\text{profileid}>  \backslash \cdots \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\begin{mybox}\label{Client buddy message prefix}
+	\tbs bm\tbs <buddy message type>\tbs sesskey\tbs <session key>\\
+	\tbs t\tbs<profile id>\tbs date\tbs<date>\tbs$ \cdots $\tbs final\tbs
+\end{mybox}
 
 \begin{table}[H]
 	\centering
@@ -582,14 +583,11 @@ All Buddy Message from Client will have same prefix which we show in \ref{Client
 
 
 All Buddy Message from GPCM will have same prefix which we show in \ref{Buddy message prefix}. The contents in $ \cdots $ is different from each Buddy Message Type.
-\begin{tcolorbox}\label{Buddy message prefix}
-	\begin{equation}
-		\begin{split}
-		&\backslash bm \backslash <\text{buddy message type }>\backslash f \backslash <\text{profileid}> \\
-		&\backslash date \backslash <\text{date}> \backslash \cdots \backslash final \backslash
-		\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
+
+\begin{mybox}\label{Buddy message prefix}
+	\tbs bm\tbs <buddy message type>\tbs f\tbs<profile id>\tbs date\tbs<date>\tbs$ \cdots $\tbs final\tbs
+\end{mybox}
 
 \begin{table}[H]
 	\centering
@@ -608,32 +606,30 @@ All Buddy Message from GPCM will have same prefix which we show in \ref{Buddy me
 	\label{Buddy message command in prefix}
 \end{table}
 
-Next following subsections we introduce message contents,  the message content will use in both client buddy message and server buddy message. We only write the message contents after $ \backslash msg \backslash $.
+Next following subsections we introduce message contents,  the message content will use in both client buddy message and server buddy message. We only write the message contents after \tbs msg\tbs.
 \subsubsection{Message}
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-& \backslash msg \backslash <message> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+This is a general message
+
+\begin{mybox}
+	\tbs msg\tbs<message content>\tbs final\tbs
+\end{mybox}
+
+
 \subsubsection{UTM}
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash <\text{UTM message}> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+
+\begin{mybox}
+	\tbs msg\tbs<UTM message>\tbs final\tbs
+\end{mybox}
+
 
 \subsubsection{Request}
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash |signed|<signature> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+This is a add friend request.
+\ServerResponse
+
+\begin{mybox}
+	\tbs msg\tbs|signed|<signature>\tbs final\tbs
+\end{mybox}
+
 \subsubsection{Auth}
 Auth method do not have contents after $ \backslash date \backslash $.
 \subsubsection{Revoke}
@@ -641,24 +637,25 @@ Revoke method is called when a client1 deleted a client2 in his friend list. Whe
 Revoke method do not have contents after $ \backslash date \backslash $.
 \subsubsection{Status}\label{Buddy Status}
 This is an old method for game to get status information. buddy status \ref{Buddy Status} and buddy status info \ref{Buddy Status Info} can not be used at same time. Buddy status method is a part of Buddy Message module, old game send buddy status through a buddy message.
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash |s|<\text{status}>|ss|<\text{status string}>|ls|<\text{location string}>\\
-	&|ip|<\text{ip address}|p|<\text{port}>|qm|<\text{quiet mode flag}> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs msg\tbs|s|<status code>|ss|<status string>|ls|<location string>\\
+	|ip|<ip address>|p|<port>|qm|<quiet mode flag>\tbs final\tbs
+\end{mybox}
+
+
 \subsubsection{Invite}
 Invite method is used to invite a player to a game which is currently playing by another player.
 
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash |p|<\text{productid}>|l|<\text{location string}> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ClientRequest
+
+\begin{mybox}
+	\tbs msg\tbs|p|<product id>|l|<location string>\tbs final\tbs
+\end{mybox}
+
+
+
 \subsubsection{PING}
 Ping method maybe is used to check the ping to other player. 
 \begin{figure}[H]
@@ -682,38 +679,33 @@ Ping method maybe is used to check the ping to other player.
 	\label{PING and PONG diagram}
 \end{figure}
 
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash <message> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ClientRequest
+
+\begin{mybox}
+	\tbs msg\tbs\tbs final\tbs
+\end{mybox}
 
 \subsubsection{PONG}
 
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	& \backslash msg \backslash 1 \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
 
+\begin{mybox}
+	\tbs msg\tbs 1\tbs final\tbs
+\end{mybox}
 
 \subsection{Buddy Status Info}\label{Buddy Status Info}
 This is a new method used in new game. \ref{Buddy Status} is an old method used in old game. Currently we can not tell you which game use new method and which use old method.
-\begin{tcolorbox}\label{Buddy status info string}
-	\begin{equation}
-	\begin{split}
-	&\backslash bsi \backslash \backslash state\backslash <buddy status> \backslash profile \backslash <profileid>  \\
-	&\backslash bip \backslash <> \backslash bport \backslash <> \backslash hostip \backslash <> \backslash hprivip \backslash <> \\
-	&\backslash qport \backslash <> \backslash hport \backslash <> \backslash sessflags \backslash <> \backslash rstatus \backslash <> \\
-	& \backslash gameType \backslash <> \backslash  gameVnt \backslash <> \backslash gameMn \backslash <> \backslash product \backslash <> \\
-	& \backslash qmodeflags \backslash <> \backslash final \backslash 
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+
+
+\ServerResponse
+
+\begin{mybox}\label{Buddy status info string}
+	\tbs bsi\tbs\tbs state\tbs <buddy status>\tbs profile\tbs<profileid>\tbs bip\tbs<buddy ip>\\
+	\tbs bport\tbs<buddy port>\tbs hostip\tbs <host ip>\tbs hprivip\tbs<host private ip>\\
+	\tbs qport\tbs<query port>\tbs hport\tbs<host port>\tbs sessflags\tbs<session flags>\\
+	\tbs rstatus\tbs<rich status>\tbs gameType\tbs<game type>\tbs gameVnt\tbs<game variant>\tbs gameMn\tbs<game map name>\tbs product\tbs<productid>\\
+	\tbs qmodeflags\tbs<quiet mode flags>\tbs final\tbs
+\end{mybox}
 
 \begin{table}[H]
 	\centering
@@ -760,14 +752,13 @@ GPCM server will send buddy list when a client is logged in. Process is showing 
 	\label{Buddy List}
 \end{figure}
 
-\begin{tcolorbox}\label{Buddy list string}
-	\begin{equation}
-	\begin{split}
-	&\backslash bdy \backslash < \text{number of profileid} > \backslash list \backslash \\ &<\text{profileid 1}>,<\text{profileid 2}>,\cdots,<\text{profileid n}>\\
-	&\backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
+
+\begin{mybox}
+	\label{Buddy list string}
+	\tbs bdy\tbs<number of profileid>\tbs list\tbs<profileid 1>,
+	\\<profileid 2>,$ \cdots $,<profileid n>\tbs final\tbs
+\end{mybox}
 
 
 \subsection{Block List}
@@ -786,14 +777,13 @@ GPCM server will send block list when a client is logged in. Process is showing 
 	\label{Block List}
 \end{figure}
 
-\begin{tcolorbox}\label{Block list string}
-	\begin{equation}
-	\begin{split}
-	&\backslash blk \backslash < \text{number of profileid} > \backslash list \backslash \\ &<\text{profileid 1}>,<\text{profileid 2}>,\cdots,<\text{profileid n}>\\
-	&\backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
+
+\begin{mybox}\label{Block list string}
+\tbs blk\tbs <number of profile id>\tbs list\tbs<profileid 1>,
+\\<profileid 2>,$ \cdots $,<profileid n>\tbs final\tbs
+\end{mybox}
+
 \subsection{Add Buddy}
 When a client want to add another client into his buddy list. He will send the following request to GPCM.
 
@@ -815,15 +805,12 @@ When a client want to add another client into his buddy list. He will send the f
 	\label{Add friend diagram}
 \end{figure}
 
+\ClientRequest
 
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	&\backslash addbuddy \backslash \backslash sesskey \backslash <\text{session key}> \\
-	&\backslash newprofileid \backslash <\text{profileid}> \backslash reason \backslash <\text{reason}> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\begin{mybox}
+	\tbs addbuddy\tbs\tbs sesskey\tbs<session key>\tbs newprofileid\tbs<profile id>\\
+	\tbs reason\tbs<add friend reason>\tbs final\tbs
+\end{mybox}
 
 \subsection{Delete Buddy}
 When a client want to delete a friend in his buddy list. He will send the following request to GPCM.
@@ -845,14 +832,31 @@ When a client want to delete a friend in his buddy list. He will send the follow
 	\label{Delete friend diagram}
 \end{figure}
 
-\begin{tcolorbox}
-	\begin{equation}
-	\begin{split}
-	&\backslash delbuddy \backslash \backslash sesskey \backslash <session key> \\
-	&\backslash delprofileid \backslash <profileid> \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\begin{mybox}
+	\tbs delbuddy\tbs\tbs sesskey\tbs <session key>\tbs delprofileid\tbs <profile id>\tbs final\tbs
+\end{mybox}
+
+
+\subsection{Profile}
+\subsubsection{Get Profile Information}
+Find a user's profile information.\\
+
+
+\ClientRequest
+
+\begin{mybox}
+	\tbs getprofile\tbs\tbs sesskey\tbs <session key>\\
+	\tbs profileid\tbs <profile id>\tbs id\tbs <id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs pi\tbs\tbs profileid\tbs <profile id>\tbs nick\tbs <nick name>\\\tbs uniquenick\tbs <uniquenick>\tbs id\tbs <operation id>\tbs final\tbs
+\end{mybox}
+
+
+
+
 \section{GameSpy Presence Search Player}
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
 

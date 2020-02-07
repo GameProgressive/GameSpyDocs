@@ -56,6 +56,13 @@
 \newcolumntype{A}{|M{2cm}|M{7cm}|M{1cm}|}
 \newcolumntype{B}{|M{2cm}|M{8cm}|}
 
+\newcommand{\tbs}{\textbackslash}
+\newcommand{\bs}{\backslash}
+\newcommand{\ClientRequest}{\begin{flushleft}\textbf{Client request:}\end{flushleft}}
+
+\newcommand{\ServerResponse}{\begin{flushleft}\textbf{Server response:}\end{flushleft}}
+
+\newenvironment{mybox}{\begin{tcolorbox}\centering}{\end{tcolorbox}}
 
 
 \renewcommand\maketitlehooka{
