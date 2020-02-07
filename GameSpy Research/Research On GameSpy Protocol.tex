@@ -211,7 +211,7 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the  IP and Ports of G
 \chapter{GameSpy Presence Connection Manager}
 
 
-\subsection{Request For GameSpy Presence Connection Manager}
+\section{Request Command of GameSpy Presence Connection Manager}
 Table \ref{Request For GameSpy Presence Connection Manager} lists the request (known by us) that clients send to GameSpy Presence Connection Manager server (GPCM).
 \begin{table}[H]
 	\centering
@@ -859,6 +859,7 @@ Find a user's profile information.
 
 
 \chapter{GameSpy Presence Search Player}
+GPSP server provides search function for client.\\
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
 
 \begin{figure}[H]
@@ -876,27 +877,18 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports 
 \end{figure}
 
 \subsection{Search User}
-Client request \ref{Search User Request}.
+\ClientRequest 
 
-\begin{tcolorbox}
-	\begin{equation}\label{Search User Request}
-	\begin{split}
-	&\backslash search\backslash\backslash sesskey \backslash < >\backslash profileid \backslash < > \\ &\backslash namespaceid\backslash < >  \backslash partnerid\backslash < >\\
-	& \backslash nick \backslash < > \backslash uniquenick \backslash < > \\ 
-	&\backslash email \backslash < > \backslash gamename \backslash < > \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\begin{mybox}
+	\tbs search\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs <profile id>\tbs nick\tbs<nick name>\tbs uniquenick\tbs<unique nick name>\tbs email\tbs<email>\tbs gamename \tbs<game name>\tbs final\tbs
+\end{mybox}
 
-Server response \ref{Search user response}.
 
-\begin{tcolorbox}
-	\begin{equation}\label{Search user response}
-	\begin{split}
-&\backslash bsr \backslash < profileid > \backslash nick \backslash < nick > \backslash 
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs bsr\tbs<profile id>\tbs nick\tbs<nick>\tbs final\tbs
+\end{mybox}
 
 \subsubsection{User Creation}
 This commmand \ref{Create user command} is used to create a user in GameSpy.

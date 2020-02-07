@@ -68,6 +68,7 @@
 	title=Code~\thetcbcounter, #1}
 
 
+
 \renewcommand\maketitlehooka{
 	\pagestyle{empty}
 	\centering
