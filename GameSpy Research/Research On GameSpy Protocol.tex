@@ -17,7 +17,7 @@
 %\mainmatter %%表示文章的正文部分，在生成目录后将从第一页开始
 \part{Introduction}
 
-\chapter{The History of GameSpy}
+\chapter{History of GameSpy}
 
 \chapter{Related Works}
 
@@ -60,7 +60,7 @@ GameSpy SDK contains of  16 modules.
 		\item GameSpy SAKE Storage (SAKE)
 	\end{itemize}
 
-\chapter{The Access Sequence of Client}
+\chapter{Access Sequence of The Client}
 If a user want to use GameSpy service, the access sequence is listed in Figure~\ref{The access sequence of client} and we describe the detail below.
 \begin{figure}[H]
 	\centering
@@ -107,18 +107,18 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 	\label{The access sequence of client}
 \end{figure}
 \begin{flushleft}
-\textbf{Access sequence explain:}
+\textbf{Explanation of access sequence}
 \end{flushleft}
 
 \begin{enumerate}
-	\item Client access to available check in QR server, which tells client GameSpy back-end server status.
-	\item Client access GPCM or GPSP to check their account and login.
-	\item Client access to CDKey to verify his cd-key in login phase.
-	\item Client login to Chat server.
-	\item Client retrieve player data(level, exp, etc.) from GStats(old game use this server to store player data, new game use Web Server to store player data).
+	\item Client checks in QR server, which tells client GameSpy back-end server status.
+	\item Client accesses GPCM or GPSP to check their account and login.
+	\item Client accesses to CDKey to verify his cd-key in login phase.
+	\item Client logins to Chat server.
+	\item Client retrieves player data(level, exp, etc.) from GStats(old game use this server to store player data, new game use Web Server to store player data).
 	\item When a game server is launched it will send heartbeat to QR server to tell QR its information.
-	\item Client access to SB to search online game server.
-	\item Client login to game server with his information and cd-key.
+	\item Client accesses to SB to search online game server.
+	\item Client logins to game server with his information and cd-key.
 	\item Game server will check his cd-key by accessing to CDKey server, after every information is verified, client should be able to play their game.
 \end{enumerate}
 
