@@ -73,4 +73,4 @@
 	\includegraphics[width=5cm]{Pictures/GameSpylogoindustries.pdf}
 	\vfill First Edition}
 %create new page for each section
-\newcommand{\sectionbreak}{\clearpage}
+%\newcommand{\sectionbreak}{\clearpage}
