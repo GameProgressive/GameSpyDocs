@@ -969,7 +969,7 @@ This method will register a new unique nick. There are two request \ref{register
 \begin{mybox}
 	\tbs rc\tbs final\tbs
 \end{mybox}
-
+\subsection{GPI Peer Module}
 \subsection{GPI Transfer Module}
 
 
@@ -992,46 +992,178 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports 
 	\label{GPSP diagram}
 \end{figure}
 
-\subsection{Search User}
+\section{Search Profile}
 \ClientRequest 
 
 \begin{mybox}
-	\tbs search\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs <profile id>\tbs nick\tbs<nick name>\tbs uniquenick\tbs<unique nick name>\tbs email\tbs<email>\tbs gamename \tbs<game name>\tbs final\tbs
+	\tbs search\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs <profile id>\tbs $\star$\\\tbs namespaceid\tbs<namespace id>\tbs partnerid\tbs<partner id>\\\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
+
+Symbol $\star$ contains client detail, we list client detail as follows.
+\begin{mybox}
+	\tbs nick\tbs<nick name>\tbs uniquenick\tbs <unique nick>\tbs email\tbs<email>\\\tbs firstname\tbs<first name>\tbs lastname\tbs<last name>\tbs icquin\tbs <icq uin>\\\tbs skip\tbs<skip>
 \end{mybox}
 
 
 \ServerResponse
 
+\begin{mybox}[label = search user response]
+	\tbs bsr\tbs\textbf{<profile 1>}\tbs bsr\tbs\textbf{<profile 2>}\tbs bsr\tbs $\cdots$\tbs \textbf{<profile n>}\\
+	\tbs bsrdone\tbs\tbs more\tbs<number of rest profiles>\tbs final\tbs
+\end{mybox}
+The value in \textbf{<profile i>} is showing below \ref{content after bsr}.
+\begin{mybox}[label = content after bsr]
+<profileid>\tbs nick\tbs<nick>\tbs uniquenick\tbs<unique nick>\\\tbs namepaceid\tbs <namespace id>\tbs firstname\tbs<first name>\\\tbs lastname\tbs<last name>\tbs email\tbs<email>
+\end{mybox}
+\subsection{Seach Profile With Unique Nick}
+\ClientRequest
 \begin{mybox}
-	\tbs bsr\tbs<profile id>\tbs nick\tbs<nick>\tbs final\tbs
+	\tbs searchunique\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs<profile id>\\\tbs uniquenick\tbs<unique nick>\tbs namespaces\tbs<namespace id 1,\\ namespace id 2, ..., namespace id n>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+The response from server is the same as \ref{search user response}.
+\subsection{Search User Is Valid}
+\ClientRequest
+
+\begin{mybox}
+	\tbs valid\tbs\tbs email\tbs<email>\tbs partnerid\tbs<partner id>\tbs final\tbs
 \end{mybox}
 
-\subsubsection{User Creation}
-This commmand \ref{Create user command} is used to create a user in GameSpy.
-\begin{tcolorbox}
-	\begin{equation}\label{Create user command}
-	\begin{split}
-	&\backslash newuser \backslash email \backslash < email > \backslash nick \backslash < nick > \\
-	& \backslash passwordenc \backslash < passwordenc > 
-	\backslash productid \backslash < productid > \\
-	& \backslash gamename \backslash < gamename > \backslash uniquenick \backslash < uniquenick > \\
-	& \backslash cdkeyenc \backslash < cdkeyenc > \backslash partnerid \backslash < partnerid > \backslash id \backslash 1 \backslash final \backslash
-	\end{split}	
-	\end{equation}
-\end{tcolorbox}
+\ServerResponse
 
-The description of each parameter string is shown in Table \ref{User creation string}.
-This is the response that server sends to client:
-\begin{tcolorbox}
-\begin{equation}
-	\begin{split}
-	&\backslash bsr \backslash <profileid> \backslash nick \backslash <nick>	\backslash uniquenick \backslash <uniquenick> \\
-	&\backslash namespaceid \backslash <namespaceid>\backslash firstname \backslash <firstname> \\ 
-	&\backslash lastname \backslash <lastname>\backslash email \backslash <email> \\
-	&\backslash bsrdone \backslash <gamespy enc determinator> \backslash final \backslash
-	\end{split}
-\end{equation}
-\end{tcolorbox}
+Number 0 represents false, 1 represents true.
+\begin{mybox}
+	\tbs vr\tbs <valid code: 0 or 1>\tbs final \tbs
+\end{mybox}
+
+\subsection{Search Nick}
+This method is used to search profile with nick name and email.
+\ClientRequest
+
+\begin{mybox}
+	\tbs nicks\tbs\tbs email\tbs <email>\tbs passenc\tbs<encrypted password>\\\tbs namespaceid\tbs <namespace id>\tbs partnerid\tbs<partner id>\\\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+
+\begin{mybox}
+	\tbs nr\tbs\tbs nick\tbs<data 1>\tbs<data 2>\tbs $\cdots$\tbs <data n> \tbs ndone\tbs final\tbs
+\end{mybox}
+The content in \textbf{<data i>} shows below.
+\begin{mybox}
+	 <nick name>\tbs uniquenick \tbs<unique nick>
+\end{mybox}
+
+\subsection{Search Player}
+
+\ClientRequest
+
+\begin{mybox}
+	\tbs pmatch\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs<profile id>\\\tbs productid\tbs <product id>\tbs gamename\tbs <game name>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+\begin{mybox}
+	\tbs psr\tbs <data 1>\tbs psr\tbs<data 2>\tbs $\cdots$\tbs psr\tbs <data n>\tbs psrdone\tbs final\tbs
+\end{mybox}
+The content in \textbf{<data i>} shows below.
+\begin{mybox}
+	<profile id>\tbs status\tbs<status string>\tbs nick\tbs<nick name>\\\tbs statuscode\tbs<status code>
+\end{mybox}
+
+
+\subsection{Search Check}
+This method is used to check whether user exist.
+\ClientRequest
+
+\begin{mybox}
+	\tbs check\tbs\tbs nick\tbs <nick name>\tbs email\tbs<email>\tbs partnerid\tbs <partner id>\\\tbs passenc\tbs<encrypted password>\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+The error code in \ref{search check response} shows in .
+\begin{mybox}[label = search check response]
+	\tbs cur\tbs<check error code>\tbs pid\tbs <profile id>\tbs final\tbs
+\end{mybox}
+
+\subsection{User Creation}
+This commmand \ref{Create user command} is used to create a user in GameSpy.
+\ClientRequest
+
+\begin{mybox}[label = Create user command]
+\tbs newuser\tbs email \tbs <email>\tbs nick\tbs < nick name> \\
+\tbs passwordenc\tbs <password enc>\tbs productid\tbs <product id>\\\tbs uniquenick\tbs <unique nick>
+\tbs cdkeyenc\tbs <cdkeyenc>\\\tbs partnerid\tbs <partnerid>\tbs gamename\tbs <gamename>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+The newuser error code shows in .
+\begin{mybox}
+	\tbs nur\tbs<newuser error code>\tbs pid\tbs <profile id>\tbs final\tbs
+\end{mybox}
+
+\subsection{Search Others Buddy}
+\ClientRequest
+
+\begin{mybox}
+	\tbs others\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs<profile id>\tbs namespaceid\tbs <namespace id>\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+GPSP should try to find the information, if some account do not have unique nick then do not add \tbs uniquenick\tbs<unique nick>\tbs to response string.
+\begin{mybox}
+\tbs others\tbs\tbs o\tbs<data 1>\tbs o\tbs <data 2>\tbs $\cdots$\tbs <data n>\tbs odone\tbs final\tbs
+\end{mybox}
+The content in \textbf{<data i>} is listed as follows.
+\begin{mybox}
+	<profile id>\tbs nick\tbs <nick name>\tbs uniquenick\tbs<unique nick>\\\tbs first\tbs<first name>\tbs last\tbs <last name>\tbs email\tbs<email>
+\end{mybox}
+
+
+\subsection{Search Others Buddy List}
+Client send request to GPSP asking for the buddy's profiles with buddy profile id.
+\ClientRequest
+
+\begin{mybox}
+	\tbs otherslist\tbs\tbs sesskey\tbs <session key>\tbs profileid\tbs<profile id>\\
+	\tbs numopids\tbs<number of recieved buddy profiles>\\
+	\tbs opids\tbs <profile id 1>|<profile id 2>|$\cdots$|<profile id 3>\\
+	\tbs namespaceid\tbs <namespace id>\tbs gamename\tbs <game name>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs otherslist\tbs\tbs o\tbs<data 1>\tbs o\tbs<data 2>\tbs $\cdots$\tbs <data n>\tbs odone\tbs final\tbs
+\end{mybox}
+The content in \textbf{<data i>} is listed as follows.
+\begin{mybox}
+	<profile id>\tbs uniquenick\tbs <unique nick>
+\end{mybox}
+
+
+
+\subsection{Search Suggest Unique}
+
+Client search nick name on GPSP.
+
+\ClientRequest
+\begin{mybox}
+	\tbs uniquesearch\tbs\tbs preferrednick\tbs<unique nick name>\\
+	\tbs namespaceid\tbs<namespace id>\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+\begin{mybox}
+	\tbs us\tbs<number of suggest nick>\tbs nick\tbs <nick name1>\\
+	\tbs nick\tbs<nick name2>\tbs $\cdots$\tbs nick\tbs <nick name n>\tbs usdone\tbs final\tbs
+\end{mybox}
+
+
+
+
+
+
+
+
+
 
 \part{Persistent Storage}
 \part{Transport}
