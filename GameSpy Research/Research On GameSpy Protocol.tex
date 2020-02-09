@@ -317,30 +317,20 @@ There are three ways of login:
 	\item User: Logging with nickname, email and password.
 \end{itemize}
 We show the common part of login request in \ref{Common string}
-\begin{tcolorbox}
-	\begin{equation}\label{Common string}
-	\begin{split}
-	&\backslash login \backslash \backslash challenge \backslash <  > \backslash \star
-	\backslash userid \backslash <  > 
-	\\& \backslash profileid \backslash <  > \backslash partnerid \backslash <  > \backslash response \backslash <  > 
-	\\&
-	\backslash firewall \backslash 1 \backslash port \backslash <  > \backslash productid \backslash  <  > 
-	\\& \backslash gamename \backslash <  > \backslash namespaceid \backslash <  > 
-	\\& \backslash  sdkrevision \backslash <  > \backslash quiet \backslash <  > \backslash id \backslash  \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
-Where the value of $ \star $ in \ref{Common string} depending on which login method user is using.
-\begin{tcolorbox}
-	\begin{equation}
-		\begin{split}
-		&\backslash authtoken \backslash <  > \backslash \\
-		&\backslash uniquenick \backslash <  > \backslash\\
-		&\backslash user \backslash <  > \backslash
-		\end{split}
-	\end{equation}
-\end{tcolorbox}
 
+\begin{mybox}[label=Common string]
+	\tbs login\tbs\tbs challenge\tbs<challenge string>\tbs $\star$\tbs userid\tbs<user id>\\
+	\tbs profileid\tbs <profile id>\tbs partnerid\tbs<partner id>\\
+	\tbs response\tbs<challenge response string>\tbs firewall\tbs<firewall flag>\\\tbs port\tbs<port>\tbs productid\tbs<product id>\tbs gamename\tbs<game name>\\\tbs sdkrevision\tbs<sdk revision number>\tbs quiet\tbs<quiet mode flag>\\\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+
+Where the value of $ \star $ in \ref{Common string} depending on which login method user is using.
+
+\begin{mybox}
+	\tbs authtoken\tbs<authentication token>\tbs\\
+	\tbs uniquenick\tbs<uniquenick name>\tbs\\
+	\tbs user\tbs<nick name+@+email>\tbs
+\end{mybox}
 \begin{table}[H]
 	\centering
 	\begin{tabular}{A}
@@ -375,15 +365,10 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 \ServerResponse
 
 When received client's login request, server check the challenge and proof. if client pass the check, server will first send response\ref{server login response lc2} and then it will send friend list friend status, message, add friend request.
-\begin{tcolorbox}
-	\label{server login response lc2}
-	\begin{equation}
-	\begin{split}
-	&\backslash lc \backslash 2 \backslash sesskey \backslash < > \backslash userid \backslash < > \backslash profileid \backslash < > \\
-	&\backslash uniquenick \backslash < > \backslash lt \backslash < > \backslash proof \backslash < > \backslash final \backslash
-	\end{split}
-	\end{equation}
-\end{tcolorbox}
+
+\begin{mybox}[label=server login response lc2]
+	\tbs lc\tbs 2\tbs sesskey\tbs<session key>\tbs userid\tbs<user id>\tbs uniquenick\tbs <unique nick>\tbs lt\tbs<login ticket>\tbs<challenge proof>\tbs final\tbs
+\end{mybox}
 
 \begin{table}[H]
 	\centering
@@ -436,7 +421,7 @@ the client challenge that was generated before.
 	\label{SDK Revision process}
 \end{figure}
 	When a player finished login, GPCM will check his sdkrevision, sdkrevision is an addition of each sdkrevision number. Every addition of sdkrevision number will make GPCM act differently.
-\begin{tcolorbox}
+\begin{mybox}
 	\begin{itemize}
 		\item Extended message support
 		\begin{itemize}
@@ -464,7 +449,7 @@ the client challenge that was generated before.
 	\end{itemize}
 
 	\end{itemize}
-\end{tcolorbox}
+\end{mybox}
 
 For now, we know the sdkrevision number of GameSpy SDK test and Crysis2.
 
@@ -833,6 +818,7 @@ When a client want to delete a friend in his buddy list. He will send the follow
 	\caption{Delete friend diagram}
 	\label{Delete friend diagram}
 \end{figure}
+\ClientRequest
 
 \begin{mybox}
 	\tbs delbuddy\tbs\tbs sesskey\tbs <session key>\tbs delprofileid\tbs <profile id>\tbs final\tbs
@@ -846,15 +832,145 @@ Find a user's profile information.
 \ClientRequest
 
 \begin{mybox}
-	\tbs getprofile\tbs\tbs sesskey\tbs <session key>\\
-	\tbs profileid\tbs <profile id>\tbs id\tbs <id>\tbs final\tbs
+	\tbs getprofile\tbs\tbs sesskey\tbs <session key>
+	\tbs profileid\tbs <profile id>\\\tbs id\tbs <operation id>\tbs final\tbs
 \end{mybox}
 \ServerResponse
 
 \begin{mybox}
-	\tbs pi\tbs\tbs profileid\tbs <profile id>\tbs nick\tbs <nick name>\\\tbs uniquenick\tbs <uniquenick>\tbs id\tbs <operation id>\tbs final\tbs
+	\tbs pi\tbs\tbs profileid\tbs <profile id>\tbs nick\tbs <nick name>\\\tbs uniquenick\tbs <uniquenick>\tbs email\tbs<email>\tbs firstname\tbs<first name>\\
+	\tbs lastname\tbs <last name>\tbs icquin\tbs<icquin>\\
+	\tbs homepage\tbs<home page URL>\tbs zipcode\tbs<zip code>\\
+	\tbs countrycode\tbs<country code>\tbs lon\tbs <longitude>\tbs lat\tbs<latitude>\\
+	\tbs loc\tbs<location>\tbs birthday\tbs<birthday>\tbs sex\tbs<gender>\\
+	\tbs pmask\tbs<public mask>\tbs aim\tbs<aim name>\tbs pic\tbs <picture>\\
+	\tbs occ\tbs<occupation id>\tbs ind\tbs<industry id>\tbs inc\tbs<income id>\\
+	\tbs mar\tbs<married id>\tbs chc\tbs<child count number>\tbs i1\tbs<interest 1>\\
+	\tbs  o1\tbs<ownership 1>\tbs conn\tbs<connection type id>\\
+	\tbs sig\tbs<peer to peer signature>\tbs id\tbs <operation id>\tbs final\tbs
 \end{mybox}
 
+Keys in profile module:
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline 
+		\textbf{Key}&\textbf{Description} \\ 
+		\hline 
+		cpubrandid&            cpu barand id\\\hline
+		cpuspeed& cpu speed\\\hline
+		memory&memory\\\hline
+		videocard1ram& GPU memory size\\\hline
+		videocard2ram& GPU memory size\\\hline
+		connectionid&connection id\\\hline
+		connectionspeed&connection speed\\\hline
+		hasnetwork& unknow\\\hline
+		passwordenc& encrypted password\\\hline
+	\end{tabular} 
+	\caption{Other keys in profile}
+	\label{Other keys in profile}
+\end{table}
+
+\subsubsection{Update Profile Information}
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\draw[line] (a)--node [fill = white] {Send update profile request} (b);
+		\end{tikzpicture}
+	}
+	\caption{Update profile diagram}
+	\label{Update profile diagram}
+\end{figure}
+\ClientRequest
+
+\begin{mybox}[label = update profile request]
+	\tbs updatepro\tbs\tbs sesskey\tbs<session key>\tbs $\star$\tbs partnerid\tbs<partner id>\\\tbs final\tbs
+\end{mybox}
+The $\star$ in \ref{update profile request} is the profile information key and value pairs such as\textbf{ \tbs nick\tbs<nick name>\tbs}, etc.
+\subsubsection{Update User Information}
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GPCM};
+		\draw[line] (a)--node [fill = white] {Send update profile request} (b);
+		\end{tikzpicture}
+	}
+	\caption{Update user diagram}
+	\label{Update user diagram}
+\end{figure}
+\ClientRequest
+The $\star$ in \ref{update user request} is the profile information key and value pairs such as \textbf{\tbs passwordenc\tbs<encrypted password>\tbs}, etc.
+\begin{mybox}[label = update user request]
+	\tbs updateui\tbs\tbs sesskey\tbs<session key>\tbs $\star$\tbs final\tbs
+\end{mybox}
+
+
+
+\subsection{GPI Profile Module}
+
+\subsubsection{Create New Profile}
+Create a new profile with nick name.
+\ClientRequest
+
+\begin{mybox}
+	\tbs newprofile\tbs\tbs sesskey\tbs <session key>\tbs nick\tbs <nick name>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+\subsubsection{Replace Existed Profile}
+Replace nick name in a profile with a new nick name.
+\ClientRequest
+
+\begin{mybox}
+\tbs newprofile\tbs\tbs sesskey\tbs <session key>\tbs nick\tbs <old nick name>\tbs replace\tbs 1\\\tbs oldnick\tbs<nick name>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+
+\subsubsection{Delete Profile}
+\ClientRequest
+
+\begin{mybox}
+	\tbs delprofile\tbs\tbs sesskey\tbs<session key>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs dpr\tbs final\tbs
+\end{mybox}
+
+
+
+\subsection{GPI Unique Module}
+
+\subsubsection{Register Unique Nick}
+This method will register a new unique nick. There are two request \ref{register uniquenick1} and \ref{register uniquenick2}. The first one is only register unique nick, and the second one is register unique nick with cd key.
+\ClientRequest
+\begin{mybox}[label=register uniquenick1]
+	\tbs registernick\tbs\tbs sesskey\tbs<session key>\tbs uniquenick\tbs<unique nick>\\\tbs partnerid\tbs<partner id>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+\begin{mybox}[label=register uniquenick2]
+	\tbs registernick\tbs\tbs sesskey\tbs<session key>\tbs uniquenick\tbs<unique nick>\\\tbs cdkey\tbs<cd key>\tbs partnerid\tbs<partner id>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+\begin{mybox}
+	\tbs rn\tbs final\tbs
+\end{mybox}
+
+
+\subsubsection{Register CD Key}
+\ClientRequest
+\begin{mybox}
+	\tbs registercdkey\tbs\tbs sesskey\tbs<session key>\tbs partnerid\tbs <partner id>\tbs id\tbs <operation id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+\begin{mybox}
+	\tbs rc\tbs final\tbs
+\end{mybox}
+
+\subsection{GPI Transfer Module}
 
 
 
