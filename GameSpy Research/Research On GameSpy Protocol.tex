@@ -1806,12 +1806,31 @@ $ \backslash final \backslash $ is not encrypted using XOR Enctype1 at the end o
 
 \section{Authenticate Player}
 
+\subsection{Authenticate Player With Partner Information}
 \ClientRequest
-
 \begin{mybox}
-\tbs authp\tbs\tbs pid\tbs <profile id>\tbs response\tbs<challenge response string>\\
-\tbs lid\tbs<local id>\tbs final\tbs
+	\tbs authp\tbs\tbs authtoken\tbs<authtoken string>\\\tbs resp\tbs response\tbs<response string>\tbs lid\tbs <local id>\tbs final\tbs
 \end{mybox}
+\ServerResponse
+
+Server response is the same as \ref{gstats player auth server response}.
+\subsection{Authenticate Player With Presence Connection Manager}
+\ClientRequest
+\begin{mybox}
+	\tbs authp\tbs\tbs pid\tbs<profile id>\tbs resp\tbs<response string>\tbs lid\tbs <local id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+Server response is the same as \ref{gstats player auth server response}.
+\subsection{Authenticate Player With CD Key Hash}
+\ClientRequest
+\begin{mybox}
+	\tbs authp\tbs\tbs nick\tbs<nick name>\tbs keyhash\tbs<cd key hash>\tbs resp\tbs <response string>\tbs lid\tbs<local id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+Server response is the same as \ref{gstats player auth server response}.
+
 The challenge response string here is calculated from password and the connection id.
 xor challenge base string will be 0x38F371E6(decimal: 955478502)
 \begin{mybox}
@@ -1841,20 +1860,13 @@ the calculation for resopnse string is connid xor 0x38F371E6
 	\tbs pauthr\tbs <profile id>\tbs lid\tbs <local id>\tbs final\tbs
 \end{mybox}
 
-\section{Authenticate Player With Partner Information}
-\ClientRequest
-\begin{mybox}
-	\tbs authp\tbs\tbs authtoken\tbs<authtoken string>\\\tbs resp\tbs response\tbs<response string>\tbs lid\tbs <local id>\tbs final\tbs
-\end{mybox}
-\ServerResponse
 
-Server response is the same as \ref{gstats player auth server response}.
 
 \section{Get Profileid}
-
+Client can get profile id by searching his cd-key hash in GSTATS server.
 \ClientRequest
 \begin{mybox}
-	\tbs getpid\tbs\tbs nick\tbs <nick name>\tbs keyhash\tbs<cd key hash>\tbs lid\tbs <local id>\tbs final\tbs
+	\tbs getpid\tbs\tbs nick\tbs <nick name>\tbs keyhash\tbs<cd key hash>\tbs lid\tbs <local id>\\\tbs final\tbs
 \end{mybox}
 
 \ServerResponse
@@ -1871,8 +1883,22 @@ Server response is the same as \ref{gstats player auth server response}.
 \ServerResponse
 
 \begin{mybox}
-\tbs getpdr\tbs <profile id>\tbs lid\tbs<local id>\tbs mod\tbs<?>\tbs length\tbs<? length>\tbs data\tbs <player data>\tbs final\tbs
+\tbs getpdr\tbs <profile id>\tbs lid\tbs<local id>\tbs mod\tbs<?>\tbs length\tbs<? length>\\\tbs data\tbs <player data>\tbs final\tbs
 \end{mybox}
+
+\begin{table}
+	\centering
+\begin{tabular}{|l|p{8cm}|}
+	\hline
+	\textbf{Enum name}&\textbf{Description}\\\hline
+	pd\_private\_ro& Readable only by the authenticated client it belongs to, can only by set on the server.\\\hline
+	pd\_private\_rw& Readable only by the authenticated client it belongs to, set by the authenticated client it belongs to.\\\hline
+	pd\_public\_ro& Readable by any client, can only be set on the server.\\\hline
+	pd\_public\_rw& Readable by any client, set by the authenicated client is belongs to.\\\hline
+\end{tabular}
+	\caption{Persist storage enumerator}
+\label{Persist storage enumerator}
+\end{table}
 
 \section{New Game}
 Creates a new game for logging and registers it with the stats server. 
@@ -1918,13 +1944,13 @@ New version:
 Server only records the data.
 
 
-\chapter{GameSpy Persist Storage}
-\section{Introduction}
+\section{GameSpy Persist Storage}
+\subsection{Introduction}
 If you store your data in key\value delimited pairs, GetPersistDataValues will
 allow you to easily retrieve a subset of the stored data. To retrieve the entire
 data set, use GetPersistData. The data will be returned as a null-terminated string,
 unless no data is available (in which case len will be 0 in the callback).
-\section{Parameter}
+\subsection{Parameter}
 \begin{itemize}
 	\item localid: Your game-specific reference number for this player, returned in the callback
 	to allow you to identify which player it is referring to.
