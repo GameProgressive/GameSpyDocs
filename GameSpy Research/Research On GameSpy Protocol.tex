@@ -219,30 +219,30 @@ Table \ref{Request For GameSpy Presence Connection Manager} lists the request (k
 		\hline 
 		\textbf{Commands}&\textbf{Description}  \\ 
 		\hline 
-		$\backslash inviteto \backslash$& Invite friends\\ 		
+		 inviteto& Invite friends\\ 		
 		\hline 
-		$\backslash login \backslash$&Login to GPCM \\
+		 login &Login to GPCM \\
 		\hline
- 		$\backslash getprofile \backslash$&	Get the profile of a player (including your own)\\
+ 		 getprofile &	Get the profile of a player (including your own)\\
  		\hline
-		$\backslash addbuddy \backslash$& Add a player to my friend list \\
+		 addbuddy & Add a player to my friend list \\
 		\hline
-		$\backslash delbuddy \backslash$ & Delete a player from my friend list \\
+		delbuddy  & Delete a player from my friend list \\
 		\hline
-		$\backslash updateui \backslash$& Update login information (email, password) \\
+		updateui & Update login information (email, password) \\
 		\hline
-		$\backslash updatepro \backslash$& Update my profile such as first name, last name, gender etc. \\
+		updatepro & Update my profile such as first name, last name, gender etc. \\
 		\hline
-		$\backslash logout \backslash$& Logout manually by user\\
+		 logout & Logout manually by user\\
 		\hline
-		$\backslash status \backslash$& Update the status of a user (Such as what game is the player playing) \\
+		status& Update the status of a user (Such as what game is the player playing) \\
 		\hline
-		$\backslash ka \backslash$& Keep client or session alive \\ \hline
-		$\backslash bm \backslash$& Message command \\
+		ka & Keep client or session alive \\ \hline
+		 bm & Message command \\
 		\hline 
-		$ \backslash blk \backslash $& Block list \\ \hline
-		$ \backslash bdy \backslash $ & Friend list \\ \hline
-		$ \backslash lt \backslash $& Login ticket \\ \hline
+		 blk & Block list \\ \hline
+		bdy  & Friend list \\ \hline
+		 lt & Login ticket \\ \hline
 	\end{tabular} 
 	\caption{Request For GameSpy Presence Connection Manager}
 	\label{Request For GameSpy Presence Connection Manager}
@@ -1106,7 +1106,7 @@ The newuser error code shows in .
 \ClientRequest
 
 \begin{mybox}
-	\tbs others\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs<profile id>\tbs namespaceid\tbs <namespace id>\tbs gamename\tbs<game name>\tbs final\tbs
+	\tbs others\tbs\tbs sesskey\tbs<session key>\tbs profileid\tbs<profile id>\\\tbs namespaceid\tbs <namespace id>\tbs gamename\tbs<game name>\tbs final\tbs
 \end{mybox}
 \ServerResponse
 GPSP should try to find the information, if some account do not have unique nick then do not add \tbs uniquenick\tbs<unique nick>\tbs to response string.
@@ -1143,7 +1143,7 @@ The content in \textbf{<data i>} is listed as follows.
 
 \subsection{Search Suggest Unique}
 
-Client search nick name on GPSP.
+Client search suggest nick name on GPSP.
 
 \ClientRequest
 \begin{mybox}
@@ -1339,9 +1339,9 @@ Server, Player and Team
 \\
 
 NOTE: In the heartbeat, we are always querying the current known keys, so
-rather than being "customkey\_one$\backslash$0customkey\_one\_data$\backslash$0" it's just "customkey\_one$\backslash$0$\backslash$0"
+rather than being "customkey\_one\tbs0customkey\_one\_data\tbs0" it's just "customkey\_one\tbs0\tbs0"
 \\
-(Each key is delimited by $\backslash$0)
+(Each key is delimited by \tbs0)
 \\
 B. Check queries (Process any new query)
 \\
@@ -1692,7 +1692,104 @@ A new key is added to the data to send:
 \part{Web Authentication}
 
 \part{GameSpy Status \& Tracking}
-when game connect to GSTATS server, server will send an message to game which contains the challenge, the total length of message must bigger than 38bytes, and the challenge must bigger than 20bytes.
+\chapter{General Introduction}
+\section{Working Process}
+\begin{enumerate}
+	\item On startup, the host connects to tracking server, is authenticated, and is assigned a unique connection ID. If disk logging is enabled (see below) and there are logged games, they are sent to the tracking server. 
+	\item When the actual game starts, the host sends a new game notification to the tracking server and creates internal structures for managing the game information. 
+	\item During the game the host collects information into buckets (or developer's own data structures) and sends out snapshots at regular intervals (in case the host is reset before the game finishes) 
+	\item (If player authentication is used) As players connect, the host sends out a challenge to the client, which formats a response based on its password or CD Key. This response is sent back to the host and stored as part of the snapshot. 
+	\item When the game is complete, a final snapshot is sent to the tracking server. 
+	\item A new game can be started immediately over the same connection (multiple simultaneous games over the same tracking server connection are supported as well). 
+	\item The tracking server post-processes the data to extract some standard information and verify the authentication of the players. Disk logged or unusual games are marked for inspection. 
+\end{enumerate}
+\section{Message Encryption}
+The GameSpy Stats \& Tracking (GSTATS) SDK provides a simple, secure way to report the results and statistics of games to a central server. These results can then be used to help facilitate online rankings, ladders, and tournaments. Tracking is done in a very abstract manner than can be applied to any type of multiplayer game.\\
+The communication between client and GSTATS server is encrypted under an simple XOR method. After encrypted the message look like \ref{gstats encrypted message}.
+
+\begin{mybox}[label = gstats encrypted message]
+	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\tbs final\tbs
+\end{mybox}
+
+
+\section{Client Command}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{B}
+		\hline
+		\textbf{Command}&\textbf{Description}\\\hline
+		auth~[\ref{gstats authentication}]& Authentication request\\\hline
+		updgame&Sends a snapshot of information about the current game.\\\hline
+		authp& Authenticates player\\\hline
+		getpd& Gets persist data values modified\\\hline
+		getpid& Ge sprofile id\\\hline
+		newgame& Creates a new game for logging and registers it with the stats server.\\\hline
+		
+		
+	\end{tabular}
+\caption{GSTATS client request command}
+\label{GSTATS client request command}
+\end{table}
+\section{Server IP and Port}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline 
+		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
+		\hline 
+		GSTATS&gamestats.gamespy.com&29920 \\ 
+		\hline 
+	\end{tabular} 
+	\caption{IP and Ports for GameSpy status and tracking}
+	\label{IP and Ports for GameSpy status and tracking}
+\end{table}
+
+
+\chapter{Protocol Detail}
+\section{Authentication}\label{gstats authentication}
+
+
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node[block] (a) {Client};  
+		\node[block,right=200pt of a] (b) {GSTATS};
+		\draw[line] ([yshift=15]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15]a.east);
+		\draw[line] (a.east)--node [fill = white] {2.Send client request} (b.west);
+		\draw[line] ([yshift=-15]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15]a.east);
+		\end{tikzpicture}
+	}
+	\caption{GSTATS authentication diagram}
+	\label{GSTATS authentication diagram}
+\end{figure}
+
+\ServerChallenge
+
+\begin{mybox}
+	\tbs challenge\tbs<challenge string>\tbs final\tbs
+\end{mybox}
+
+
+\ClientRequest
+
+\begin{mybox}[label = gstats auth request]
+	\tbs auth\tbs\tbs gamename\tbs<game name>\tbs response\tbs<response string>\\
+	\tbs port\tbs<game port>\tbs id\tbs<operation id>\tbs final\tbs
+\end{mybox}
+The response string in\ref {gstats auth request} is computed using the secrete key~\ref{GameSpy Secret Key} of the client.\\
+
+\ServerResponse
+
+\begin{mybox}
+	\tbs sesskey\tbs<session key>\tbs final\tbs
+\end{mybox}
+
+Session key should be Uint number.
+
+when game wants to use the connect to GSTATS server, server will send an message to game which contains the challenge, the total length of message must bigger than 38bytes, and the challenge must bigger than 20bytes.
 when game received the challenge it will compute a response, the response is formed as follows. 
 response = CRC32(<server challenge>,<length of server challenge>)||<game secret key>
 then game will compute the MD5 hash as MD5value = MD5(<response>,<length of response>)
@@ -1705,9 +1802,150 @@ connction id = transfer ascii of sessionkey to integer
 the initialization phase is finished.
 server challenge message length (bigger than 38-byte)
 server challenge length (bigger than 20-byte)
-$ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
+$ \backslash final \backslash $ is not encrypted using XOR Enctype1 at the end of the challenge that sends by the server.
 
-\part{Chat Server}
+\section{Authenticate Player}
+
+\ClientRequest
+
+\begin{mybox}
+\tbs authp\tbs\tbs pid\tbs <profile id>\tbs response\tbs<challenge response string>\\
+\tbs lid\tbs<local id>\tbs final\tbs
+\end{mybox}
+The challenge response string here is calculated from password and the connection id.
+xor challenge base string will be 0x38F371E6(decimal: 955478502)
+\begin{mybox}
+int temp = connid xor 0x38F371E6\\
+string challenge;\\
+string result;\\
+for( int i=0; i<challenge.Lenth; i++ )\\
+\{\\
+	result+=( i + 17 + challenge[i]);\\
+\}
+\end{mybox}
+the calculation for resopnse string is connid xor 0x38F371E6
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Game name}&\textbf{Secret key}\\\hline
+		Crysis2&8TTq4M\\\hline
+	\end{tabular}
+	\caption{Player authenticate response string}
+	\label{Player authenticate response string}
+\end{table}
+
+\ServerResponse
+
+\begin{mybox}[label = gstats player auth server response]
+	\tbs pauthr\tbs <profile id>\tbs lid\tbs <local id>\tbs final\tbs
+\end{mybox}
+
+\section{Authenticate Player With Partner Information}
+\ClientRequest
+\begin{mybox}
+	\tbs authp\tbs\tbs authtoken\tbs<authtoken string>\\\tbs resp\tbs response\tbs<response string>\tbs lid\tbs <local id>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+Server response is the same as \ref{gstats player auth server response}.
+
+\section{Get Profileid}
+
+\ClientRequest
+\begin{mybox}
+	\tbs getpid\tbs\tbs nick\tbs <nick name>\tbs keyhash\tbs<cd key hash>\tbs lid\tbs <local id>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+
+\begin{mybox}
+	\tbs getpidr\tbs <profile id>\tbs lid\tbs<local id>\tbs final\tbs
+\end{mybox}
+
+\section{Get Player Data}
+\ClientRequest
+\begin{mybox}
+	\tbs getpd\tbs pid\tbs<profile id>\tbs ptype\tbs<persist storage type>\tbs dindex\tbs <data index>\tbs keys
+\end{mybox}
+\ServerResponse
+
+\begin{mybox}
+\tbs getpdr\tbs <profile id>\tbs lid\tbs<local id>\tbs mod\tbs<?>\tbs length\tbs<? length>\tbs data\tbs <player data>\tbs final\tbs
+\end{mybox}
+
+\section{New Game}
+Creates a new game for logging and registers it with the stats server. 
+Creates all the game structures, including buckets if needed.
+\ClientRequest
+
+\begin{mybox}
+	\tbs newgame\tbs\tbs connid\tbs<connection id>\tbs sesskey\tbs<session key>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+
+\begin{mybox}
+	内容...
+\end{mybox}
+
+\section{Set Persist Data Helper}
+\ClientRequest
+\begin{mybox}
+	\tbs setpd\tbs pid\tbs<profile id>\tbs ptype\tbs <persist storage type> \tbs dindex\tbs<data index>\tbs kv\tbs<player key value data>\tbs lid\tbs <local id>\tbs length\tbs<size of game defined data>\tbs final\tbs
+\end{mybox}
+\ServerResponse
+
+\begin{mybox}
+	\tbs setpdr\tbs<success or fail>\tbs lid\tbs<local id>\tbs pid\tbs <profile id>\tbs mod\tbs <modified time>\tbs final\tbs
+\end{mybox}
+
+\section{Update Game Snapshot}
+\ClientRequest
+
+Old version:
+\begin{mybox}
+	\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs done\tbs<final flag>\tbs gamedata\tbs <game data>\tbs final\tbs
+\end{mybox}
+
+New version:
+\begin{mybox}
+		\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs connid\tbs<connection id>\tbs done\tbs<final flag>\tbs gamedata\tbs <game data>\tbs final\tbs
+\end{mybox}
+
+\ServerResponse
+
+Server only records the data.
+
+
+\chapter{GameSpy Persist Storage}
+\section{Introduction}
+If you store your data in key\value delimited pairs, GetPersistDataValues will
+allow you to easily retrieve a subset of the stored data. To retrieve the entire
+data set, use GetPersistData. The data will be returned as a null-terminated string,
+unless no data is available (in which case len will be 0 in the callback).
+\section{Parameter}
+\begin{itemize}
+	\item localid: Your game-specific reference number for this player, returned in the callback
+	to allow you to identify which player it is referring to.
+	\item profileid: The profileid of the player whose data you are looking up. 
+	Returned by gpIDFromProfile() in the Presence \& Messaging SDK, or using GetProfileIDFromCD
+\item	type: The type of persistent data you are looking up
+\item	index: Each profile can have multiple persistent data records associated with them. Usually you
+	just want to use index 0.
+\item	modifiedsince: A time value to limit the request for data. Data will only be returned if it has been
+	modified since the time provided. If data has not been modified since that time, the callback will be
+	called with a success value that indicates it is unmodified.
+Note: modification time is tracked for the given profileid/index, not on a per-persisttype or per-key basis
+	keys: A "\tbs" delimited list of the keys you want returned (for example: "\tbs clan\tbs color\tbs homepage\tbs birthday")
+	PersDataCallbackFn: Callback that will be called with the data when it is returned
+	instance: Pointer that will be passed to the callback function (for your use)
+\end{itemize}
+
+
+
+
+\part{GameSpy Chat Server}
 
 
 
@@ -1718,6 +1956,18 @@ $ \backslash final \backslash $ is encrypted using XOR Enctype1 at the end of th
 \chapter{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}
 \chapter{Gstats Initial Encryption}
 \chapter{CDKey Server Initial Encryption}
+\chapter{GameSpy Secret Key}\label{GameSpy Secret Key}
+If a game is using GameSpy service, GameSpy will issue  a secret key to the game, which length is at 5-byte. The secret key that GameSpy issued is not the traditional secret key in public-key cryptography, actually it is an key for simple symmetric encryption.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\textbf{Game name}&\textbf{Secret key}\\\hline
+		Crysis2&8TTq4M\\\hline
+  \end{tabular}
+\caption{Secret key example}
+\label{Secret key example}
+\end{table}
 \end{appendix}
 
 

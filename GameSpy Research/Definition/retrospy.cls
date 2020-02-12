@@ -59,10 +59,12 @@
 \newcolumntype{B}{|M{2cm}|M{8cm}|}
 
 \newcommand{\tbs}{\textbackslash}
-\newcommand{\bs}{\backslash}
+
 \newcommand{\ClientRequest}{\begin{flushleft}\textbf{Client request:}\end{flushleft}}
 
 \newcommand{\ServerResponse}{\begin{flushleft}\textbf{Server response:}\end{flushleft}}
+
+\newcommand{\ServerChallenge}{\begin{flushleft}\textbf{Server challenge:}\end{flushleft}}
 
 \newtcolorbox[auto counter, number within=section]{mybox}[1][]{%
 	title=Code~\thetcbcounter, #1}
