@@ -1163,11 +1163,39 @@ Client search suggest nick name on GPSP.
 
 
 
-
-
-\part{Persistent Storage}
 \part{Transport}
+
+
+
+
+
+
 \part{NAT Negotation}
+
+\begin{figure}[H]
+	\centering
+	\scalebox{0.8}{
+		\begin{tikzpicture}
+		\node [block]  (a) at (5,5){NATNEG};
+		\node [block] (b) at (0,0){Client 1};
+		\node [block](c) at (10,0){Client 2};
+		
+		\draw[line] ([xshift = -15]a.south)--node [midway, below, sloped] {Client2 connect request} ([xshift=10]b.north);
+		
+		\draw[line] ([xshift=-10]b.north)--node [midway, above, sloped] {Heat beat} ([xshift = -35]a.south);
+		
+		\draw[line] ([xshift =15]a.south)--node[midway, below, sloped] {Client 1 connect request} ([xshift=-10]c.north);
+		\draw[line] ([xshift=10]c.north) -- node[midway, above, sloped] {Heart beat} ([xshift=35]a.south);
+		
+		
+		\draw[line] ([yshift=8]b.east)--node[fill=white]{Connect to each other}([yshift=8]c.west);
+		
+		\draw[line] ([yshift=-8]c.west)--node[fill=white]{Connect to each other}([yshift=-8]b.east);
+		
+		\end{tikzpicture}
+	}
+\end{figure}
+
 Three matchup servers: natneg1. natnet2. natneg3.
 
 IP: natneg1.gamespy.com or natneg2.gamespy.com or natneg3.gamespy.com
@@ -1693,6 +1721,10 @@ A new key is added to the data to send:
 
 \part{GameSpy Status \& Tracking}
 \chapter{General Introduction}
+\section{Note}
+Game uses GSTATS to store its data only using email and passwords login method in GPCM. So we do not need to consider namespaceid, we only need to find profileid.
+
+
 \section{Working Process}
 \begin{enumerate}
 	\item On startup, the host connects to tracking server, is authenticated, and is assigned a unique connection ID. If disk logging is enabled (see below) and there are logged games, they are sent to the tracking server. 
@@ -1918,12 +1950,13 @@ Creates all the game structures, including buckets if needed.
 \section{Set Persist Data Helper}
 \ClientRequest
 \begin{mybox}
-	\tbs setpd\tbs pid\tbs<profile id>\tbs ptype\tbs <persist storage type> \tbs dindex\tbs<data index>\tbs kv\tbs<player key value data>\tbs lid\tbs <local id>\tbs length\tbs<size of game defined data>\tbs final\tbs
+	\tbs setpd\tbs pid\tbs<profile id>\tbs ptype\tbs <persist storage type> \tbs dindex\tbs<data index>\tbs kv\tbs<key value flag>\tbs lid\tbs <local id>\tbs length\tbs<size of game defined data>\tbs final\tbs
 \end{mybox}
+
 \ServerResponse
 
 \begin{mybox}
-	\tbs setpdr\tbs<success or fail>\tbs lid\tbs<local id>\tbs pid\tbs <profile id>\tbs mod\tbs <modified time>\tbs final\tbs
+	\tbs setpdr\tbs<success or fail>\tbs lid\tbs<local id>\tbs pid\tbs <profile id>\\\tbs mod\tbs <modified time>\tbs final\tbs
 \end{mybox}
 
 \section{Update Game Snapshot}
@@ -1931,12 +1964,12 @@ Creates all the game structures, including buckets if needed.
 
 Old version:
 \begin{mybox}
-	\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs done\tbs<final flag>\tbs gamedata\tbs <game data>\tbs final\tbs
+	\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs done\tbs<final flag>\\\tbs gamedata\tbs <game data>\tbs final\tbs
 \end{mybox}
 
 New version:
 \begin{mybox}
-		\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs connid\tbs<connection id>\tbs done\tbs<final flag>\tbs gamedata\tbs <game data>\tbs final\tbs
+		\tbs updgame\tbs\tbs sesskey\tbs<session key>\tbs connid\tbs<connection id>\\\tbs done\tbs<final flag>\tbs gamedata\tbs <game data>\tbs final\tbs
 \end{mybox}
 
 \ServerResponse
@@ -1944,13 +1977,13 @@ New version:
 Server only records the data.
 
 
-\section{GameSpy Persist Storage}
-\subsection{Introduction}
+\part{GameSpy Persist Storage}
+\chapter{Introduction}
 If you store your data in key\value delimited pairs, GetPersistDataValues will
 allow you to easily retrieve a subset of the stored data. To retrieve the entire
 data set, use GetPersistData. The data will be returned as a null-terminated string,
 unless no data is available (in which case len will be 0 in the callback).
-\subsection{Parameter}
+\chapter{Parameter}
 \begin{itemize}
 	\item localid: Your game-specific reference number for this player, returned in the callback
 	to allow you to identify which player it is referring to.
