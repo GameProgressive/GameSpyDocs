@@ -84,21 +84,21 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 	
 	
 	%%%%%%%%%%%lines%%%%%%%%%%%%%
-	\draw[line] (client)--node [midway, above, sloped] {\circled{\small{2}}}(gpcm);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{2}}}(gpsp);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{3}}}(cdkey);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{4}}}(chat);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{1}}} (qr);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{7}}}(sb);
+	\draw[line] (client)--node [midway, above] {\circled{\small{2}}}(gpcm);
+	\draw[line](client)--node [midway, left] {\circled{\small{2}}}(gpsp);
+	\draw[line](client)--node [midway, above] {\circled{\small{3}}}(cdkey);
+	\draw[line](client)--node [midway, above] {\circled{\small{4}}}(chat);
+	\draw[line](client)--node [midway, above] {\circled{\small{1}}} (qr);
+	\draw[line](client)--node [midway, above] {\circled{\small{7}}}(sb);
 	
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(gstats);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{5}}}(webserver);
+	\draw[line](client)--node [midway, left] {\circled{\small{5}}}(gstats);
+	\draw[line](client)--node [midway, above] {\circled{\small{5}}}(webserver);
 		
 	\draw[line](sb)--(qr);
 	
-	\draw[line](gameserver)--node [midway, above, sloped] {\circled{\small{6}}}(qr);
-	\draw[line](client)--node [midway, above, sloped] {\circled{\small{8}}}(gameserver);
-	\draw[line](gameserver.west) to [in=190,out=190] node [midway, above, sloped] {\circled{\small{9}}}(cdkey.west);
+	\draw[line](gameserver)--node [midway, above] {\circled{\small{6}}}(qr);
+	\draw[line](client)--node [midway, right] {\circled{\small{8}}}(gameserver);
+	\draw[line](gameserver.west) to [in=190,out=190] node [midway, right] {\circled{\small{9}}}(cdkey.west);
 
 
 	\end{tikzpicture}  
