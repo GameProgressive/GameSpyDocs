@@ -198,9 +198,9 @@ Table \ref{IP and Ports for GameSpy Presence Servers} are the  IP and Ports of G
 		\hline 
 		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
 		\hline 
-		GPCM&gpcm.gamespy.com&29900 \\ 
+		GPCM&gpcm.gamespy.com&29900 (tcp) \\ 
 	 	\hline 
-		GPSP&gpsp.gamespy.com&29901 \\
+		GPSP&gpsp.gamespy.com&29901 (tcp)\\
 		\hline
 	\end{tabular} 
 \caption{IP and Ports for GameSpy Presence Servers}
@@ -1172,6 +1172,18 @@ Client search suggest nick name on GPSP.
 
 \part{NAT Negotation}
 
+\chapter{Introduction}
+The GameSpy NAT Negotiation SDK interacts with GameSpy's NAT Negotiation server to allow hosting of multiplayer games by users behind NAT and firewall devices. Typically, a user behind a NAT or firewall device cannot host multiplayer games because the device will block incoming connections from outside users. GameSpy's NAT Negotiation technology allows two users, one or both of whom are behind a NAT device, to open a clear UDP channel directly between the users.
+GameSpy's NAT Negotiation technology uses a method known as "Port Guessing" to attempt to discern future port mapping information for two users based on their connections to the NAT Negotiation server. Once this mapping information is determined, the server exchanges the information with the users, and they connect to each other directly (note: the term "connect" in this document is understood to mean the establishment a clear, two-way channel between the users, since UDP is in reality a connection-less protocol).
+
+Note that the NAT Negotiation SDK does not make any distinction between the "client" who is connecting to a "server" (or "host"), however this document will use those terms for clarity, and because the other SDKs involved do make that distinction.
+
+The NAT Negotiation SDK itself is very simple - two users who want to be connected to each other have a shared "cookie" value that the NAT Negotiation server uses to match the users up. 
+
+The NAT Negotiation SDK has no limit to the number of users that can be connected together, but each channel between two users must be independently established.
+
+
+
 \begin{figure}[H]
 	\centering
 	\scalebox{0.8}{
@@ -1180,112 +1192,198 @@ Client search suggest nick name on GPSP.
 		\node [block] (b) at (0,0){Client 1};
 		\node [block](c) at (10,0){Client 2};
 		
-		\draw[line] ([xshift = -15]a.south)--node [midway, below, sloped] {Client2 connect request} ([xshift=10]b.north);
+		\draw[line] ([xshift = -15]a.south)--node [midway, below, sloped] {\circled{\small{2}} Client2 connect request} ([xshift=10]b.north);
 		
-		\draw[line] ([xshift=-10]b.north)--node [midway, above, sloped] {Heat beat} ([xshift = -35]a.south);
+		\draw[line] ([xshift=-10]b.north)--node [midway, above, sloped] {\circled{\small{1}} Heat beat} ([xshift = -35]a.south);
 		
-		\draw[line] ([xshift =15]a.south)--node[midway, below, sloped] {Client 1 connect request} ([xshift=-10]c.north);
-		\draw[line] ([xshift=10]c.north) -- node[midway, above, sloped] {Heart beat} ([xshift=35]a.south);
+		\draw[line] ([xshift =15]a.south)--node[midway, below, sloped] {\circled{\small{2}} Client 1 connect request} ([xshift=-10]c.north);
+		\draw[line] ([xshift=10]c.north) -- node[midway, above, sloped] {\circled{\small{1}} Heart beat} ([xshift=35]a.south);
 		
 		
-		\draw[line] ([yshift=8]b.east)--node[fill=white]{Connect to each other}([yshift=8]c.west);
+		\draw[line] ([yshift=8]b.east)--node[fill=white]{\circled{\small{3}} Connect to each other}([yshift=8]c.west);
 		
-		\draw[line] ([yshift=-8]c.west)--node[fill=white]{Connect to each other}([yshift=-8]b.east);
+		\draw[line] ([yshift=-8]c.west)--node[fill=white]{\circled{\small{3}} Connect to each other}([yshift=-8]b.east);
 		
 		\end{tikzpicture}
 	}
+\caption{NatNeg working diagram}
+\label{NatNeg working diagram}
 \end{figure}
 
-Three matchup servers: natneg1. natnet2. natneg3.
 
-IP: natneg1.gamespy.com or natneg2.gamespy.com or natneg3.gamespy.com
-Protocol: UDP
-Port: 27901
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline 
+		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
+		\hline 
+		NATNEG&natneg1.gamespy.com&27901 (udp) \\ 
+		\hline
+				NATNEG&natneg3.gamespy.com&27901 (udp) \\ 
+		\hline 
+				NATNEG&natneg2.gamespy.com&27901 (udp) \\ 
+		\hline 
+	\end{tabular} 
+	\caption{IP and Ports for NatNeg Servers}
+	\label{IP and Ports for NatNeg Servers}
+	
+\end{table}
+
 
 Nat Negotiation mechanism:
 Because the ip address and other environment are changing from time to time, so when a client1 wants to connect
 to client2, he dose not know any informations about client2, so he cannot connect to client2. using natneg it can ask client2 information on gamespy nat server and connect to client2.
 
-The Nat Negotiation do the following things:
-1.connect to GameSpy nat server
-2.send the data that contain all information about himself to gamespy nat server
-3.GameSpy Nat server store clients information.
-4.when a client1 is try to connect to other client2:
-(1) client1 send request to gamespy nat server
-(2) gamespy nat server send the information about client2 to client1
-(3) client1 get the client2 information and connect.
+Nat Negotiation SDK do the following things:
+\begin{itemize}
+	\item Clients connect to GameSpy NatNeg server
+	\item Clients send the heart beat data that contain all information about himself to GameSpy NatNeg server
+	\item GameSpy Nat server store clients information.
+	\item when a client1 is try to connect to other client2:
+	\begin{itemize}
+		\item client1 send request to GameSpy NatNeg server
+	\item GameSpy NatNeg server send the information about client2 to client1
+		\item  client1 get the client2 information and connect.
+	\end{itemize}
+	
 
-1. Client discovers if the servers are reachable
-sends the following data
+\end{itemize}
 
-\begin{tcolorbox}
-typedef struct \_InitPacket\\
-\{\\
+
+
+
+\section{NetNag Packet}
+
+\begin{mybox}
+	typedef struct \_NatNegPacket \\
+	\{\\
+	unsigned char magic[NATNEG\_MAGIC\_LEN];\\
+	unsigned char version;\\
+	unsigned char packettype;\\
+	int cookie;	\\
+	
+	union\\
+	\{\\
+	InitPacket Init;\\
+	ConnectPacket Connect;\\
+	ReportPacket Report;\\
+	\} Packet;\\
+	
+	\} NatNegPacket;
+\end{mybox}
+
+\subsection{Magic Data}
+Every heart beat packet start with magic data.
+\begin{mybox}
+	Magic Data: 0xFD 0xFC 0x1E 0x66 0x6A 0xB2
+\end{mybox}
+
+\subsection{NatNeg Packet Type}
+Client's heart beat contains NatNeg packet type which we list as follows.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{Packet type} &\textbf{Description}&\textbf{Value}\\\hline
+		Init && 0\\\hline
+		ErtTest&Echo packet to original sender test&2\\\hline
+		Connect&&5\\\hline
+		Connect Ack&&6\\\hline
+		Connect ping&& 7\\\hline
+		BackupTest&&8\\\hline
+		Address check&& 10\\\hline
+		Natify request&&12\\\hline
+		Report && 13\\\hline
+	\end{tabular}
+	\caption{NatNeg client request packet type}
+	\label{NatNeg client request packet type}
+\end{table}
+
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{Packet type} &\textbf{Description}&\textbf{Value}\\\hline
+		InitAck&&1\\\hline
+		ErtAck&Echo packet remote to sender&3\\\hline
+		Backup Ack&&9\\\hline
+		Address reply&&11\\\hline
+		Report Ack&&15\\\hline
+	\end{tabular}
+	\caption{NatNeg server response packet type}
+	\label{NatNeg server response packet type}
+\end{table}
+
+
+%Magic: 0xFD 0xFC 0x1E 0x66 0x6A 0xB2
+%Version: 0x03
+%
+%Command 1: Natify Request (0x12)
+%Cookie: htonl(777)
+%
+%Sets Packet Init. portType to 1 if Natneg server is natneg1, 2 if it's natneg2, 3 if it's natneg3
+%
+%Command 2: Address check (discover mapping)
+%
+%Sets portType to as the same as Command 1
+%Cookie is htonl(0 for natneg1 (map1A), 1 for natneg2, 2 for natneg3, 3 for natneg1 second map (Map1B))
+
+
+\subsection{Initial Packet}
+\begin{mybox}
+	typedef struct \_InitPacket\\
+	\{\\
 	unsigned char porttype;\\
 	unsigned char clientindex;\\
 	unsigned char usegameport;\\
 	unsigned int localip;\\
 	unsigned short localport;\\
-\} InitPacket;\\
+	\} InitPacket;\\
+\end{mybox}
 
-\#define REPORTPACKET\_SIZE BASEPACKET\_SIZE + 61\\
-typedef struct \_ReportPacket\\
-\{\\
+\subsection{Report Packet}
+
+\begin{mybox}
+	\#define REPORTPACKET\_SIZE BASEPACKET\_SIZE + 61\\
+	typedef struct \_ReportPacket\\
+	\{\\
 	unsigned char porttype;\\
 	unsigned char clientindex;\\
 	unsigned char negResult;\\
 	NatType natType;\\
 	NatMappingScheme natMappingScheme;\\
 	char gamename[50];\\
-\} ReportPacket;\\
+	\} ReportPacket;\\
+\end{mybox}
 
-\#define CONNECTPACKET\_SIZE BASEPACKET\_SIZE + 8\\
-typedef struct \_ConnectPacket\\
-\{\\
+
+
+\subsection{Connect Packet}
+
+\begin{mybox}
+	\#define CONNECTPACKET\_SIZE BASEPACKET\_SIZE + 8\\
+	typedef struct \_ConnectPacket\\
+	\{\\
 	unsigned int remoteIP;\\
 	unsigned short remotePort;\\
 	unsigned char gotyourdata;\\
 	unsigned char finished;\\
-\} ConnectPacket;\\
-
-\#define BASEPACKET\_SIZE 12\\
-\#define BASEPACKET\_TYPE\_OFFSET 7\\
-typedef struct \_NatNegPacket \\
-\{\\
-	// Base members:
-	unsigned char magic[NATNEG\_MAGIC\_LEN];\\
-	unsigned char version;\\
-	unsigned char packettype;\\
-	int cookie;	\\
-	
-	union \\
-	\{\\
-		InitPacket Init;\\
-		ConnectPacket Connect;\\
-		ReportPacket Report;\\
-	\} Packet;\\
-	
-\} NatNegPacket;
-
-
-\end{tcolorbox}
+	\} ConnectPacket;\\
+\end{mybox}
 
 
 
 
 
-Magic: 0xFD 0xFC 0x1E 0x66 0x6A 0xB2
-Version: 0x03
 
-Command 1: Natify Request (0x12)
-Cookie: htonl(777)
 
-Sets Packet Init. portType to 1 if Natneg server is natneg1, 2 if it's natneg2, 3 if it's natneg3
 
-Command 2: Address check (discover mapping)
 
-Sets portType to as the same as Command 1
-Cookie is htonl(0 for natneg1 (map1A), 1 for natneg2, 2 for natneg3, 3 for natneg1 second map (Map1B))
+
+
+
 
 \part{Peer to Peer communication}
 \part{Patching \& Tracking}
@@ -1771,7 +1869,7 @@ The communication between client and GSTATS server is encrypted under an simple 
 		\hline 
 		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
 		\hline 
-		GSTATS&gamestats.gamespy.com&29920 \\ 
+		GSTATS&gamestats.gamespy.com&29920 (tcp) \\ 
 		\hline 
 	\end{tabular} 
 	\caption{IP and Ports for GameSpy status and tracking}
