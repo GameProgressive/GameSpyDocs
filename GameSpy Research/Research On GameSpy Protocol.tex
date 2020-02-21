@@ -353,8 +353,8 @@ Where the value of $ \star $ in \ref{Common string} depending on which login met
 		
 		namespaceid & Distinguish same nickname player   &Uint                                                                                                                                                                                                     \\ \hline
 		sdkrevision & The version of the SDK you're using&Uint \\ \hline
-		quiet    & ? Maybe indicate invisible login which can not been seen at friends list & Uint\\ \hline
-		lt& The login ticket used for login into SAKE&String \\ \hline
+		quiet    & quite flag mode used in status buddy info \ref{Buddy Status Info} & Uint\\ \hline
+		lt& The login ticket used for login into SAKE&String 25 \\ \hline
 		id& The operation number&Uint\\ \hline
 	\end{tabular} 
 	\caption{Login parameter string}
@@ -619,6 +619,7 @@ This is a add friend request.
 \end{mybox}
 
 \subsubsection{Auth}
+Auth method is a add friend function.
 Auth method do not have contents after $ \backslash date \backslash $.
 \subsubsection{Revoke}
 Revoke method is called when a client1 deleted a client2 in his friend list. When deletion is finished in client1, client1 will send revoke message to GPCM, GPCM will forward this message to client2, then client2 will delete player1 in his friend list.
@@ -824,11 +825,19 @@ When a client want to delete a friend in his buddy list. He will send the follow
 	\tbs delbuddy\tbs\tbs sesskey\tbs <session key>\tbs delprofileid\tbs <profile id>\tbs final\tbs
 \end{mybox}
 
+\subsection{Add Block}
+
+\ClientRequest
+\begin{mybox}
+	\tbs addblock\tbs\tbs sesskey\tbs <session key>\tbs profileid\tbs <profile id>\tbs final\tbs
+\end{mybox}
+
+
 
 \section{GPI Info Module}
 \subsection{Profile}
 \subsubsection{Get Profile Information}
-Find a user's profile information.
+Find a user's profile information. signature string in response is used in adding someone as your friend through buddy message.
 \ClientRequest
 
 \begin{mybox}
@@ -963,7 +972,7 @@ This method will register a new unique nick. There are two request \ref{register
 \subsubsection{Register CD Key}
 \ClientRequest
 \begin{mybox}
-	\tbs registercdkey\tbs\tbs sesskey\tbs<session key>\tbs partnerid\tbs <partner id>\tbs id\tbs <operation id>\tbs final\tbs
+	\tbs registercdkey\tbs\tbs sesskey\tbs<session key>\tbs cdkeyenc\tbs<cd key enc string>\tbs id\tbs <operation id>\tbs final\tbs
 \end{mybox}
 \ServerResponse
 \begin{mybox}
@@ -1157,9 +1166,16 @@ Client search suggest nick name on GPSP.
 \end{mybox}
 
 
+\subsection{Valid Email}
+\ClientRequest
+\begin{mybox}
+	\tbs valid\tbs\tbs email\tbs<email account>\tbs partnerid\tbs <partner id>\tbs gamename\tbs<game name>\tbs final\tbs
+\end{mybox}
 
-
-
+\ServerResponse
+\begin{mybox}
+	\tbs vr\tbs<valid value>\tbs final\tbs
+\end{mybox}
 
 
 
@@ -1293,8 +1309,8 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 		Connect ping&& 7\\\hline
 		BackupTest&&8\\\hline
 		Address check&& 10\\\hline
-		Natify request&&12\\\hline
-		Report && 13\\\hline
+		Natify request&NAT identify&12\\\hline
+		Report &NatNeg result report& 13\\\hline
 	\end{tabular}
 	\caption{NatNeg client request packet type}
 	\label{NatNeg client request packet type}
@@ -1307,7 +1323,7 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 		\hline
 		\textbf{Packet type} &\textbf{Description}&\textbf{Value}\\\hline
 		InitAck&&1\\\hline
-		ErtAck&Echo packet remote to sender&3\\\hline
+		ErtAck&External reach test&3\\\hline
 		Backup Ack&&9\\\hline
 		Address reply&&11\\\hline
 		Report Ack&&15\\\hline
@@ -1340,7 +1356,9 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 	unsigned char usegameport;\\
 	unsigned int localip;\\
 	unsigned short localport;\\
+		char[] gamename;\\
 	\} InitPacket;\\
+
 \end{mybox}
 
 \subsection{Report Packet}
@@ -1373,12 +1391,27 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 	\} ConnectPacket;\\
 \end{mybox}
 
+\section{Nat Negotiation Process}
+
+Natify --> AddressCheck --> Init --> Connect --> ConnectPing --> Report
 
 
 
+\subsection{Nat Identification}
 
+When client start, it sends 3 different Natify packet (NN1,NN2,NN3)to NatNeg server to discover it's reach-ability.
 
+ERT stands for external reach test, which detect network environment. check your private ip and port whether equal to your public ip and port.
+\subsection{Address Check}
+Then client will send 4 address check packets to NatNeg server to discover network mapping. Each packet contains cookie defined before which are \{packet\_map1a, packet\_map1b, packet\_map2, packet\_map3\}.
 
+\subsubsection{Initial NatNeg}
+
+\ClientRequest
+Client sends a initpacket which contains an extra information of gamename to NatNeg server.
+
+\ServerResponse
+Server changes the packet type of received initpacket to InitAck then send back this packet to sender.
 
 
 
@@ -2008,7 +2041,7 @@ Client can get profile id by searching his cd-key hash in GSTATS server.
 \section{Get Player Data}
 \ClientRequest
 \begin{mybox}
-	\tbs getpd\tbs pid\tbs<profile id>\tbs ptype\tbs<persist storage type>\tbs dindex\tbs <data index>\tbs keys
+	\tbs getpd\tbs\tbs pid\tbs<profile id>\tbs ptype\tbs<persist storage type>\tbs dindex\tbs <data index>\tbs keys
 \end{mybox}
 \ServerResponse
 
@@ -2048,7 +2081,7 @@ Creates all the game structures, including buckets if needed.
 \section{Set Persist Data Helper}
 \ClientRequest
 \begin{mybox}
-	\tbs setpd\tbs pid\tbs<profile id>\tbs ptype\tbs <persist storage type> \tbs dindex\tbs<data index>\tbs kv\tbs<key value flag>\tbs lid\tbs <local id>\tbs length\tbs<size of game defined data>\tbs final\tbs
+	\tbs setpd\tbs\tbs pid\tbs<profile id>\tbs ptype\tbs <persist storage type> \tbs dindex\tbs<data index>\tbs kv\tbs<key value flag>\tbs lid\tbs <local id>\tbs length\tbs<size of game defined data>\tbs final\tbs
 \end{mybox}
 
 \ServerResponse
