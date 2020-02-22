@@ -1421,6 +1421,144 @@ Server changes the packet type of received initpacket to InitAck then send back 
 \part{Peer to Peer communication}
 \part{Patching \& Tracking}
 \part{Query \& Reporting}
+Query Report server is responsible for server available check and dedicated server information collection. Query Report server and Server Browser server communicate with each other, these two servers generally called master server. 
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline 
+		\textbf{Name}&\textbf{IP}&\textbf{Port}\\ 
+		\hline 
+		QR&*.master.gamespy.com&27900 (Udp) \\ 
+		\hline 
+	\end{tabular} 
+	\caption{IP and Ports for Query Report Server}
+	\label{IP and Ports for Query Report Server}
+\end{table}
+
+\chapter{Avaliable Check}
+According to GameSpy SDK every game needs to check GameSpy back end server before using multiplayer. The contents in client request are shown below.
+\ClientRequest
+\begin{mybox}
+	PacketType:0x09\\
+	GameName:<game name>\\
+\end{mybox}
+
+The response of available check is fixed with first 6 bytes, last byte is the status of the master server.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|m{5cm}|c|}
+		\hline
+		\textbf{Status}&\textbf{Description}&\textbf{Value}\\\hline
+		GSIACWaiting&still waiting for a response from the backend&1\\\hline
+		GSIACAvailable&the game's backend services are available&2\\\hline
+		GSIACUnavailable& the game's backend services are unavailable&3\\\hline
+		GSIACTemporarilyUnavailable&the game's backend services are temporarily unavailable&4\\\hline
+	\end{tabular}
+\caption{Available check server status}
+\label{Available check server status}
+\end{table}
+
+\ServerResponse
+
+\begin{mybox}
+	0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, <server status \ref{Available check server status}>
+\end{mybox}
+
+\chapter{Game Server Information Report}
+Query Report server collecting information about the player, server, team.
+\section{General Information}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|m{9cm}|}
+		\hline
+		\tbf{Data type}&\tbf{Description}\\\hline
+		Server data&This is general information about the game in progress, for example - the map that is being played, the type of game, and any specific game settings that would be of interest to players before they joined.\\\hline
+		Player data&This is information about a specific player that is in the current game, for example - the player's name, their current score, what team they are on, and the latency to the game server. 
+		\\\hline
+		Team data&This is information about a specific team in the current game, for example - the name of the team and the team score. If your game does not support team play you do not need to report any team information. 
+		\\\hline
+	\end{tabular}
+\caption{The report data type }
+\label{The report data type}
+\end{table}
+The format of the data in report data is key value pair. GameSpy gives several GameSpy defined keys that we list as follows and game can define their custom key to report.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{C}
+		\hline
+		\tbf{Key}&\tbf{Description}\\\hline
+		hostname &a descriptive host-defined string (can include spaces) that identifies the server (e.g. "Joe's Game!") \\\hline
+		gamever &a version specifier (e.g. 1.23) \\\hline
+		hostport &the port that the game networking is running on and that the client should connect to. If the game shares a port with the Query and Reporting 2 SDK, you do not need to specify this. \\\hline
+		mapname &the map name (either filename or descriptive name) \\\hline
+		gametype &string which specifies the type of game, or the mod being played. \\\hline
+		gamevariant &if the particular game type has multiple variants, you can report it using this key. \\\hline
+		numplayers  &numeric string, number of players on the server \\\hline
+		numteams &numeric string, number of teams on the server \\\hline
+		maxplayers &numeric string, max number of players for this server \\\hline
+		gamemode &string which specifies what is going on in the game at that time. see Table~\ref{Game mode detail} \\\hline
+		teamplay &number which defines the type of teamplay in use, or 0 for no teamplay. Values > 0 are up to the developer \\\hline
+		fraglimit &number of total kills or points before a level change or game restart \\\hline
+		teamfraglimit &number of total kills or points for a team before a level change or game restart \\\hline
+		timelimit &amount of total time before a level change or game restart occurs (generally in minutes) \\\hline
+		timeelapsed &amount of time (in seconds) since the current level or game started 
+		\\\hline
+		roundtime &amount of time before a round ends (for round based games) \\\hline
+		roundelapsed &amount of time (in seconds) that the current round has been in progress 
+		\\\hline
+		password &0 or not present if no password is required to join, 1 if password is required. Implementation of actual password protection is up to the game developer's network code. \\\hline
+		
+		groupid &
+		(optional) If the server being hosted is part of a "group room" then it needs to report which groupid it is part of (as passed in on launch) \\\hline
+		player\_ &
+		a player name (may include spaces) \\\hline
+		score\_ &
+		numeric string that contains the score (kills/points) for a single player \\\hline
+		skill\_ &
+		a skill rating, if applicable, for a single player \\\hline
+		ping\_ &
+		the ping for a player (as measured between the player and the server) \\\hline
+		team\_ &
+		the team a player is on, either numeric or string \\\hline
+		deaths\_ &
+		number of deaths a player has had \\\hline
+		pid\_ &
+		The profileID number for a player (if logged in with the P\&M SDK) \\\hline
+		team\_t &
+		the name for a team \\\hline
+		score\_t &
+		the score for a team \\\hline
+		
+		
+		
+	\end{tabular}
+\caption{Report data keys}
+\label{Report data keys}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{C}
+		\hline
+		\tbf{Key}&\tbf{Description}\\\hline
+		openwaiting&game has not yet started and players can join \\\hline
+		closedwaiting& game has not yet started and players cannot join \\\hline
+		closedplaying &game is in progress, no joining allowed \\\hline
+		openplaying &game is in progress, players may still join \\\hline
+		openstaging / closedstaging&
+		Use to report that the game is in staging mode (should generally not be used directly - the Peer SDK handles this automatically). \\\hline
+		exiting &server is shutting down \\\hline
+	\end{tabular}
+\caption{Game mode detail}
+\label{Game mode detail}
+\end{table}
+
+
+
+
 Custom keys are used to define custom data to report, for example if the user is playing with a
 Windows or Machintosh PC.
 

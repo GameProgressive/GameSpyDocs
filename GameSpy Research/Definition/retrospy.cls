@@ -57,8 +57,11 @@
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \newcolumntype{A}{|M{2cm}|M{7cm}|M{1cm}|}
 \newcolumntype{B}{|M{2cm}|M{8cm}|}
+\newcolumntype{C}{|m{2cm}|m{9cm}|}
+
 
 \newcommand{\tbs}{\textbackslash}
+\newcommand{\tbf}{\textbf}
 
 \newcommand{\ClientRequest}{\begin{flushleft}\textbf{Client request:}\end{flushleft}}
 
