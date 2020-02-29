@@ -106,6 +106,53 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 	\caption{The access sequence of client}
 	\label{The access sequence of client}
 \end{figure}
+
+\begin{figure}[H]
+	\centering
+	\scalebox{0.7}{
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst{GPCM}{GPCM}{}
+		\newinst{GPSP}{GPSP}{}
+		\newinst{CDKey}{CDKey}{}
+		\newinst{CHAT}{CHAT}{}
+		\newinst{QR}{QR}{}
+		\newinst{SB}{SB}{}
+		\newinst{GSTATS}{GSTATS}{}
+		\newinst{WebServer}{WebServer}{}
+		\begin{call}
+			{Client}{}{GPCM}{}
+		\end{call}
+		\begin{call}
+			{Client}{}{GPSP}{}
+		\end{call}
+			\begin{call}
+		{Client}{}{CDKey}{}
+	\end{call}
+			\begin{call}
+	{Client}{}{CHAT}{}
+\end{call}
+			\begin{call}
+	{Client}{}{QR}{}
+\end{call}
+			\begin{call}
+	{Client}{}{SB}{}
+	\begin{call}
+		{SB}{}{QR}{}
+	\end{call}
+\end{call}
+			\begin{call}
+	{Client}{}{GSTATS}{}
+\end{call}
+			\begin{call}
+	{Client}{}{WebServer}{}
+\end{call}
+	\end{sequencediagram}
+}
+	\caption{Login diagram}
+	\label{Login diagram}
+\end{figure}
+
 \begin{flushleft}
 \textbf{Explanation of access sequence}
 \end{flushleft}
@@ -258,16 +305,19 @@ Error response string for (GPCM, GPSP):
 \section{GPI Connect Module}
 \subsection{Login}
 We show the login communication diagram in Fig~\ref{Login diagram}
+
 \begin{figure}[H]
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\draw[line] ([yshift=15]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15]a.east);
-		\draw[line] (a.east)--node [fill = white] {2.Send client request} (b.west);
-		\draw[line] ([yshift=-15]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15]a.east);
-		\end{tikzpicture}
-	}
+	\centering
+	\begin{sequencediagram}
+	\newthread{Client}{Client}{}
+	\newinst[5]{GPCM}{GPCM}{}
+	\begin{call}
+		{Client}{Connect}{GPCM}{Send challenge}
+	\end{call}
+\begin{call}
+		{Client}{Send challenge response}{GPCM}{Accept/reject}
+\end{call}
+\end{sequencediagram}
 \caption{Login diagram}
 \label{Login diagram}
 \end{figure}
@@ -395,31 +445,34 @@ the client challenge that was generated before.
 
 \subsection{SDK Revision}
 
-\begin{figure}[H]
-	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Login Finished};  
-		\node[block,below=20pt of a] (b) {SDKRevision Check};
-		\node[block,below=20pt of b] (c) {Recv Buddy Message};
-		\node[block,right=20pt of c] (d) {Recv Buddy Status Info};
-		\node[block,right=20pt of b] (e) {Recv Buddy Request};
-		\node[block,right=20pt of a] (f) {Recv Buddy Revoke};
-		\node[block,right=20pt of f]  (g) {Recv Buddy List};
-		\node[block,below=20pt of g] (h) {Recv Block List};
 
-		\draw[line] (a.south)--(b.north);
-		\draw[line] (b)--(c);
-		\draw[line] (c)--(d);
-		\draw[line] (d)--(e);
-		\draw[line] (e)--(f);
-		\draw[line] (f)--(g);
-		\draw[line] (g)--(h);
-\end{tikzpicture}
-	}
+	\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[5]{GPCM}{GPCM}{}
+		\begin{call}
+			{Client}{Login}{GPCM}{Success}
+		\end{call}
+		\begin{callself}
+			{GPCM}{Check SDK version}{}
+			\mess{GPCM}{Send buddy message}{Client}
+			\mess{GPCM}{Send buddy revoke}{Client}
+			\mess{GPCM}{Send buddy request}{Client}
+			\mess{GPCM}{Send buddy status info/buddy status}{Client}
+			\mess{GPCM}{Send buddy list}{Client}
+			\mess{GPCM}{Send block list}{Client}
+		\end{callself}
+
+		
+	\end{sequencediagram}
 	\caption{SDK Revision process}
-	\label{SDK Revision process}
+\label{SDK Revision process}
 \end{figure}
+
+	
+
+
 	When a player finished login, GPCM will check his sdkrevision, sdkrevision is an addition of each sdkrevision number. Every addition of sdkrevision number will make GPCM act differently.
 \begin{mybox}
 	\begin{itemize}
@@ -527,20 +580,25 @@ When a Buddy Message received by a client, the client will determine Buddy Messa
 	\label{Buddy Message Definition}
 \end{table}
 Because Client1 and Client2 are in NAT network, so they can not connect each other using p2p, so GPCM will forward message for them. The forward diagram shows in Figure~\ref{Buddy message diagram}
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client1};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\node[block,below= of a] (c) {Client2};
-		\draw[line] (a)--node [fill = white] {Client buddy message} (b);
-		\draw[line] (b)|-node [fill=white] {Server buddy message} (c);
-		\end{tikzpicture}
-	}
+	\begin{sequencediagram}
+		\newthread{Client1}{Client1}{}
+		\newinst[3]{GPCM}{GPCM}{}
+		\newinst[3]{Client2}{Client2}{}
+		\begin{messcall}
+			{Client1}{Send buddy message}{GPCM}
+			\begin{messcall}
+				{GPCM}{Forward buddy message}{Client2}
+			\end{messcall}
+		\end{messcall}
+		
+	\end{sequencediagram}
 	\caption{Buddy message diagram}
-	\label{Buddy message diagram}
+\label{Buddy message diagram}
 \end{figure}
+
 All Buddy Message from Client will have same prefix which we show in \ref{Client buddy message prefix}
 \ClientRequest
 
@@ -647,25 +705,23 @@ Invite method is used to invite a player to a game which is currently playing by
 
 \subsubsection{PING}
 Ping method maybe is used to check the ping to other player. 
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client1};  
-		\node[block,right=150pt of a] (b) {GPCM};
-		\node[block, below= of a] (c) {Cilent2};
+	\begin{sequencediagram}
+		\newthread{Client1}{Client1}{}
+		\newinst[3]{GPCM}{GPCM}{}
+		\newinst[3]{Client2}{Client2}{}
+		\begin{call}
+			{Client1}{Send Ping request}{GPCM}{Forward pong response}
+			\begin{call}
+				{GPCM}{Forward ping request}{Client2}{Send pong response}
+			\end{call}
+		\end{call}
 		
-		\draw[line] ([yshift=8]a.east)--node [fill = white] {1.Send PING request} ([yshift=8]b.west);
-		
-		\draw[line] ([xshift=-16]b.south)|-node [fill = white] {2.Forward PING request} ([yshift=8]c.east);
-		
-		\draw[line] ([yshift=-8]c.east)-|node [fill = white] {3. Send Pong Response} ([xshift=16]b.south);
-		
-		\draw[line] ([yshift=-8]b.west)--node [fill = white] {4.Forward PONG response} ([yshift=-8]a.east);
-		\end{tikzpicture}
-	}
+	\end{sequencediagram}
 	\caption{PING and PONG diagram}
-	\label{PING and PONG diagram}
+\label{PING and PONG diagram}
 \end{figure}
 
 \ClientRequest
@@ -777,20 +833,20 @@ When a client want to add another client into his buddy list. He will send the f
 
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client1};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\node[block, below= of a] (c) {Cilent2};
+	\begin{sequencediagram}
+		\newthread{Client1}{Client1}{}
+		\newinst[3]{GPCM}{GPCM}{}
+		\newinst[4]{Client2}{Client2}{}
+		\begin{messcall}
+			{Client1}{Send addbuddy request}{GPCM}
+			\begin{messcall}
+				{GPCM}{Translate addbuddy to bm request}{Client2}
+			\end{messcall}
+		\end{messcall}
 		
-		\draw[line] (a.east)--node [fill = white] {1.Send addbuddy request} (b.west);
-		
-		\draw[line] (b.south)|-node [fill = white] {2.Translate addbuddy to bm request} (c.east);
-
-		\end{tikzpicture}
-	}
+	\end{sequencediagram}
 	\caption{Add friend diagram}
-	\label{Add friend diagram}
+\label{Add friend diagram}
 \end{figure}
 
 \ClientRequest
@@ -804,21 +860,22 @@ When a client want to add another client into his buddy list. He will send the f
 When a client want to delete a friend in his buddy list. He will send the following request to GPCM.
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client1};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\node[block, below= of a] (c) {Cilent2};
+	\begin{sequencediagram}
+		\newthread{Client1}{Client1}{}
+		\newinst[3]{GPCM}{GPCM}{}
+		\newinst[4]{Client2}{Client2}{}
+		\begin{messcall}
+			{Client1}{Send delbuddy request}{GPCM}
+			\begin{messcall}
+				{GPCM}{Translate delbuddy to bm revoke}{Client2}
+			\end{messcall}
+		\end{messcall}
 		
-		\draw[line] (a.east)--node [fill = white] {1.Send delbuddy request} (b.west);
-		
-		\draw[line] (b.south)|-node [fill = white] {2.Translate delbuddy to bm revoke} (c.east);
-		
-		\end{tikzpicture}
-	}
+	\end{sequencediagram}
 	\caption{Delete friend diagram}
 	\label{Delete friend diagram}
 \end{figure}
+
 \ClientRequest
 
 \begin{mybox}
@@ -987,17 +1044,19 @@ This method will register a new unique nick. There are two request \ref{register
 GPSP server provides search function for client.\\
 Table \ref{IP and Ports for GameSpy Presence Servers} are the GPSP IP and Ports that client/game connect to.
 
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPSP};
-		\draw[line] ([yshift=8]a.east)--node [fill = white] {1.Send client search request} ([yshift=8]b.west);
-		\draw[line] ([yshift=-8]b.west)--node [fill = white] {2.Send search result} ([yshift=-8]a.east);
-		\end{tikzpicture}
-	}
-	\caption{GPSP diagram}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[4]{GPSP}{GPSP}{}
+		
+		\begin{call}
+			{Client}{Send client search request}{GPSP}{Send search result}
+		\end{call}
+	
+	\end{sequencediagram}
+		\caption{GPSP diagram}
 	\label{GPSP diagram}
 \end{figure}
 
@@ -1229,7 +1288,7 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 \begin{figure}[H]
 	\centering
 	\begin{sequencediagram}
-		\newinst{Client}{:Client}{}
+		\newthread{Client}{:Client}{}
 		\newinst[4]{NN}{:NatNeg}{}
 		\begin{call}
 			{Client}{External reachable test1()}{NN}{ERT response1()}
@@ -1593,20 +1652,20 @@ The format of the data in report data is key value pair. GameSpy gives several G
 \begin{figure}[H]
 	\centering
 	\begin{sequencediagram}
-		\newinst{Client}{:Client}{}
-		\newinst[3]{QR}{:QR}{}
+		\newthread{Client}{Client}{}
+		\newinst[3]{QR}{QR}{}
 		\begin{call}
 			{Client}{Available check()}{QR}{}
 		\end{call}
 		\begin{call}
 			{Client}{Hear beat report()}{QR}{Challenge()}
 		\end{call}
-		\begin{messcall}
-			{Client}{Challenge response()}{QR}{}
-		\end{messcall}
 		\begin{call}
-			{QR}{Echo packet()}{Client}{Echo packet()}
+			{Client}{Challenge response()}{QR}{Echo packet()}
 		\end{call}
+		\begin{messcall}
+			{Client}{Echo packet()}{QR}
+		\end{messcall}
 	\end{sequencediagram}
 	\caption{The sequence of heart beat packet process}
 \end{figure}
