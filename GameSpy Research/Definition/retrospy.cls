@@ -24,8 +24,9 @@
 	\tcbuselibrary{skins,breakable}
 \RequirePackage{titlesec}
 \RequirePackage{lipsum}
-
 \usetikzlibrary{positioning,fit,calc}
+
+\RequirePackage{pgf-umlsd}
 
 \tikzset{block/.style={draw, thick, text width=3cm, minimum height=1.5cm, align=center},   
 	% the align command is used to align the block diagram at the center  
