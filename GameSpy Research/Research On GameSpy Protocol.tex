@@ -1524,6 +1524,19 @@ Query Report server is responsible for server available check and dedicated serv
 
 \chapter{Avaliable Check}
 According to GameSpy SDK every game needs to check GameSpy back end server before using multiplayer. The contents in client request are shown below.
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[3]{QR}{QR}{}
+		\begin{call}
+			{Client}{Available check()}{QR}{Response()}
+		\end{call}
+	
+	\end{sequencediagram}
+	\caption{The sequence of available check}
+\end{figure}
+
 \ClientRequest
 \begin{mybox}
 	PacketType:0x09\\
@@ -1642,21 +1655,84 @@ The format of the data in report data is key value pair. GameSpy gives several G
 \label{Game mode detail}
 \end{table}
 
-\section{Query Report Packet}
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		\tbf{Packet type}&\tbf{Value}\\\hline
+		Query & 0x00\\\hline
+		Echo response & 0x05\\\hline
+		Client Message & 0x06\\\hline
+		Message ACK &0x07 \\\hline
+		Keep alive & 0x08\\\hline
+	\end{tabular}
+\caption{Query report client packet}
+\label{Query report client packet}
+\end{table}
+
+\begin{table}
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		\tbf{Packet type}&\tbf{Value}\\\hline
+		Pre-query ip verify&0x09\\\hline
+		Challenge&0x01\\\hline
+		Echo & 0x02 \\\hline
+		AddError & 0x04\\\hline
+		Keep alive & 0x08 \\\hline
+	\end{tabular}
+	\caption{Query report server packet}
+	\label{Query report server packet}
+\end{table}
+
+
+\section{Pre-Query IP Verify Packet}
+\begin{itemize}
+
+	\item Server uses this packet to verify the IP of a client that connects to the server. 
+	\item This is only done if the user enable  IP challenge. 
+	\item Each new client has to verify them-self with a challenge.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+			\newthread{QR}{QR}{}
+			\newinst[6]{Client}{Client}{}
+		\begin{call}
+			{QR}{IP verify request(pre-query packet [\ref{Query report client packet}])}{Client}{IP verify response(query packet [\ref{Query report server packet}])}
+		\end{call}
+	\end{sequencediagram}
+	\caption{The sequence of IP verify}
+\end{figure}
+This packet has limit length 200 bytes.
+\ServerResponse
+\begin{mybox}
+	|Magic data(2 bytes)|Packet type (1 byte)|Instant key(4 bytes)|Server challenge (int)|
+\end{mybox}
+
+\section{Query Packet}
+After receiving the pre-query ip verify request from server, client will compute the challenge response and send to server. 
 
 \section{Heart Beat Packet}
+Heat beat packet is used to report the information about server, player and team.
+We guess when QR server received  a heartbeat packet, it will generate an challenge and send to game server. after received challenge game server will compute response and send to QR server to verify. If game server response is valid then QR server will add this server to server list.
 
-\section{Challenge Packet}
+Custom keys are used to define custom data to report, for example if the user is playing with a Windows or Macintosh.
 
-\chapter{Heart Beat Request}
+There could be two types of custom keys:
+Player keys (they end with \_):
+Custom player information
+Team keys (they end with \_t):
+Custom team (or brigade) information
+Server keys (they don't end with anything):
+Custom server information
+
 \begin{figure}[H]
 	\centering
 	\begin{sequencediagram}
 		\newthread{Client}{Client}{}
 		\newinst[3]{QR}{QR}{}
-		\begin{call}
-			{Client}{Available check()}{QR}{}
-		\end{call}
 		\begin{call}
 			{Client}{Hear beat report()}{QR}{Challenge()}
 		\end{call}
@@ -1669,20 +1745,44 @@ The format of the data in report data is key value pair. GameSpy gives several G
 	\end{sequencediagram}
 	\caption{The sequence of heart beat packet process}
 \end{figure}
-%We guess when QR server received  a heartbeat packet, it will generate an challenge and send to game server. after received challenge game server will compute response and send to QR server to verify. If game server response is valid then QR server will add this server to server list.
+
+
+\ClientRequest
+\begin{mybox}
+	|Instant key (4 bytes) | \tbs0\tbs0 |Total number of server keys (1 byte) | Server keys (unknown bytes) | \tbs0\tbs0 | Total number of player keys (1 byte) | Player keys (unknown bytes) | \tbs0\tbs0 |Total number of team keys (1 byte) | Team key (unknown byte) |
+\end{mybox}
+\section{Challenge Packet}
+When received the heart beat packet from client, Query Report server sends a challenge packet to verify the authenticity of the report client to prevent some illegal client.
+\ServerResponse 
+\begin{mybox}
+	| Magic data | Packet type | Instant key | Challenge (5 bytes) | User IP (4 byte) | 4 bytes padding | User port (4 byte) |
+\end{mybox} 
+\section{Report Packet}
+
+
+
+\section{Echo Packet}
+We guess echo packet is used to detect the ping between server and Query Report server.
+
+
+
+\section{AddError Packet}
+This packet means address error, when query report server find client ip is not valid, server will send this packet to client.
+
+
+
+%Query (0x00)
+%This packet verify the IP of the client by checking if the random data
+%it was sended before (With 0x09) is the same. If it isn't the server won't
+%verify the client.
+%
+
 %
 %
 %
-%Custom keys are used to define custom data to report, for example if the user is playing with a
-%Windows or Machintosh PC.
+
 %
-%There could be two types of custom keys:
-%Player keys (they end with \_):
-%Custom player information
-%Team keys (they end with \_t):
-%Custom team (or brigade) information
-%Server keys (they don't end with anything):
-%Custom server information
+
 %
 %Custom keys starts from 50 to 253
 %
@@ -1691,22 +1791,7 @@ The format of the data in report data is key value pair. GameSpy gives several G
 %Port 27900
 %Protocol: UDP
 %
-%There is more than one Query report ports, if 27900 is not found the system will 
-%try to scan the ports up to 28000
-%
-%A dedicated server sends some information data to GameSpy Master Server to let GameSpy know
-%that a new server was started, so users can find the server in the server browser
-%like GameSpy 3D or GameSpy Arcade.
-%
-%A server needs to be registred to GameSpy master Server, it's done with a challenge
-%Sending the heartbeat challenge packet and processing the response.
-%If an error happens, the AddError packet is sended.
-%
-%A. Heartbeat (Only done if the server is public)
-%The heartbeat checks if the dedicated server is active or not.
-%When a dedicated servers sends a data, the time when the data is sended is saved in the Master server.
-%If the Master server does not receive a new data in 10 seconds, Master server removes the dedicated server
-%to the list and assumes the server is offline.
+
 %
 %The dedicated server have to send the heartbeat packet each 10 seconds in order to maintain his connection
 %alive.
@@ -1765,105 +1850,33 @@ The format of the data in report data is key value pair. GameSpy gives several G
 %Query Report 1 queries (compatibility):
 %They start with $\backslash$
 %\\
-%Nat Negotiation query:
-%If the length is bigger than 6 and we find the NatNeg magic data
-%See NatNeg Reverse for more information
-%\\
-%Query Report 2:
-%If the first two bytes are 0xFE and 0xFD
-%\\
-%Query Report 2 Queries:
-%Structure:
-%Byte \[0\] = 0xFE
-%Byte \[1\] = 0xFD
-%Byte \[2\] = Packet type
-%Byte \[3-10\] = Request key (An array long 7 bytes)
-%\\
-%After all the queries are processed, the dedicated server sends back some data.
-%Which can be the challenges or something different.
-%
-%
-%Packet types:
-%
-%Query (0x00)
-%This packet verify the IP of the client by checking if the random data
-%it was sended before (With 0x09) is the same. If it isn't the server won't
-%verify the client.
-%
-%The dedicated server will send a notification to the Master Server about who
-%authenticated and who didn't
-%
-%A character from the start of the data is called EXFlags and they are used to see if the QR2
-%server supports different things (an example is: Split if the server supports splitting the queries)
-%
-%Maximum of 7 queries can be splitted
-%
-%How a query is created:
-%A key called splitnum is created which contains the current number of key splitted
-%The key type (server, team or player)
-%The key data
-%
-%Challenge (0x01)
-%This packet is used for verify the server with the master server.
-%
-%Calculate the challenge:
-%First the backend option, each server can have some custom backend option, like disabling the Query Report challenge
-%The data sended is the following:
-%
-%\[2 Bytes that are the backend option with a \backslash 0\] \\
-%\[Public IP (Length of 8, readed with htonl) and Port (length of 4)\]\\
-%\[ Max of 64 bytes containg a random data that will be the challenge, this is much like GPCM \]\\
-%
-%Algorithm of calculating the challenge (Client side):
-%
-%See qr2.c at line 785 (compue\_challenge\_response) for more information
-%A. Encrypt the challenge with the secret key
-%B. Encode the encrypted challenge
-%
-%Echo (0x02)
-%Simply reply the same data as the server sended
-%
-%The first byte is 0x05
-%Then the data the server sended (max 32 bytes are allowed)
-%
-%Heartbeat (0x03)
-%Check "General heartbeat packet"
-%
-%Add Error (0x04)
-%The master server sends an error to the dedicated server
-%For example about Server registration (Failed challenge)
-%
-%Echo response (0x05)
-%This is a response of the Echo packet that Server sended to Client
-%Server to Client ID is 0x02, Client to Server ID is 0x05
-%
-%Client Message (0x06)
-%Sends the following data (After the packet structure)
-%
-%The first byte is 0x07 (Message ACK)
-%The other 4 bytes is the length of the message key
-%
-%There can be sent a Nat negotiation packet now (With the natneg magic)
-%Or it can be a normam data
-%
-%Max 10 messages to track
-%
-%0x07???
-%
-%Keep alive (0x08)
-%Ignored packet
-%
-%Prequery IP Verify (0x09) [Server to Client only]
-%Try to verify the IP of a client that connects to the server.
-%This is only done if the user enable the IP challenge.
-%Each new client has to verify themself with a challenge.
-%
-%A new key is added to the data to send:
 
 
 
-%CD-Key/NatNeg authentication to QR2:
-%Client ------> Query Report 2 ------> CD-Key/NatNeg Server -----> Query Report 2 (Filtered with CD-KEY or NatNeg Request) -----> Client
+
+\chapter{The Process of CD key or Nat Negotiation authentication with Query Report}
+
+
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[1]{QR}{QR}{}
+		\newinst[4]{CDKey}{CD-Key}{}
+		\newinst{NN}{NatNeg}{}
+\begin{call}
+	{Client}{Authentication}{QR}{Response}
+	\begin{call}
+		{QR}{Forward authentication request}{CDKey}{response}
+	\end{call}
+	\begin{call}
+		{QR}{Forward authentication request}{NN}{Response}
+	\end{call}
+\end{call}
+	\end{sequencediagram}
+	\caption{The diagram of CD key or NatNeg server authentication with query report}
+\end{figure}
+
 
 \part{Server Browser}
 
@@ -2195,19 +2208,19 @@ The communication between client and GSTATS server is encrypted under an simple 
 
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GSTATS};
-		\draw[line] ([yshift=15]b.west)--node [fill = white] {1.Send server challenge} ([yshift=15]a.east);
-		\draw[line] (a.east)--node [fill = white] {2.Send client request} (b.west);
-		\draw[line] ([yshift=-15]b.west)--node [fill = white] {3.Accept or reject} ([yshift=-15]a.east);
-		\end{tikzpicture}
-	}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[5]{GSTATS}{GSTATS}{}
+		\begin{call}
+			{Client}{Connect}{GSTATS}{Send challenge}
+		\end{call}
+		\begin{call}
+			{Client}{Send challenge response}{GSTATS}{Accept/reject}
+		\end{call}
+	\end{sequencediagram}
 	\caption{GSTATS authentication diagram}
-	\label{GSTATS authentication diagram}
+\label{GSTATS authentication diagram}
 \end{figure}
-
 \ServerChallenge
 
 \begin{mybox}
@@ -2387,13 +2400,13 @@ New version:
 Server only records the data.
 
 
-\part{GameSpy Persist Storage}
-\chapter{Introduction}
+\chapter{GameSpy Persist Storage}
+\section{Introduction}
 If you store your data in key\value delimited pairs, GetPersistDataValues will
 allow you to easily retrieve a subset of the stored data. To retrieve the entire
 data set, use GetPersistData. The data will be returned as a null-terminated string,
 unless no data is available (in which case len will be 0 in the callback).
-\chapter{Parameter}
+\section{Parameter}
 \begin{itemize}
 	\item localid: Your game-specific reference number for this player, returned in the callback
 	to allow you to identify which player it is referring to.
