@@ -1757,14 +1757,9 @@ When received the heart beat packet from client, Query Report server sends a cha
 \begin{mybox}
 	| Magic data | Packet type | Instant key | Challenge (5 bytes) | User IP (4 byte) | 4 bytes padding | User port (4 byte) |
 \end{mybox} 
-\section{Report Packet}
-
-
 
 \section{Echo Packet}
 We guess echo packet is used to detect the ping between server and Query Report server.
-
-
 
 \section{AddError Packet}
 This packet means address error, when query report server find client ip is not valid, server will send this packet to client.
@@ -1882,6 +1877,7 @@ This packet means address error, when query report server find client ip is not 
 
 \chapter{Overview}
 The GameSpy Server Browsing SDK is a portable LAN and Internet server browser engine. It allows developers to quickly and easily add a list-based matchmaking interface to the game, with powerful features such as server-side filtering, sorting, country-filtering, and ping (latency) measurement.
+
 \chapter{Server List Retrieve}
 When a client want to see how many servers are online for playing it will do the following.
 \begin{figure}[H]
@@ -1901,26 +1897,34 @@ When a client want to see how many servers are online for playing it will do the
 	\end{figure}
 
 
-
+{\color{red}Note}: The port in request and response should be check if it is little Indian, and according to the result we should do byte reverse on port. \\
+NTS string means Null Terminated String which ends with \tbs0.
 \ClientRequest
 \begin{mybox}[label=Server browser client request]
-Message type=0 (1 byte) |Total length of the request (2 bytes) | Protocol version (1 byte) | List protocol version (1 byte) | Encoding version (1 byte) | Game version (4 bytes) | game name for development | Game name for real application | Challenge (8 bytes) | Server filter | Key field list | Query option (4byte) | 
+Total length of the request (2 bytes) \\
+ Protocol version (1 byte) \\
+ List protocol version (1 byte)\\
+ Encoding version (1 byte)\\
+ Game version (4 bytes)\\
+ Game name for development(i bytes)\\
+ Game name for real application(i bytes)\\
+ Challenge (8 bytes)\\
+ Server filter(i bytes)\\
+ Key field list(i bytes)\\
+ Query option (4byte) \\
+ Source IP (4 bytes) [optional]\\
+ Max servers (4 bytes) [optional]
 \end{mybox}
 After query option there could be more bytes which is listed as follows.
 If there has alternate source ip option the following should be added after query option.
-\begin{mybox}
-	| Source IP (4 bytes) | 
-\end{mybox}
 If there has limit result count option the following should be added after query option.
-\begin{mybox}
-	| Max servers (4 bytes) |
-\end{mybox}
+
 
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|l|c|}
 		\hline
-		\tbf{Protocol version} & \tbf{Value}\\\hline
+		\tbf{Name} & \tbf{Value}\\\hline
 		SERVER\_LIST\_REQUEST & 0\\\hline
 		SERVER\_INFO\_REQUEST & 1 \\\hline
 		 SEND\_MESSAGE\_REQUEST	&2\\\hline
@@ -1928,9 +1932,22 @@ If there has limit result count option the following should be added after query
 		 MAPLOOP\_REQUEST		&	4\\\hline
 		 PLAYERSEARCH\_REQUEST	&5\\\hline
 	\end{tabular}
-\caption{Server browser protocol version}
+\caption{Server browser request}
 \end{table}
-
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|c|}
+		\hline
+		\tbf{Name}&\tbf{Value}\\\hline
+		PUSH\_KEYS\_MESSAGE & 1 \\\hline
+		PUSH\_SERVER\_MESSAGE & 2 \\\hline
+		KEEPALIVE\_MESSAGE & 3 \\\hline
+		DELETE\_SERVER\_MESSAGE & 4 \\\hline
+		MAPLOOP\_MESSAGE & 5 \\\hline
+		PLAYERSEARCH\_MESSAGE & 6 \\\hline
+	\end{tabular}
+	\caption{Server browser response}
+\end{table}
 The list protocol version=1 and Encoding version=3 in code \ref{Server browser client request}. We do not know if there is another protocol version exist only by looking at the GameSpy SDK. Server filter can select the server according to condition client send to server browser.
 Filed list contains the keys that client need such as game name, game type, map name etc.
 
@@ -1949,6 +1966,198 @@ Filed list contains the keys that client need such as game name, game type, map 
 	\end{tabular}
 	\caption{Server browser server list update options}
 \end{table}
+
+
+\ServerResponse
+
+\begin{mybox}[label=server list response]
+Random byte (1 byte) $ \land $ 0xEC \\
+Response Message Length $ \land $ xEA (1 byte)\\
+Server Challenge (i bytes)\\
+Client's public ip (4 bytes)\\
+Standard query port (2 bytes)\\
+Number of keys (1 byte)\\
+Keys list $\rightarrow$ \ref{section key list}\\
+Unique values list $\rightarrow$ \ref{section unique value list}\\
+Servers info list  $\rightarrow$ \ref{section servers info list}
+
+AdHoc data $\rightarrow$ \ref{section adhoc data}
+\end{mybox}
+
+\section{Keys List}\label{section key list}
+The key list in above contains all keys that client required for. Each key is separate by \tbf{0x00} and the first byte of each key is the key type. There are 3 types we listed as follow.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|}
+		\hline
+		\tbf{Key type}&\tbf{Value}\\\hline
+		Byte & 0 \\\hline
+		Short & 1 \\\hline
+		String & 2 \\\hline
+	\end{tabular}
+\caption{The key type enumerator}
+\end{table}
+
+\begin{mybox}[label=key list]
+	Key-1 type (1 byte), Key-1 name (i bytes)\\
+	Key-2 type (1 byte), Key-2 name (i bytes)\\
+	$\cdots$ \\
+	Key-n type (1 byte), Key-n name (i bytes)
+\end{mybox}
+
+\section{Unique Values List}\label{section unique value list}
+There are 2 ways to parse the value:
+\begin{itemize}
+	\item Popular value: presents all string value inside unique value list, gives indexes in servers info list.
+	\item Null terminate string: presents all string value inside server info list, sets the unique value number to 0.
+\end{itemize}
+
+Each unique value is separate by \tbf{0x00}.
+\begin{mybox}[label=unique value list]
+	Unique value1 (i bytes)\\
+	 Unique value2 (i bytes)\\
+	 $\cdots$\\
+	 Unique value3 (i bytes)\\
+\end{mybox}
+
+
+\section{Servers Info List}\label{section servers info list}
+Servers info list contains multiple information of servers, each server is separated by server flags\ref{Server flags in servers info list}, final server should end with \tbf{0x00FFFFFFFF}.
+
+
+
+\begin{mybox}
+	Server flag (1 byte)\\
+	Server public ip (4 bytes)\\
+	Private port (4 bytes) [optional]\\
+	Private IP (4 bytes) [optional]\\
+	ICMP IP (4 bytes) [optional]\\
+	String index or NTS string
+\end{mybox}
+
+If you use popular value to parse values there should be string index which starts with 0. Each index represents the value index.
+\begin{mybox}
+	0 | 1 | 2 | $ \cdots $ | n
+\end{mybox}
+If you use NTS string you should parse value in this way:
+\begin{mybox}
+	0xFF | value | 0x00
+\end{mybox}
+
+The game server flag in \ref{server list response} is listed as follows.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|c|}
+		\hline
+			\tbf{Flag name}&\tbf{Value}	\\\hline
+			UNSOLICITED\_UDP\_FLAG &1 \\\hline
+			PRIVATE\_IP\_FLAG &2 \\\hline
+			CONNECT\_NEGOTIATE\_FLAG  &4\\\hline	
+			ICMP\_IP\_FLAG & 8\\\hline
+			NONSTANDARD\_PORT\_FLAG & 16\\\hline
+			NONSTANDARD\_PRIVATE\_PORT\_FLAG &32 \\\hline
+			HAS\_KEYS\_FLAG & 64\\\hline
+			HAS\_FULL\_RULES\_FLAG &128 \\\hline 
+	\end{tabular}
+\caption{Server flags in servers info list}
+\label{Server flags in servers info list}
+\end{table}
+
+\section{AdHoc Data}\label{section adhoc data}
+AdHoc data contains the following types of command.
+
+\subsection{Push Keys List}
+
+\ServerResponse
+\begin{mybox}
+	Number of keys (1 byte)\\
+	Keys list with key type (i bytes) [NTS string]
+\end{mybox}
+
+\subsection{Push Server}
+Search a server in client servers list. If the server is not exist adding it to client list.
+\ServerResponse
+\begin{mybox}
+	Server flag (1 byte)~\ref{Server flags in servers info list}\\
+	Server public IP (4 bytes)\\
+	Server public port (2 bytes)
+\end{mybox}
+\subsection{Keep Alive}
+
+
+\subsection{Delete Server}
+Delete a specific server in servers list.
+\ServerResponse
+\begin{mybox}
+	Server public IP (4 bytes)\\
+	Server public port (2 bytes)
+\end{mybox}
+
+
+\subsection{Map Loop}
+Gets a servers map information.
+\ClientRequest
+\begin{mybox}
+	Length of request (2 bytes)\\
+	MAPLOOP\_REQUEST (1byte)\\
+	Server public IP (4 bytes)\\
+	Server public port (2 bytes)
+\end{mybox}
+
+\ServerResponse
+\begin{mybox}
+	Server public IP (4 bytes)\\
+	Server public port (2 bytes)\\
+	Map change time (4 bytes)\\
+	Number of maps (1 byte)\\
+	Map names (i bytes) [NTS string]
+\end{mybox}
+
+\subsection{Player Search}
+Search a specific player information.
+\ClientRequest
+Total request length should less than 256 bytes.
+\begin{mybox}
+	Length of request (2 bytes)\\
+	PLAYERSEARCH\_REQUEST (1 byte)\\
+	Search options (4 bytes)\\
+	Max results (4 bytes)\\
+	Player name (i bytes)
+\end{mybox}
+
+\ServerResponse
+Player names are NTS string.
+\begin{mybox}
+	Is final flag (1 byte)\\
+	Result count (1 byte)\\
+	Player names (i bytes)\\
+	Server IP (4 bytes)\\
+	Server ports (2 bytes)\\
+	Last record UTC time (4bytes)\\
+	Game name (i bytes)
+\end{mybox}
+
+\chapter{Server Info}
+Retrieves server rules for a specific server.
+\ClientRequest
+\begin{mybox}
+	Length of request message (2 bytes)\\
+	SERVER\_INFO\_REQUEST (1 byte)\\
+	Public IP of specific server (4 bytes)\\
+	Public port of specific server (2 bytes)\\
+\end{mybox}
+
+\ServerResponse
+
+\begin{mybox}
+	
+\end{mybox}
+
+
+
+
+
 
 \part{SAKE Persistent Storage}
 \part{ATLAS Competition}
