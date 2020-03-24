@@ -126,26 +126,29 @@ If a user want to use GameSpy service, the access sequence is listed in Figure~\
 		\begin{call}
 			{Client}{}{GPSP}{}
 		\end{call}
-			\begin{call}
+		\begin{call}
 		{Client}{}{CDKey}{}
-	\end{call}
-			\begin{call}
-	{Client}{}{CHAT}{}
-\end{call}
-			\begin{call}
-	{Client}{}{QR}{}
-\end{call}
-			\begin{call}
-	{Client}{}{SB}{}
-	\begin{call}
+		\end{call}
+		\begin{call}
+		{Client}{}{CHAT}{}
+		\end{call}
+		\begin{call}
+		{Client}{}{QR}{}
+		\end{call}
+		\begin{call}
+		{Client}{}{SB}{}
+		\begin{call}
 		{SB}{}{QR}{}
-	\end{call}
-\end{call}
+		\end{call}
+		\end{call}
 			\begin{call}
 	{Client}{}{GSTATS}{}
 \end{call}
 			\begin{call}
 	{Client}{}{WebServer}{}
+	\begin{call}
+		{WebServer}{}{GPCM}{}
+	\end{call}
 \end{call}
 	\end{sequencediagram}
 }
@@ -784,15 +787,16 @@ This is a new method used in new game. \ref{Buddy Status} is an old method used 
 \subsection{Buddy List}
 Buddy list is a list which contains your friends.
 GPCM server will send buddy list when a client is logged in. Process is showing in Fig~\ref{Buddy List} and the response is showing in \ref{Buddy list string}.
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\draw[line] (b)--node [fill = white] {Send Buddy List} (a);
-		\end{tikzpicture}
-	}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[5]{GPCM}{GPCM}{}
+
+		\mess{GPCM}{Send buddy list}{Client}
+
+	\end{sequencediagram}
 	\caption{Buddy List}
 	\label{Buddy List}
 \end{figure}
@@ -809,15 +813,16 @@ GPCM server will send buddy list when a client is logged in. Process is showing 
 \subsection{Block List}
 Block list is an list which contain the players you do not like.
 GPCM server will send block list when a client is logged in. Process is showing in Fig~\ref{Block List} and the response is showing in \ref{Block list string}.
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\draw[line] (b)--node [fill = white] {Send Block List} (a);
-		\end{tikzpicture}
-	}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[5]{GPCM}{GPCM}{}
+		
+		\mess{GPCM}{Send block list}{Client}
+		
+	\end{sequencediagram}
 	\caption{Block List}
 	\label{Block List}
 \end{figure}
@@ -938,39 +943,41 @@ Keys in profile module:
 \end{table}
 
 \subsubsection{Update Profile Information}
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\draw[line] (a)--node [fill = white] {Send update profile request} (b);
-		\end{tikzpicture}
-	}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[3]{GPCM}{GPCM}{}
+	\mess {Client}{Update profile request}{GPCM}
+	\end{sequencediagram}
 	\caption{Update profile diagram}
 	\label{Update profile diagram}
 \end{figure}
+
+
 \ClientRequest
 
 \begin{mybox}[label = update profile request]
-	\tbs updatepro\tbs\tbs sesskey\tbs<session key>\tbs $\star$\tbs partnerid\tbs<partner id>\\\tbs final\tbs
+	\tbs updatepro\tbs\tbs sesskey\tbs<session key>\tbs $\star$\tbs partnerid\tbs<partner id>\tbs final\tbs
 \end{mybox}
 The $\star$ in \ref{update profile request} is the profile information key and value pairs such as\textbf{ \tbs nick\tbs<nick name>\tbs}, etc.
 \subsubsection{Update User Information}
+
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node[block] (a) {Client};  
-		\node[block,right=200pt of a] (b) {GPCM};
-		\draw[line] (a)--node [fill = white] {Send update profile request} (b);
-		\end{tikzpicture}
-	}
-	\caption{Update user diagram}
-	\label{Update user diagram}
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[5]{GPCM}{GPCM}{}
+		\mess {Client}{Update user information request}{GPCM}
+	\end{sequencediagram}
+	\caption{Update user information diagram}
+	\label{Update user information diagram}
 \end{figure}
+
+
 \ClientRequest
-The $\star$ in \ref{update user request} is the profile information key and value pairs such as \textbf{\tbs passwordenc\tbs<encrypted password>\tbs}, etc.
+The $\star$ in \ref{update user information request} is the profile information key and value pairs such as \textbf{\tbs passwordenc\tbs<encrypted password>\tbs}, etc.
 \begin{mybox}[label = update user request]
 	\tbs updateui\tbs\tbs sesskey\tbs<session key>\tbs $\star$\tbs final\tbs
 \end{mybox}
@@ -1228,7 +1235,8 @@ Client search suggest nick name on GPSP.
 \subsection{Valid Email}
 \ClientRequest
 \begin{mybox}
-	\tbs valid\tbs\tbs email\tbs<email account>\tbs partnerid\tbs <partner id>\tbs gamename\tbs<game name>\tbs final\tbs
+	\tbs valid\tbs\tbs email\tbs<email account>\tbs partnerid\tbs <partner id>\\
+	\tbs gamename\tbs<game name>\tbs final\tbs
 \end{mybox}
 
 \ServerResponse
@@ -1505,6 +1513,47 @@ Server changes the packet type of received initpacket to InitAck then send back 
 
 
 \part{Peer to Peer communication}
+
+\chapter{Peer to Query Report Server}
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[3]{QR}{Query Report}{}
+
+		\mess{Client}{Send state changed request}{QR}
+		\begin{callself}
+			{QR}{Update server state}{}
+		\end{callself}
+		
+	\end{sequencediagram}
+	\caption{Peer to query report diagram}
+	\label{Peer to query report diagram}
+\end{figure}
+
+
+\chapter{Peer to Server Browser Server}
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[3]{SB}{Server Browser}{}
+		\newinst[2]{QR}{Query Report}{}
+		\begin{callself}
+			{Client}{Call peer module}{Call server browser module}
+		\end{callself}
+	\begin{call}
+		{Client}{Search group list}{SB}{Send groups list}
+		\begin{call}
+			{SB}{Search groups list}{QR}{Send groups list}
+		\end{call}
+	\end{call}
+		
+	\end{sequencediagram}
+	\caption{Peer to server browser diagram}
+	\label{Peer to server browser diagram}
+\end{figure}
+
 \part{Patching \& Tracking}
 \part{Query \& Reporting}
 Query Report server is responsible for server available check and dedicated server information collection. Query Report server and Server Browser server communicate with each other, these two servers generally called master server. 
@@ -1878,7 +1927,38 @@ This packet means address error, when query report server find client ip is not 
 \chapter{Overview}
 The GameSpy Server Browsing SDK is a portable LAN and Internet server browser engine. It allows developers to quickly and easily add a list-based matchmaking interface to the game, with powerful features such as server-side filtering, sorting, country-filtering, and ping (latency) measurement.
 
-\chapter{Server List Retrieve}
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+		\newthread{Client}{Client}{}
+		\newinst[6]{SB}{Server Browser}{}
+		\begin{call}
+			{Client}{Server list request}{SB}{Has keys response}
+		\end{call}		
+		\mess {SB}{Servers full rule response}{Client}
+	\begin{call}
+	{Client}{Server rules request}{SB}{Has full rules response}
+	\end{call}
+	\begin{call}
+		{Client}{Send message request(ask for new server)}{SB}{Push server message}
+	\end{call}
+	\begin{call}
+		{Client}{Map loop request}{SB}{Map loop message}
+	\end{call}
+	\begin{call}
+		{Client}{Player search request}{SB}{Player search message}
+	\end{call}
+	\begin{call}
+		{SB}{Keep alive message}{Client}{Keep alive reply}
+	\end{call}
+
+	\mess{SB}{Delete server}{Client}
+		
+	\end{sequencediagram}
+	\caption{Total process of server browser server}
+\end{figure}
+
+\chapter{Server List Retrieve}\label{Server list retrieve}
 When a client want to see how many servers are online for playing it will do the following.
 \begin{figure}[H]
 
@@ -1953,16 +2033,16 @@ Filed list contains the keys that client need such as game name, game type, map 
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|l|c|}
+	\begin{tabular}{|M{4.5cm}|M{5.3cm}|M{1cm}|}
 		\hline
-		\tbf{Option name} & \tbf{Value}\\\hline
-		SEND\_FIELDS\_FOR\_ALL & 1\\\hline
-		NO\_SERVER\_LIST&2\\\hline
-		PUSH\_UPDATES&4\\\hline
-		ALTERNATE\_SOURCE\_IP & 8\\\hline
-		SEND\_GROUPS&32\\\hline
-		NO\_LIST\_CACHE&64\\\hline
-		LIMIT\_RESULT\_COUNT&128\\\hline
+		\tbf{Update option name} &\tbf{Description} & \tbf{Value}\\\hline
+		SEND\_FIELDS\_FOR\_ALL & Unknown & 1\\\hline
+		NO\_SERVER\_LIST & Only sends servers info do not send keys values etc.&2\\\hline
+		PUSH\_UPDATES & Updates server information in group list (used by peer)& 4\\\hline
+		ALTERNATE\_SOURCE\_IP &&8\\\hline
+		SEND\_GROUPS& Sends groups information (used by peer)&32\\\hline
+		NO\_LIST\_CACHE& Unknown &64\\\hline
+		LIMIT\_RESULT\_COUNT&Sends servers with a limit number&128\\\hline
 	\end{tabular}
 	\caption{Server browser server list update options}
 \end{table}
@@ -2065,6 +2145,8 @@ The game server flag in \ref{server list response} is listed as follows.
 \end{table}
 
 \section{AdHoc Data}\label{section adhoc data}
+AdHoc data is used to help peer module setup game service.\\
+If game want to use this function, client should require servers list \ref{Server list retrieve}  then the crypt header will be initialized which can be used to encrypt further communication.\\
 AdHoc data contains the following types of command.
 
 \subsection{Push Keys List}
@@ -2076,7 +2158,7 @@ AdHoc data contains the following types of command.
 \end{mybox}
 
 \subsection{Push Server}
-Search a server in client servers list. If the server is not exist adding it to client list.
+Search a server's keys and full rules from server browser.
 \ServerResponse
 \begin{mybox}
 	Server flag (1 byte)~\ref{Server flags in servers info list}\\
@@ -2355,7 +2437,7 @@ Client can get profile id by searching his cd-key hash in GSTATS server.
 \section{Get Player Data}
 \ClientRequest
 \begin{mybox}
-	\tbs getpd\tbs\tbs pid\tbs<profile id>\tbs ptype\tbs<persist storage type>\tbs dindex\tbs <data index>\tbs keys
+	\tbs getpd\tbs\tbs pid\tbs<profile id>\tbs ptype\tbs<persist storage type>\tbs dindex\tbs <data index>\tbs keys\tbs final\tbs
 \end{mybox}
 \ServerResponse
 
@@ -2389,7 +2471,7 @@ Creates all the game structures, including buckets if needed.
 \ServerResponse
 
 \begin{mybox}
-	内容...
+
 \end{mybox}
 
 \section{Set Persist Data Helper}
