@@ -2535,6 +2535,69 @@ Note: modification time is tracked for the given profileid/index, not on a per-p
 
 
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		\begin{package}{Architecture}
+		
+			\begin{class}[text width = 4cm]{ChatServer}{0,0}
+			\attribute{String[9] : Name}
+			\operation{+ CreateChatSession()}
+			\operation{+ CreateChatChannel()}
+			\end{class}
+			
+			\begin{class}[text width = 3cm]{UserInfo}{5,-10}
+			\attribute{String : nickname}
+			\end{class}
+			
+			\begin{class}[text width = 4cm]{ChatSession}{5,-5}
+			\attribute{UserInfo : User}
+			\operation{+ CreateChatChannel()}
+			\operation{+ UserLogin()}
+			\operation{+ JoinChatChannel()}
+			\end{class}
+	
+
+			\begin{class}[text width = 4cm]{ChatChannel}{-5,-5}
+			\operation{+ AddChatSession()}
+			\operation{+ DeleteChatSession()}
+			\operation{+ BanChatSession()}
+			\end{class}
+			
+			\composition{ChatServer}{}{}{ChatSession}
+			\composition{ChatServer}{}{}{ChatChannel}
+			\aggregation{ChatSession}{}{}{ChatChannel}
+			\composition{ChatSession}{}{}{UserInfo}
+		\end{package}
+	\end{tikzpicture}
+\end{figure}
+
+\begin{figure}
+	\begin{tikzpicture}
+		\begin{package}{IRC Command System}
+		\begin{class}[text width=4cm]{IRCCommandBase}{0,0}
+		\attribute{Enum : command}
+		\attribute{String : params}
+		\attribute{String: Messages}
+		\end{class}
+		\begin{class}[text width=4cm]{IRCBasicCommand}{0,-3}
+		
+		\end{class}
+		\begin{class}[text width=4cm]{IRCUserCommand}{-5,-5}
+		
+		\end{class}
+		
+		\begin{class}[text width=4cm]{IRCServerCommand}{0,-5}
+		
+		\end{class}
+		
+		\begin{class}[text width=4cm]{IRCChannelCommand}{5,-5}
+
+		\end{class}
+		\end{package}
+	\end{tikzpicture}
+\end{figure}
+
 
 
 

@@ -27,6 +27,7 @@
 \usetikzlibrary{positioning,fit,calc}
 
 \RequirePackage{pgf-umlsd}
+\RequirePackage{pgf-umlcd}
 
 
 \tikzset{block/.style={draw, thick, text width=3cm, minimum height=1.5cm, align=center},   
