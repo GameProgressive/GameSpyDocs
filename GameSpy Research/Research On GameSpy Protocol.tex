@@ -1294,29 +1294,37 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 \end{figure}
 
 \begin{figure}[H]
-	\centering
+		\scalebox{0.7}{
 	\begin{sequencediagram}
 		\newthread{Client}{:Client}{}
 		\newinst[4]{NN}{:NatNeg}{}
+		\newinst[2]{SB}{:ServerBrowser}{}
+		\newinst[2]{GS}{:GameServer}{}		
 		\begin{call}
-			{Client}{External reachable test1()}{NN}{ERT response1()}
+			{Client}{External reachable test()}{NN}{ERT response()}
 		\end{call}
 		\begin{call}
-			{Client}{External reachable test2()}{NN}{ERT response2()}
-		\end{call}
-			\begin{call}
-		{Client}{External reachable test3()}{NN}{ERT response3()}
-	\end{call}
-		\begin{call}
-	{Client}{Address mapping test1()}{NN}{Address mapping response1()}
+	{Client}{Address mapping test()}{NN}{Address mapping response()}
 \end{call}
-		\begin{call}
-	{Client}{Address mapping test2()}{NN}{Address mapping response2()}
+\begin{call}
+	{Client}{Initialization packet()}{NN}{Initialization packet response()}
 \end{call}
-		\begin{call}
-	{Client}{Address mapping test3()}{NN}{Address mapping response3()}
+\begin{call}
+		{Client}{Get server list()}{SB}{Get server list response()}
 \end{call}
+\begin{messcall}
+		{Client}{NatNeg cookie packet()}{SB}
+		\begin{messcall}
+			{SB}{NatNeg connect packet()}{GS}
+		\end{messcall}
+\end{messcall}
+
+\begin{call}
+		{Client}{Try connect()}{GS}{Try connect()}
+\end{call}
+
 	\end{sequencediagram}
+}
 	\caption{NatNeg ERT and address mapping test sequence diagram}
 \end{figure}
 
@@ -2546,60 +2554,89 @@ Note: modification time is tracked for the given profileid/index, not on a per-p
 			\operation{+ CreateChatChannel()}
 			\end{class}
 			
-			\begin{class}[text width = 3cm]{UserInfo}{5,-10}
-			\attribute{String : nickname}
+			\begin{class}[text width = 3cm]{ChatSession}{5,-10}
 			\end{class}
 			
-			\begin{class}[text width = 4cm]{ChatSession}{5,-5}
-			\attribute{UserInfo : User}
-			\operation{+ CreateChatChannel()}
-			\operation{+ UserLogin()}
-			\operation{+ JoinChatChannel()}
+			\begin{class}[text width = 4cm]{ChatUser}{5,-5}
+			\attribute{ChatSession : Session}
+			\attribute{ChatChannel[] : Channels}
 			\end{class}
 	
 
 			\begin{class}[text width = 4cm]{ChatChannel}{-5,-5}
-			\operation{+ AddChatSession()}
-			\operation{+ DeleteChatSession()}
-			\operation{+ BanChatSession()}
+			\operation{+ AddChatUser()}
+			\operation{+ DeleteChatUSer()}
+			\operation{+ BanChatUser()}
 			\end{class}
 			
-			\composition{ChatServer}{}{}{ChatSession}
+			\composition{ChatServer}{}{}{ChatUser}
 			\composition{ChatServer}{}{}{ChatChannel}
-			\aggregation{ChatSession}{}{}{ChatChannel}
-			\composition{ChatSession}{}{}{UserInfo}
+			\aggregation{ChatUser}{}{}{ChatChannel}
+			\composition{ChatUser}{}{}{ChatSession}
 		\end{package}
 	\end{tikzpicture}
 \end{figure}
+
+multiple commands can send with one message
 
 \begin{figure}
 	\begin{tikzpicture}
 		\begin{package}{IRC Command System}
 		\begin{class}[text width=4cm]{IRCCommandBase}{0,0}
-		\attribute{Enum : command}
-		\attribute{String : params}
-		\attribute{String: Messages}
+		\attribute{String : Prefix}
+		\attribute{Enum : Command}
+
+
+		\attribute{String[15] : Params}
+		\operation{+ IRCCommandBase[] GetCommands(string request)}
 		\end{class}
-		\begin{class}[text width=4cm]{IRCBasicCommand}{0,-3}
-		
-		\end{class}
+
 		\begin{class}[text width=4cm]{IRCUserCommand}{-5,-5}
-		
+		\inherit{IRCCommandBase}
 		\end{class}
 		
 		\begin{class}[text width=4cm]{IRCServerCommand}{0,-5}
-		
+		\inherit{IRCCommandBase}
 		\end{class}
 		
 		\begin{class}[text width=4cm]{IRCChannelCommand}{5,-5}
-
+		\inherit{IRCCommandBase}
 		\end{class}
 		\end{package}
 	\end{tikzpicture}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+	\begin{package}{IRC Command Handler}
+	\begin{class}{CommandHandlerBase}{0,0}
+	\attribute{IRCCommand : command}
+	\end{class}
+	\begin{class}[text width=4cm]{ACommandHandler}{3,-3}
+	\inherit{CommandHandlerBase}
+	\attribute{IRCCommand : command}
+	\end{class}
+		\begin{class}[text width=4cm]{BCommandHandler}{-3,-3}
+	\inherit{CommandHandlerBase}
+	\attribute{IRCCommand : command}
+	\end{class}
+	\end{package}
+	\end{tikzpicture}
+\end{figure}
 
-
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+	\begin{package}{IRC Channel System}
+	\begin{class}{IRCChannel}{0,0}
+	\attribute{String : Mode}
+	\attribute{String : Name}
+	\attribute{ChatSession[] : Users}
+	\end{class}
+	\end{package}
+	\end{tikzpicture}
+\end{figure}
 
 \begin{appendix}
 \chapter{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}
