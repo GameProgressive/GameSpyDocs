@@ -1301,7 +1301,7 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 		\newinst[2]{SB}{:ServerBrowser}{}
 		\newinst[2]{GS}{:GameServer}{}		
 		\begin{call}
-			{Client}{External reachable test()}{NN}{ERT response()}
+			{Client}{Natify packet()}{NN}{ERT response()}
 		\end{call}
 		\begin{call}
 	{Client}{Address mapping test()}{NN}{Address mapping response()}
@@ -1318,14 +1318,16 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 			{SB}{NatNeg connect packet()}{GS}
 		\end{messcall}
 \end{messcall}
-
+		\begin{call}
+	{GS}{Nat negotiation()}{NN}{Nat negotiation()}
+\end{call}
 \begin{call}
-		{Client}{Try connect()}{GS}{Try connect()}
+	{Client}{Try connect()}{GS}{Try connect()}
 \end{call}
 
 	\end{sequencediagram}
 }
-	\caption{NatNeg ERT and address mapping test sequence diagram}
+	\caption{NatNeg sequence diagram}
 \end{figure}
 
 
@@ -2541,102 +2543,219 @@ Note: modification time is tracked for the given profileid/index, not on a per-p
 
 \part{GameSpy Chat Server}
 
+\chapter{Introduction}
+GameSpy Chat server is similar to IRC chat server, but support many extra commands.
+We use bracket <> to represent the data, in real protocol there is no bracket around each character field.\\
+For example the following codes shows a welcome message.
+\begin{mybox}
+	:www.retrospy.cc 001 spyguy  :"Welcome to RetroSpy".
+\end{mybox}
+The client request formatted as follows:
+\begin{mybox}[label= Format of the GameSpy chat request]
+	:<prefix> <middle> <command> <command params> :<tailing> \tbs r\tbs n
+\end{mybox}
+\section{Prefix Format}
+:<prefix> contains information as follows, when user is logged in the prefix will have user's information and server address. Before user logged in there will be only server address. Prefix using to indicate the message source.
+\begin{mybox}
+	:<nick name>!<user name>@<server address>\\
+	or\\
+	:<server address>
+\end{mybox}
+\section{Middle Format}
+In original IRC protocol, <middle> is used to represent the <command> and <command parameters>, however in GameSpy chat protocol they comprehend it a parameter before <command>, which cause the handler of sdk some time skip the first parameter. The partial source code of \tbf{ciRplGetCKeyHandler()} we list as follows.
+\begin{mybox}
+	channel = message->params[1];\\
+	nick = message->params[2];\\
+	cookie = message->params[3];\\
+	flags = message->params[4];
+\end{mybox}
 
 
-\begin{figure}
+\section{Command Format}
+GameSpy chat protocol contains two types of command, request is character command, response has both types of command.
+\begin{itemize}
+	\item Enumerate command
+	\item Character command
+\end{itemize}
+
+\subsection{Enumerate Command}
+The format of enumerate commands are present as three digit numbers \tbf{XXX}. The commands which used by GameSpy chat server are list as Table~\ref{The enumerate reply command}.
+\begin{table}[H]
 	\centering
-	\begin{tikzpicture}
-		\begin{package}{Architecture}
-		
-			\begin{class}[text width = 4cm]{ChatServer}{0,0}
-			\attribute{String[9] : Name}
-			\operation{+ CreateChatSession()}
-			\operation{+ CreateChatChannel()}
-			\end{class}
-			
-			\begin{class}[text width = 3cm]{ChatSession}{5,-10}
-			\end{class}
-			
-			\begin{class}[text width = 4cm]{ChatUser}{5,-5}
-			\attribute{ChatSession : Session}
-			\attribute{ChatChannel[] : Channels}
-			\end{class}
+	\begin{longtable}{|p{4.5cm}|l|p{4.5cm}|}
+		\hline 		\tbf{Name}&\tbf{Value}&\tbf{Description}\\
+		\hline
+		RPL\_WELCOME&"001"&Welcome reply\\
+		\hline
+		RPL\_USRIP           &        "302"&Get user's public ip reply\\\hline
+		RPL\_WHOISUSER        &       "311"&Search for user information reply\\\hline
+		RPL\_ENDOFWHOIS         &     "318"&End of search user information reply\\\hline
+		RPL\_WHOISCHANNELS     &      "319"&Search channel information reply\\\hline
+		RPL\_LISTSTART         &      "321"&Start list channels reply\\\hline
+		RPL\_LIST               &     "322"&List channel information reply\\\hline
+		RPL\_LISTEND       &          "323"&End of list channel information reply\\\hline
+		RPL\_CHANNELMODEIS     &      "324"&Get channel modes reply\\\hline
+		RPL\_NOTOPIC     &            "331"&There is no topic for this channel reply\\\hline
+		RPL\_TOPIC              &     "332"&Get channel topic reply\\\hline
+		RPL\_WHOREPLY        &        "352"&Search users reply\\\hline
+		RPL\_ENDOFWHO          &      "315"&The end of Search users reply\\\hline
+		RPL\_NAMEREPLY         &      "353"&Get users in channel reply\\\hline
+		RPL\_ENDOFNAMES     &         "366"&End of list users in this channel reply\\\hline
+		RPL\_BANLIST              &   "367"&Get ban list reply\\\hline
+		RPL\_ENDOFBANLIST      &      "368"&End of ban list reply\\\hline
+		RPL\_GETKEY              &    "700"&Get user value by specific keys reply\\\hline
+		RPL\_ENDGETKEY      &         "701"&End of GETKEY reply\\\hline
+		RPL\_GETCKEY           &      "702"&Get channel or user's values reply\\\hline
+		RPL\_ENDGETCKEY    &          "703"&End of GETCKEY reply\\\hline
+		RPL\_GETCHANKEY     &         "704"&Get channel values reply\\\hline
+		RPL\_SECUREKEY       &        "705"&Use gamespy encryption to communicate\\\hline
+		RPL\_CDKEY               &    "706"&Authenticate with cdkey reply\\\hline
+		RPL\_LOGIN              &     "707"&Login as a GameSpy user reply\\\hline
+		RPL\_GETUDPRELAY		&		"712"&\\\hline
+
+	\end{longtable}
+\caption{The enumerate reply command}
+\label{The enumerate reply command}
+\end{table}
+
+The 3 digits number will convert to ASCII code and send to client.
+
+
+\subsection{Character Command}
+The other command is character command, the format of these commands are using words to represent command.
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|p{4.5cm}|l|p{4cm}|}
+	\hline 		\tbf{Name}&\tbf{Value}&\tbf{Description}\\\hline
 	
+	\end{tabular}
+\end{table}
 
-			\begin{class}[text width = 4cm]{ChatChannel}{-5,-5}
-			\operation{+ AddChatUser()}
-			\operation{+ DeleteChatUSer()}
-			\operation{+ BanChatUser()}
-			\end{class}
-			
-			\composition{ChatServer}{}{}{ChatUser}
-			\composition{ChatServer}{}{}{ChatChannel}
-			\aggregation{ChatUser}{}{}{ChatChannel}
-			\composition{ChatUser}{}{}{ChatSession}
-		\end{package}
-	\end{tikzpicture}
-\end{figure}
-
-multiple commands can send with one message
-
-\begin{figure}
-	\begin{tikzpicture}
-		\begin{package}{IRC Command System}
-		\begin{class}[text width=4cm]{IRCCommandBase}{0,0}
-		\attribute{String : Prefix}
-		\attribute{Enum : Command}
-
-
-		\attribute{String[15] : Params}
-		\operation{+ IRCCommandBase[] GetCommands(string request)}
-		\end{class}
-
-		\begin{class}[text width=4cm]{IRCUserCommand}{-5,-5}
-		\inherit{IRCCommandBase}
-		\end{class}
-		
-		\begin{class}[text width=4cm]{IRCServerCommand}{0,-5}
-		\inherit{IRCCommandBase}
-		\end{class}
-		
-		\begin{class}[text width=4cm]{IRCChannelCommand}{5,-5}
-		\inherit{IRCCommandBase}
-		\end{class}
-		\end{package}
-	\end{tikzpicture}
-\end{figure}
-
-\begin{figure}
+\begin{table}[H]
 	\centering
-	\begin{tikzpicture}
-	\begin{package}{IRC Command Handler}
-	\begin{class}{CommandHandlerBase}{0,0}
-	\attribute{IRCCommand : command}
-	\end{class}
-	\begin{class}[text width=4cm]{ACommandHandler}{3,-3}
-	\inherit{CommandHandlerBase}
-	\attribute{IRCCommand : command}
-	\end{class}
-		\begin{class}[text width=4cm]{BCommandHandler}{-3,-3}
-	\inherit{CommandHandlerBase}
-	\attribute{IRCCommand : command}
-	\end{class}
-	\end{package}
-	\end{tikzpicture}
-\end{figure}
+	\begin{tabular}{|p{4.5cm}|l|p{4cm}|}
+	\hline 		\tbf{Name}&\tbf{Value}&\tbf{Description}\\\hline
+	Private message response&"PRIVMSG"&\\\hline
+	Notice message response&"NOTICE"&\\\hline
+	Under the table message response&"UTM"&\\\hline
+	Above the table message response&"ATM"&\\\hline
+	Ping message response&"PING"&\\\hline
+	Nick message response&"NICK"&\\\hline
+	Join channel response&"JOIN"&\\\hline
+	Leave channel response&"PART"&\\\hline
+	Kick player response&"KICK"&\\\hline
+	Quit response&"QUIT"&\\\hline
+	Kill response&"KILL"&\\\hline
+	Get or set topic response&"TOPIC"&\\\hline
+	Get or set mode response&"MODE"&\\\hline
+	Error message&"ERROR"&\\\hline
+	Invite Response&"INVITE"&\\\hline
+	\end{tabular}
+\caption{Character reply commands}
+\label{Character reply commands}
+\end{table}
 
-\begin{figure}
-	\centering
-	\begin{tikzpicture}
-	\begin{package}{IRC Channel System}
-	\begin{class}{IRCChannel}{0,0}
-	\attribute{String : Mode}
-	\attribute{String : Name}
-	\attribute{ChatSession[] : Users}
-	\end{class}
-	\end{package}
-	\end{tikzpicture}
-\end{figure}
+\section{Command Parameters}
+Command parameters are the extra information that each request contains. Such as nick name, user name, channel name etc.
+
+\section{Tailing Format}
+The start of <tailing> should be :, the space inside <tailing> is ignored by server and client, which means you can send <:hello my friend> to others. usually <tailing> is used to carry some messages.
+%    \s\su\sub\subs\subse
+%\begin{figure}
+%	\centering
+%	\begin{tikzpicture}
+%		\begin{package}{Architecture}
+%		
+%			\begin{class}[text width = 4cm]{ChatServer}{0,0}
+%			\attribute{String[9] : Name}
+%			\operation{+ CreateChatSession()}
+%			\operation{+ CreateChatChannel()}
+%			\end{class}
+%			
+%			\begin{class}[text width = 3cm]{ChatSession}{5,-10}
+%			\end{class}
+%			
+%			\begin{class}[text width = 4cm]{ChatUser}{5,-5}
+%			\attribute{ChatSession : Session}
+%			\attribute{ChatChannel[] : Channels}
+%			\end{class}
+%	
+%
+%			\begin{class}[text width = 4cm]{ChatChannel}{-5,-5}
+%			\operation{+ AddChatUser()}
+%			\operation{+ DeleteChatUSer()}
+%			\operation{+ BanChatUser()}
+%			\end{class}
+%			
+%			\composition{ChatServer}{}{}{ChatUser}
+%			\composition{ChatServer}{}{}{ChatChannel}
+%			\aggregation{ChatUser}{}{}{ChatChannel}
+%			\composition{ChatUser}{}{}{ChatSession}
+%		\end{package}
+%	\end{tikzpicture}
+%\end{figure}
+%
+%multiple commands can send with one message
+%
+%\begin{figure}
+%	\begin{tikzpicture}
+%		\begin{package}{IRC Command System}
+%		\begin{class}[text width=4cm]{IRCCommandBase}{0,0}
+%		\attribute{String : Prefix}
+%		\attribute{Enum : Command}
+%
+%
+%		\attribute{String[15] : Params}
+%		\operation{+ IRCCommandBase[] GetCommands(string request)}
+%		\end{class}
+%
+%		\begin{class}[text width=4cm]{IRCUserCommand}{-5,-5}
+%		\inherit{IRCCommandBase}
+%		\end{class}
+%		
+%		\begin{class}[text width=4cm]{IRCServerCommand}{0,-5}
+%		\inherit{IRCCommandBase}
+%		\end{class}
+%		
+%		\begin{class}[text width=4cm]{IRCChannelCommand}{5,-5}
+%		\inherit{IRCCommandBase}
+%		\end{class}
+%		\end{package}
+%	\end{tikzpicture}
+%\end{figure}
+%
+%\begin{figure}
+%	\centering
+%	\begin{tikzpicture}
+%	\begin{package}{IRC Command Handler}
+%	\begin{class}{CommandHandlerBase}{0,0}
+%	\attribute{IRCCommand : command}
+%	\end{class}
+%	\begin{class}[text width=4cm]{ACommandHandler}{3,-3}
+%	\inherit{CommandHandlerBase}
+%	\attribute{IRCCommand : command}
+%	\end{class}
+%		\begin{class}[text width=4cm]{BCommandHandler}{-3,-3}
+%	\inherit{CommandHandlerBase}
+%	\attribute{IRCCommand : command}
+%	\end{class}
+%	\end{package}
+%	\end{tikzpicture}
+%\end{figure}
+%
+%\begin{figure}
+%	\centering
+%	\begin{tikzpicture}
+%	\begin{package}{IRC Channel System}
+%	\begin{class}{IRCChannel}{0,0}
+%	\attribute{String : Mode}
+%	\attribute{String : Name}
+%	\attribute{ChatSession[] : Users}
+%	\end{class}
+%	\end{package}
+%	\end{tikzpicture}
+%\end{figure}
 
 \begin{appendix}
 \chapter{Login Proof Challenge Generation Algorithm}\label{Login Proof Challenge Gerneration Algorithm}

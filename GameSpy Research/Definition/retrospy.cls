@@ -25,7 +25,7 @@
 \RequirePackage{titlesec}
 \RequirePackage{lipsum}
 \usetikzlibrary{positioning,fit,calc}
-
+\RequirePackage{longtable}
 \RequirePackage{pgf-umlsd}
 \RequirePackage{pgf-umlcd}
 
