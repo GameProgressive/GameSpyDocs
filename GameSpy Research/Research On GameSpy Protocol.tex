@@ -1268,6 +1268,68 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 \begin{figure}[H]
 	\centering
 	\begin{sequencediagram}
+		
+		\newthread{Client1}{:Client1}{}
+		\newinst[4]{NN1}{:NatNeg1}{}
+		\newinst{NN2}{:NatNeg2}{}			\newinst{NN3}{:NatNeg3}{}
+		
+		\begin{call}
+			{Client1}{ErtPacket(NN1)}{NN1}{InitACK(NN1)}
+		\end{call}
+		\begin{call}
+			{Client1}{ErtPacket(NN1)}{NN1}{InitACK(NN1)}
+		\end{call}
+\begin{call}
+		{Client1}{ErtPacket(NN3)}{NN2}{InitACK(NN3)}
+\end{call}
+
+\begin{call}
+{Client1}{AddressMappingPacket(NN1)}{NN1}{InitACK(NN1)}
+\end{call}	
+
+\begin{call}
+{Client1}{AddressMappingPacket(NN1)}{NN1}{InitACK(NN1)}
+\end{call}	
+
+\begin{call}
+{Client1}{AddressMappingPacket(NN2)}{NN2}{InitACK(NN2)}
+\end{call}	
+
+\begin{call}
+{Client1}{AddressMappingPacket(NN3)}{NN3}{InitACK(NN3)}
+\end{call}	
+
+	\end{sequencediagram}
+	\caption{Single client nat detection sequence}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
+
+		\newthread{Client1}{:Client1}{}
+		\newinst[3]{NN1}{:NatNeg1}{}
+		\newinst{NN2}{:NatNeg2}{}			\newinst{NN3}{:NatNeg3}{}
+		
+		\begin{call}
+			{Client1}{InitPacket(Port type = GP)}{NN1}{InitACK()}
+		\end{call}
+			\begin{call}
+			{Client1}{InitPacket(Port type = NN1)}{NN1}{InitACK()}
+		\end{call}
+			\begin{call}
+			{Client1}{InitPacket(Port type = NN2)}{NN2}{InitACK()}
+		\end{call}
+		\begin{call}
+		{Client1}{InitPacket(Port type = NN3)}{NN3}{InitACK()}
+	\end{call}
+
+	\end{sequencediagram}
+	\caption{Single client nat negotiation sequence}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\begin{sequencediagram}
 		\newthread{Client1}{:Client1}{}
 		\newinst[3]{NN}{:NatNeg}{}
 		\newinst[3]{Client2}{:Client2}{}
@@ -1275,15 +1337,25 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 		\begin{call}
 			{Client1}{InitPacket}{NN}{InitACK()}
 		\end{call}
+
 	\begin{call}
 		{Client2}{InitPacket}{NN}{InitACK()}
 	\end{call}
+
 		\begin{messcall}
 	{NN}{ConnectPacket}{Client1}
 	\begin{messcall}
 		{NN}{ConnectPacket}{Client2}
 	\end{messcall}
 \end{messcall}
+
+\begin{messcall}
+	{Client1}{ConnectPingPacket}{Client2}
+	\begin{messcall}
+		{Client2}{ConnectPingPacket}{Client1}
+	\end{messcall}
+\end{messcall}
+
 
 	\end{sequencediagram}
 \caption{Nat negotiation sequence}
