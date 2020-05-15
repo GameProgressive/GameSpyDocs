@@ -1265,70 +1265,69 @@ The NAT Negotiation SDK itself is very simple - two users who want to be connect
 
 The NAT Negotiation SDK has no limit to the number of users that can be connected together, but each channel between two users must be independently established.
 
-
-
 \begin{figure}[H]
 	\centering
-	\scalebox{0.8}{
-		\begin{tikzpicture}
-		\node [block]  (a) at (5,5){NATNEG};
-		\node [block] (b) at (0,0){Client 1};
-		\node [block](c) at (10,0){Client 2};
-		
-		\draw[line] ([xshift = -15]a.south)--node [midway, below, sloped] {\circled{\small{2}} Client2 connect request} ([xshift=10]b.north);
-		
-		\draw[line] ([xshift=-10]b.north)--node [midway, above, sloped] {\circled{\small{1}} Heat beat} ([xshift = -35]a.south);
-		
-		\draw[line] ([xshift =15]a.south)--node[midway, below, sloped] {\circled{\small{2}} Client 1 connect request} ([xshift=-10]c.north);
-		\draw[line] ([xshift=10]c.north) -- node[midway, above, sloped] {\circled{\small{1}} Heart beat} ([xshift=35]a.south);
-		
-		
-		\draw[line] ([yshift=8]b.east)--node[fill=white]{\circled{\small{3}} Connect to each other}([yshift=8]c.west);
-		
-		\draw[line] ([yshift=-8]c.west)--node[fill=white]{\circled{\small{3}} Connect to each other}([yshift=-8]b.east);
-		
-		\end{tikzpicture}
-	}
-\caption{NatNeg working diagram}
-\label{NatNeg working diagram}
-\end{figure}
-
-\begin{figure}[H]
-		\scalebox{0.7}{
 	\begin{sequencediagram}
-		\newthread{Client}{:Client}{}
-		\newinst[4]{NN}{:NatNeg}{}
-		\newinst[2]{SB}{:ServerBrowser}{}
-		\newinst[2]{GS}{:GameServer}{}		
+		\newthread{Client1}{:Client1}{}
+		\newinst[3]{NN}{:NatNeg}{}
+		\newinst[3]{Client2}{:Client2}{}
+		
 		\begin{call}
-			{Client}{Natify packet()}{NN}{ERT response()}
+			{Client1}{InitPacket}{NN}{InitACK()}
 		\end{call}
-		\begin{call}
-	{Client}{Address mapping test()}{NN}{Address mapping response()}
-\end{call}
-\begin{call}
-	{Client}{Initialization packet()}{NN}{Initialization packet response()}
-\end{call}
-\begin{call}
-		{Client}{Get server list()}{SB}{Get server list response()}
-\end{call}
-\begin{messcall}
-		{Client}{NatNeg cookie packet()}{SB}
+	\begin{call}
+		{Client2}{InitPacket}{NN}{InitACK()}
+	\end{call}
 		\begin{messcall}
-			{SB}{NatNeg connect packet()}{GS}
-		\end{messcall}
+	{NN}{ConnectPacket}{Client1}
+	\begin{messcall}
+		{NN}{ConnectPacket}{Client2}
+	\end{messcall}
 \end{messcall}
-		\begin{call}
-	{GS}{Nat negotiation()}{NN}{Nat negotiation()}
-\end{call}
-\begin{call}
-	{Client}{Try connect()}{GS}{Try connect()}
-\end{call}
 
 	\end{sequencediagram}
-}
-	\caption{NatNeg sequence diagram}
+\caption{Nat negotiation sequence}
 \end{figure}
+
+
+
+\begin{figure}[H]
+	\scalebox{0.7}{
+		\begin{sequencediagram}
+			\newthread{Client}{:Client}{}
+			\newinst[4]{NN}{:NatNeg}{}
+			\newinst[2]{SB}{:ServerBrowser}{}
+			\newinst[2]{GS}{:GameServer}{}		
+			\begin{call}
+				{Client}{Natify packet()}{NN}{ERT response()}
+			\end{call}
+			\begin{call}
+				{Client}{Address mapping test()}{NN}{Address mapping response()}
+			\end{call}
+			\begin{call}
+				{Client}{Initialization packet()}{NN}{Initialization packet response()}
+			\end{call}
+			\begin{call}
+				{Client}{Get server list()}{SB}{Get server list response()}
+			\end{call}
+			\begin{messcall}
+				{Client}{NatNeg cookie packet()}{SB}
+				\begin{messcall}
+					{SB}{NatNeg connect packet()}{GS}
+				\end{messcall}
+			\end{messcall}
+			\begin{call}
+				{GS}{Nat negotiation()}{NN}{Nat negotiation()}
+			\end{call}
+			\begin{call}
+				{Client}{Try connect()}{GS}{Try connect()}
+			\end{call}
+			
+		\end{sequencediagram}
+	}
+	\caption{NatNeg general sequence diagram}
+\end{figure}
+
 
 
 \begin{table}[H]
