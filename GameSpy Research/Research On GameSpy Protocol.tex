@@ -1308,7 +1308,7 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 	\begin{sequencediagram}
 
 		\newthread{Client1}{:Client1}{}
-		\newinst[3]{NN1}{:NatNeg1}{}
+		\newinst[4]{NN1}{:NatNeg1}{}
 		\newinst{NN2}{:NatNeg2}{}			\newinst{NN3}{:NatNeg3}{}
 		
 		\begin{call}
@@ -1335,11 +1335,11 @@ The NAT Negotiation SDK has no limit to the number of users that can be connecte
 		\newinst[3]{Client2}{:Client2}{}
 		
 		\begin{call}
-			{Client1}{InitPacket}{NN}{InitACK()}
+			{Client1}{InitPacket(ClientIndex=0)}{NN}{InitACK()}
 		\end{call}
 
 	\begin{call}
-		{Client2}{InitPacket}{NN}{InitACK()}
+		{Client2}{InitPacket(ClientIndex=1)}{NN}{InitACK()}
 	\end{call}
 
 		\begin{messcall}
@@ -1474,18 +1474,18 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 
 \begin{table}[H]
 	\centering
-	\begin{tabular}{|c|c|c|}
+	\begin{tabular}{A}
 		\hline
 		\textbf{Packet type} &\textbf{Description}&\textbf{Value}\\\hline
-		Init && 0\\\hline
-		ErtTest&Echo packet to original sender test&2\\\hline
-		Connect&&5\\\hline
-		Connect Ack&&6\\\hline
-		Connect ping&& 7\\\hline
+		Init &Heart beat to let server know the existence of the client(client to server)& 0\\\hline
+		ErtTest&External reachable test (client to server)&2\\\hline
+		Connect&Directly send to another client try to connect with each others (client to client)&5\\\hline
+		Connect Ack&Client already received the connect request and tried to connect to the other client (client to client)&6\\\hline
+		Connect ping&Test the latency between each other (client to client)& 7\\\hline
 		BackupTest&&8\\\hline
-		Address check&& 10\\\hline
-		Natify request&NAT identify&12\\\hline
-		Report &NatNeg result report& 13\\\hline
+		Address check&Identify client's IP address mapping relations (client to server)& 10\\\hline
+		Natify request&Identify NAT type (client to server)&12\\\hline
+		Report &NAT negotiation result report (client to server)& 13\\\hline
 	\end{tabular}
 	\caption{NatNeg client request packet type}
 	\label{NatNeg client request packet type}
@@ -1497,11 +1497,11 @@ Client's heart beat contains NatNeg packet type which we list as follows.
 	\begin{tabular}{|c|c|c|}
 		\hline
 		\textbf{Packet type} &\textbf{Description}&\textbf{Value}\\\hline
-		InitAck&&1\\\hline
-		ErtAck&External reach test&3\\\hline
-		Backup Ack&&9\\\hline
-		Address reply&&11\\\hline
-		Report Ack&&15\\\hline
+		InitAck&Init packet acknowledgment&1\\\hline
+		ErtAck&External reach test acknowledgment&3\\\hline
+		Backup Ack&Backup packet acknowledgment&9\\\hline
+		Address reply&Address mapping relation reply&11\\\hline
+		Report Ack&Report packet acknowledgment&15\\\hline
 	\end{tabular}
 	\caption{NatNeg server response packet type}
 	\label{NatNeg server response packet type}
