@@ -1680,10 +1680,9 @@ The response of available check is fixed with first 6 bytes, last byte is the st
 	\begin{tabular}{|l|m{5cm}|c|}
 		\hline
 		\textbf{Status}&\textbf{Description}&\textbf{Value}\\\hline
-		GSIACWaiting&still waiting for a response from the backend&1\\\hline
-		GSIACAvailable&the game's backend services are available&2\\\hline
-		GSIACUnavailable& the game's backend services are unavailable&3\\\hline
-		GSIACTemporarilyUnavailable&the game's backend services are temporarily unavailable&4\\\hline
+		Available&the game's backend services are available&0\\\hline
+		Unavailable& the game's backend services are unavailable&1\\\hline
+		TemporarilyUnavailable&the game's backend services are temporarily unavailable&2\\\hline
 	\end{tabular}
 \caption{Available check server status}
 \label{Available check server status}
